@@ -1,0 +1,192 @@
+/* BoastPlug App Styles */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom selection */
+::selection {
+  background: hsl(142 76% 45% / 0.3);
+  color: white;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid hsl(142 76% 45%);
+  outline-offset: 2px;
+}
+
+/* Button hover transitions */
+button {
+  transition: all 0.2s ease;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.text-gradient-animated {
+  background: linear-gradient(90deg, hsl(142 76% 45%), hsl(199 89% 48%), hsl(142 76% 45%));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Glass morphism variants */
+.glass-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-medium {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Glow effects */
+.glow-text-green {
+  text-shadow: 0 0 20px hsl(142 76% 45% / 0.5);
+}
+
+.glow-text-blue {
+  text-shadow: 0 0 20px hsl(199 89% 48% / 0.5);
+}
+
+/* Loading shimmer */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Slider styling */
+[data-slot="slider-track"] {
+  background: hsl(220 15% 20%) !important;
+}
+
+[data-slot="slider-range"] {
+  background: linear-gradient(90deg, hsl(142 76% 45%), hsl(199 89% 48%)) !important;
+}
+
+[data-slot="slider-thumb"] {
+  background: hsl(142 76% 45%) !important;
+  border: 2px solid white !important;
+}
+
+/* Progress bar styling */
+[data-slot="progress-indicator"] {
+  background: linear-gradient(90deg, hsl(142 76% 45%), hsl(199 89% 48%)) !important;
+}
+
+/* Dialog/Sheet backdrop */
+[data-slot="dialog-overlay"],
+[data-slot="sheet-overlay"] {
+  background: hsl(220 35% 6% / 0.8) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Input focus states */
+input:focus,
+textarea:focus {
+  border-color: hsl(142 76% 45% / 0.5) !important;
+  box-shadow: 0 0 0 2px hsl(142 76% 45% / 0.2) !important;
+}
+
+/* Checkbox styling */
+[data-state="checked"] {
+  background-color: hsl(142 76% 45%) !important;
+  border-color: hsl(142 76% 45%) !important;
+}
+
+/* Badge variants */
+.badge-glow {
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* Tab styling */
+[data-state="active"][role="tab"] {
+  font-weight: 600;
+}
+
+/* Accordion styling */
+[data-state="open"] > [data-slot="accordion-trigger"] {
+  color: hsl(142 76% 45%);
+}
+
+/* Tooltip styling */
+[data-slot="tooltip-content"] {
+  background: hsl(220 20% 12%) !important;
+  border: 1px solid hsl(220 15% 20%) !important;
+}
+
+/* Dropdown styling */
+[data-slot="dropdown-menu-content"] {
+  background: hsl(220 20% 12%) !important;
+  border: 1px solid hsl(220 15% 20%) !important;
+}
+
+/* Popover styling */
+[data-slot="popover-content"] {
+  background: hsl(220 20% 12%) !important;
+  border: 1px solid hsl(220 15% 20%) !important;
+}
+
+/* Toast styling */
+[data-sonner-toast] {
+  background: hsl(220 20% 12%) !important;
+  border: 1px solid hsl(220 15% 20%) !important;
+  color: white !important;
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 2rem !important;
+  }
+  
+  h2 {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
