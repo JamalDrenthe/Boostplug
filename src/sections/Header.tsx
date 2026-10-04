@@ -61,7 +61,7 @@ export function Header({ onCheckout, onTracking }: HeaderProps) {
               </div>
             </div>
             <span className="text-xl font-bold tracking-tight text-white">
-              BOAST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
+              BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
             </span>
           </a>
 
@@ -184,7 +184,7 @@ export function Header({ onCheckout, onTracking }: HeaderProps) {
                       </div>
                     </div>
                     <span className="text-xl font-bold text-white">
-                      BOAST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
+                      BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
                     </span>
                   </div>
 

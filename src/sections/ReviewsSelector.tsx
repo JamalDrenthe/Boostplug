@@ -347,13 +347,13 @@ export function ReviewsSelector({ onCheckout }: ReviewsSelectorProps) {
             <Textarea
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Laat leeg voor een professionele review door BoastPlug..."
+              placeholder="Laat leeg voor een professionele review door BoostPlug..."
               className="bg-white/5 border-white/10 text-white placeholder:text-white/30 min-h-[100px]"
               maxLength={500}
             />
             <p className="text-xs text-white/40 mt-2">
               {reviewText.length}/500 karakters
-              {!reviewText && ' · Laat leeg voor een professionele review door BoastPlug'}
+              {!reviewText && ' · Laat leeg voor een professionele review door BoostPlug'}
             </p>
           </div>
         )}

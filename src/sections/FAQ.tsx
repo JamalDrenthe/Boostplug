@@ -7,7 +7,7 @@ import {
 
 const faqs = [
   {
-    question: 'Is BoastPlug veilig om te gebruiken?',
+    question: 'Is BoostPlug veilig om te gebruiken?',
     answer: 'Ja, absoluut. We werken met geavanceerde distributiemethoden die volledig veilig zijn voor je accounts. Onze streams en reviews komen van echte, actieve gebruikers. We hebben strikte kwaliteitscontroles en leveren nooit bots of fake accounts.',
   },
   {
@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     question: 'Heb ik een account nodig?',
-    answer: 'Nee, dat is het mooie! Bij BoastPlug werken we met guest checkout. Je hebt geen account nodig - alleen je email adres voor de bestelbevestiging en tracking updates.',
+    answer: 'Nee, dat is het mooie! Bij BoostPlug werken we met guest checkout. Je hebt geen account nodig - alleen je email adres voor de bestelbevestiging en tracking updates.',
   },
   {
     question: 'Welke betaalmethoden accepteren jullie?',
@@ -35,6 +35,10 @@ const faqs = [
     answer: 'Onze reviews worden geschreven door echte mensen met actieve accounts op de betreffende platforms. Ze zijn uniek, relevant en voldoen aan alle richtlijnen van het platform.',
   },
   {
+    question: 'Wie zit er achter BoostPlug?',
+    answer: 'BoostPlug is een onderneming van Quantum Initium Holding, de holding waaronder ook WoningVry, Spontiva, Investbotiq, VVC (Verdienende Vrienden Club), Immigratie Punt en Xabi World vallen. Die ruggensteuning betekent professionele processen, betrouwbare levering en een vast aanspreekpunt.',
+  },
+  {
     question: 'Kan ik zelf de review tekst bepalen?',
     answer: 'Ja, bij de meeste platforms kun je optioneel je eigen review tekst invoeren. Laat je het leeg? Dan schrijft ons team een professionele, relevante review voor je.',
   },
@@ -48,7 +52,7 @@ export function FAQ() {
           Veelgestelde <span className="text-gradient">vragen</span>
         </h2>
         <p className="text-white/60 max-w-xl mx-auto">
-          Alles wat je wilt weten over BoastPlug. Staat je vraag er niet tussen? 
+          Alles wat je wilt weten over BoostPlug. Staat je vraag er niet tussen? 
           Neem contact op met onze support.
         </p>
       </div>

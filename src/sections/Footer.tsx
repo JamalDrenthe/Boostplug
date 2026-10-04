@@ -25,12 +25,24 @@ export function Footer() {
                 </div>
               </div>
               <span className="text-xl font-bold text-white">
-                BOAST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
+                BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
               </span>
             </div>
             <p className="text-white/50 mb-6">
               Boost je online aanwezigheid met streams en reviews. 
               Geen account nodig, directe levering.
+            </p>
+            <p className="text-white/50 mb-6">
+              BoostPlug is een onderneming van{' '}
+              <a
+                href="https://quantuminitium.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[hsl(142,76%,45%)] hover:text-white transition-colors"
+              >
+                Quantum Initium Holding
+              </a>
+              {' '}— naast onder meer WoningVry, Spontiva, Investbotiq, VVC en Immigratie Punt.
             </p>
             <div className="flex gap-3">
               <a 
@@ -153,7 +165,7 @@ export function Footer() {
             </div>
             <div className="flex items-center gap-2 text-white/40">
               <Mail className="w-5 h-5" />
-              <span className="text-sm">support@boastplug.com</span>
+              <span className="text-sm">support@boostplug.one</span>
             </div>
           </div>
         </div>
@@ -161,7 +173,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="border-t border-white/10 mt-8 pt-8 text-center">
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} BoastPlug. Alle rechten voorbehouden.
+            © {new Date().getFullYear()} BoostPlug — een onderneming van Quantum Initium Holding. Alle rechten voorbehouden.
           </p>
         </div>
       </div>
