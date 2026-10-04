@@ -71,25 +71,25 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-6">Producten</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
+                <a href="#products" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
                   <Music2 className="w-4 h-4" />
                   Spotify Streams
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
+                <a href="#products" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
                   <Music2 className="w-4 h-4" />
                   Apple Music
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
+                <a href="#products" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
                   <Star className="w-4 h-4" />
                   Google Reviews
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
+                <a href="#products" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
                   <Star className="w-4 h-4" />
                   Trustpilot
                 </a>
@@ -102,22 +102,22 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-6">Bedrijf</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors">
+                <a href="#/over-ons" className="text-white/50 hover:text-white transition-colors">
                   Over ons
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors">
+                <a href="#how-it-works" className="text-white/50 hover:text-white transition-colors">
                   Hoe het werkt
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors">
-                  Blog
+                <a href="#/account" className="text-white/50 hover:text-white transition-colors">
+                  Mijn account
                 </a>
               </li>
               <li>
-                <a href="#" className="text-white/50 hover:text-white transition-colors">
+                <a href="mailto:support@boostplug.one" className="text-white/50 hover:text-white transition-colors">
                   Contact
                 </a>
               </li>

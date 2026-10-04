@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { formatPrice } from '@/data/platforms';
 import { Button } from '@/components/ui/button';
@@ -30,12 +30,18 @@ interface CheckoutModalProps {
 }
 
 export function CheckoutModal({ open, onClose }: CheckoutModalProps) {
-  const { cart, removeFromCart, clearCart, currency, addOrder, setCheckoutEmail } = useStore();
+  const { cart, removeFromCart, clearCart, currency, addOrder, setCheckoutEmail, user } = useStore();
   const [email, setEmail] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [trackingToken, setTrackingToken] = useState('');
+
+  useEffect(() => {
+    if (open && user && !email) {
+      setEmail(user.email);
+    }
+  }, [open, user]);
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
 

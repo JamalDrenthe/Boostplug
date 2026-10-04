@@ -8,7 +8,9 @@ import {
   Menu, 
   Search,
   Package,
-  Zap
+  Zap,
+  User,
+  LogIn
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -21,10 +23,13 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 interface HeaderProps {
   onCheckout: () => void;
   onTracking: () => void;
+  onAccount: () => void;
+  onHome: () => void;
+  onAbout: () => void;
 }
 
-export function Header({ onCheckout, onTracking }: HeaderProps) {
-  const { cart, currency, setCurrency, locale, setLocale } = useStore();
+export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: HeaderProps) {
+  const { cart, currency, setCurrency, locale, setLocale, user } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -52,7 +57,7 @@ export function Header({ onCheckout, onTracking }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3 group">
+          <a href="#" onClick={(e) => { e.preventDefault(); onHome(); }} className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 flex items-center justify-center">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(220,30%,15%)] to-[hsl(220,35%,8%)] border border-white/10 group-hover:border-[hsl(142,76%,45%)]/50 transition-colors" />
               <div className="relative flex gap-1.5">
@@ -67,10 +72,10 @@ export function Header({ onCheckout, onTracking }: HeaderProps) {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            <a href="#products" className="text-sm text-white/70 hover:text-white transition-colors">
+            <a href="#products" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
               Producten
             </a>
-            <a href="#how-it-works" className="text-sm text-white/70 hover:text-white transition-colors">
+            <a href="#how-it-works" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
               Hoe het werkt
             </a>
             <button 
@@ -78,6 +83,12 @@ export function Header({ onCheckout, onTracking }: HeaderProps) {
               className="text-sm text-white/70 hover:text-white transition-colors"
             >
               Track bestelling
+            </button>
+            <button
+              onClick={onAbout}
+              className="text-sm text-white/70 hover:text-white transition-colors"
+            >
+              Over ons
             </button>
           </nav>
 
@@ -137,6 +148,32 @@ export function Header({ onCheckout, onTracking }: HeaderProps) {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Account / Login */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                if (user) {
+                  onAccount();
+                } else {
+                  window.location.hash = '#/login';
+                }
+              }}
+              className="flex items-center gap-2 text-white/70 hover:text-white hover:bg-white/10"
+            >
+              {user ? (
+                <>
+                  <User className="w-4 h-4" />
+                  <span className="hidden md:inline text-sm">{user.name.split(' ')[0]}</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden md:inline text-sm">Inloggen</span>
+                </>
+              )}
+            </Button>
 
             {/* Cart Button */}
             <Button
@@ -210,12 +247,40 @@ export function Header({ onCheckout, onTracking }: HeaderProps) {
                     <button 
                       onClick={() => {
                         setIsMobileMenuOpen(false);
+                        onAbout();
+                      }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
+                    >
+                      <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+                      <span className="text-white">Over ons</span>
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
                         onCheckout();
                       }}
                       className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
                     >
                       <Package className="w-5 h-5 text-[hsl(142,76%,45%)]" />
                       <span className="text-white">Winkelwagen ({cartItemCount})</span>
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        if (user) {
+                          onAccount();
+                        } else {
+                          window.location.hash = '#/login';
+                        }
+                      }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
+                    >
+                      {user ? (
+                        <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                      ) : (
+                        <LogIn className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                      )}
+                      <span className="text-white">{user ? `Mijn account` : 'Inloggen'}</span>
                     </button>
                   </nav>
 

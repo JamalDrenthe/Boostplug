@@ -80,6 +80,13 @@ export interface Order {
   deliveredAt?: Date;
 }
 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
 export interface CheckoutFormData {
   email: string;
   acceptTerms: boolean;
