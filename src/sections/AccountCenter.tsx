@@ -196,18 +196,34 @@ export function AccountCenter({ onBack, onTrack, onShop }: AccountCenterProps) {
                 <ol className="space-y-3 mb-4">
                   <li className="flex items-start gap-3 text-sm">
                     <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
+                    <span className="text-white/60">Voltooi je VVC account</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
+                    <span className="text-white/60">Voltooi je Xabi World account</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
+                    <span className="text-white/60">Voltooi je Grover account</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
+                    <span className="text-white/60">Huur een Mac Mini via Grover en gebruik de kortingscode</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
                     <span className="text-white/60">Installeer de BoostPlug IP-software op je apparaat</span>
                   </li>
                   <li className="flex items-start gap-3 text-sm">
                     <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
-                    <span className="text-white/60">Koppel je GPU aan het netwerk via je mining-account</span>
+                    <span className="text-white/60">Voltooi je Zheavenzy account</span>
                   </li>
                   <li className="flex items-start gap-3 text-sm">
                     <CheckCircle2 className="w-4 h-4 mt-0.5 text-[hsl(199,89%,48%)] shrink-0" />
-                    <span className="text-white/60">Lever rekenkracht — accounts via Logs.rent beïnvloeden het algoritme</span>
+                    <span className="text-white/60">Voltooi je Logs Rent account — je mining kan beginnen</span>
                   </li>
                 </ol>
-                <Badge variant="outline" className="border-amber-500/50 text-amber-400">Status: nog niet geactiveerd</Badge>
+                <Badge variant="outline" className="border-amber-500/50 text-amber-400">Status: stap 1 van 7</Badge>
               </div>
             )}
             {openPanel === 'eco' && (
