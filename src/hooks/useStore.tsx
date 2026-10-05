@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import type { CartItem, ProductCategory, Currency, Locale, Order, OrderStatus, AuthUser, Subscription } from '@/types';
+import type { CartItem, ProductCategory, Currency, Locale, Order, OrderStatus, AuthUser, AccountType, Subscription } from '@/types';
 
 interface StoredUser extends AuthUser {
   password: string;
@@ -69,7 +69,7 @@ interface StoreState {
 
   // Account
   user: AuthUser | null;
-  register: (name: string, email: string, password: string) => { ok: boolean; error?: string };
+  register: (name: string, email: string, password: string, accountType: AccountType) => { ok: boolean; error?: string };
   login: (email: string, password: string) => { ok: boolean; error?: string };
   logout: () => void;
 }
@@ -86,7 +86,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => loadJSON<Subscription[]>(SUBSCRIPTIONS_KEY, []));
   const [user, setUser] = useState<AuthUser | null>(() => loadJSON<AuthUser | null>(SESSION_KEY, null));
 
-  const register = useCallback((name: string, email: string, password: string) => {
+  const register = useCallback((name: string, email: string, password: string, accountType: AccountType) => {
     const normalized = email.trim().toLowerCase();
     const users = getUsers();
     if (users.some(u => u.email === normalized)) {
@@ -97,10 +97,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       name: name.trim(),
       email: normalized,
       password,
+      accountType,
       createdAt: new Date().toISOString(),
     };
     saveUsers([...users, newUser]);
-    const session: AuthUser = { id: newUser.id, name: newUser.name, email: newUser.email, createdAt: newUser.createdAt };
+    const session: AuthUser = { id: newUser.id, name: newUser.name, email: newUser.email, accountType: newUser.accountType, createdAt: newUser.createdAt };
     setUser(session);
     saveJSON(SESSION_KEY, session);
     return { ok: true };
@@ -112,7 +113,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (!found) {
       return { ok: false, error: 'Onjuiste combinatie van e-mailadres en wachtwoord.' };
     }
-    const session: AuthUser = { id: found.id, name: found.name, email: found.email, createdAt: found.createdAt };
+    const session: AuthUser = { id: found.id, name: found.name, email: found.email, accountType: found.accountType ?? 'customer', createdAt: found.createdAt };
     setUser(session);
     saveJSON(SESSION_KEY, session);
     return { ok: true };

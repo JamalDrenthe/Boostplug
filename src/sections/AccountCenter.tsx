@@ -16,6 +16,10 @@ import {
   Copy,
   Repeat,
   Calendar,
+  Pickaxe,
+  Cpu,
+  Globe,
+  TrendingUp,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -90,17 +94,66 @@ export function AccountCenter({ onBack, onTrack, onShop }: AccountCenterProps) {
               <User className="w-8 h-8 text-[hsl(142,76%,45%)]" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-white">{user.name}</h2>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h2 className="text-xl font-semibold text-white">{user.name}</h2>
+                {user.accountType === 'member' ? (
+                  <Badge variant="outline" className="border-[hsl(199,89%,48%)]/50 text-[hsl(199,89%,48%)]">
+                    <Pickaxe className="w-3 h-3 mr-1" />
+                    Lidaccount
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="border-[hsl(142,76%,45%)]/50 text-[hsl(142,76%,45%)]">
+                    <ShoppingBag className="w-3 h-3 mr-1" />
+                    Klantaccount
+                  </Badge>
+                )}
+              </div>
               <p className="text-white/50 flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 {user.email}
               </p>
               <p className="text-white/30 text-sm mt-1">
-                Lid sinds {new Date(user.createdAt).toLocaleDateString('nl-NL')}
+                {user.accountType === 'member' ? 'Lid' : 'Klant'} sinds {new Date(user.createdAt).toLocaleDateString('nl-NL')}
               </p>
             </div>
           </div>
         </Card>
+
+        {/* Leden dashboard — alleen voor lidaccounts */}
+        {user.accountType === 'member' && (
+          <Card className="p-6 bg-white/5 border-[hsl(199,89%,48%)]/20 mb-8">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2 mb-6">
+              <Pickaxe className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+              Leden dashboard
+            </h3>
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <Cpu className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+                <p className="text-white font-medium text-sm mb-1">Mining setup</p>
+                <p className="text-white/40 text-xs">
+                  Lever rekenkracht via IP-software en GPU aan het BoostPlug-netwerk.
+                </p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <Globe className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+                <p className="text-white font-medium text-sm mb-1">Ecosysteem</p>
+                <p className="text-white/40 text-xs">
+                  Accounts via Logs.rent · VVC-leden krijgen voordeel via Spontiva.
+                </p>
+              </div>
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                <TrendingUp className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+                <p className="text-white font-medium text-sm mb-1">Verdiensten</p>
+                <p className="text-white/40 text-xs">
+                  Verdien mee aan de algoritme-boosts van klanten zoals Zheavenzy.
+                </p>
+              </div>
+            </div>
+            <p className="text-white/30 text-xs">
+              Mining-statistieken en uitbetalingen worden hier getoond zodra jouw mining-account actief is.
+            </p>
+          </Card>
+        )}
 
         {/* Abonnementen */}
         <Card className="p-6 bg-white/5 border-white/10 mb-8">

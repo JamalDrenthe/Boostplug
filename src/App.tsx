@@ -7,6 +7,7 @@ import { CheckoutModal } from '@/sections/CheckoutModal';
 import { TrackingSection } from '@/sections/TrackingSection';
 import { LoginPage } from '@/sections/LoginPage';
 import { RegisterPage } from '@/sections/RegisterPage';
+import type { AccountType } from '@/types';
 import { AccountCenter } from '@/sections/AccountCenter';
 import { AboutPage } from '@/sections/AboutPage';
 import { MembersPage } from '@/sections/MembersPage';
@@ -19,7 +20,7 @@ type Route =
   | { page: 'home' }
   | { page: 'tracking'; token: string }
   | { page: 'login' }
-  | { page: 'register' }
+  | { page: 'register'; accountType?: AccountType }
   | { page: 'account' }
   | { page: 'about' }
   | { page: 'members' };
@@ -35,6 +36,8 @@ function parseHash(hash: string): Route {
       return { page: 'login' };
     case '#/register':
       return { page: 'register' };
+    case '#/register/lid':
+      return { page: 'register', accountType: 'member' };
     case '#/account':
       return { page: 'account' };
     case '#/over-ons':
@@ -53,7 +56,7 @@ function routeToHash(route: Route): string {
     case 'login':
       return '#/login';
     case 'register':
-      return '#/register';
+      return route.accountType === 'member' ? '#/register/lid' : '#/register';
     case 'account':
       return '#/account';
     case 'about':
@@ -129,6 +132,7 @@ function AppContent() {
         )}
         {route.page === 'register' && (
           <RegisterPage
+            defaultType={route.accountType}
             onBack={goHome}
             onSuccess={goAccount}
             onGoLogin={() => navigate({ page: 'login' })}
@@ -154,7 +158,7 @@ function AppContent() {
         {route.page === 'members' && (
           <MembersPage
             onBack={goHome}
-            onJoin={() => navigate({ page: 'register' })}
+            onJoin={() => navigate({ page: 'register', accountType: 'member' })}
             onShop={goProducts}
           />
         )}

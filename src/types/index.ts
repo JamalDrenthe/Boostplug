@@ -80,10 +80,13 @@ export interface Order {
   deliveredAt?: Date;
 }
 
+export type AccountType = 'customer' | 'member';
+
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  accountType: AccountType;
   createdAt: string;
 }
 

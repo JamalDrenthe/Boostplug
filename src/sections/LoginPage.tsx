@@ -56,7 +56,7 @@ export function LoginPage({ onBack, onSuccess, onGoRegister }: LoginPageProps) {
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Inloggen</h1>
             <p className="text-white/50 text-sm">
-              Log in om je bestellingen en account te beheren.
+              Log in met je klant- of lidaccount — je accounttype wordt automatisch herkend.
             </p>
           </div>
 
@@ -104,7 +104,17 @@ export function LoginPage({ onBack, onSuccess, onGoRegister }: LoginPageProps) {
             </Button>
           </form>
 
-          <div className="border-t border-white/10 mt-6 pt-6 text-center">
+          <div className="border-t border-white/10 mt-6 pt-6 text-center space-y-3">
+            <div className="grid grid-cols-2 gap-3 text-left">
+              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-[hsl(142,76%,45%)] font-medium text-xs uppercase tracking-wider mb-1">Klantaccount</p>
+                <p className="text-white/40 text-xs">Bestellingen, tracking & abonnementen</p>
+              </div>
+              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-[hsl(199,89%,48%)] font-medium text-xs uppercase tracking-wider mb-1">Lidaccount</p>
+                <p className="text-white/40 text-xs">Mining, verdiensten & ecosysteem</p>
+              </div>
+            </div>
             <p className="text-white/50 text-sm">
               Nog geen account?{' '}
               <button

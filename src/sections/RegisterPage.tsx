@@ -5,22 +5,25 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { UserPlus, Mail, Lock, User, ArrowLeft, Loader2 } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, ArrowLeft, Loader2, ShoppingBag, Pickaxe } from 'lucide-react';
 import { toast } from 'sonner';
+import type { AccountType } from '@/types';
 
 interface RegisterPageProps {
+  defaultType?: AccountType;
   onBack: () => void;
   onSuccess: () => void;
   onGoLogin: () => void;
 }
 
-export function RegisterPage({ onBack, onSuccess, onGoLogin }: RegisterPageProps) {
+export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: RegisterPageProps) {
   const { register } = useStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [accountType, setAccountType] = useState<AccountType>(defaultType ?? 'customer');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,7 +50,7 @@ export function RegisterPage({ onBack, onSuccess, onGoLogin }: RegisterPageProps
     }
     setIsSubmitting(true);
     setTimeout(() => {
-      const result = register(name, email, password);
+      const result = register(name, email, password, accountType);
       setIsSubmitting(false);
       if (!result.ok) {
         toast.error(result.error || 'Registreren mislukt');
@@ -76,11 +79,43 @@ export function RegisterPage({ onBack, onSuccess, onGoLogin }: RegisterPageProps
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Account aanmaken</h1>
             <p className="text-white/50 text-sm">
-              Registreer om bestellingen te volgen en sneller af te rekenen.
+              Kies je accounttype en registreer om aan de slag te gaan.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <Label className="text-white">Ik ben een…</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setAccountType('customer')}
+                  className={`p-4 rounded-xl border text-left transition-all ${
+                    accountType === 'customer'
+                      ? 'border-[hsl(142,76%,45%)] bg-[hsl(142,76%,45%)]/10'
+                      : 'border-white/10 bg-white/5 hover:border-white/25'
+                  }`}
+                >
+                  <ShoppingBag className={`w-5 h-5 mb-2 ${accountType === 'customer' ? 'text-[hsl(142,76%,45%)]' : 'text-white/50'}`} />
+                  <p className="text-white font-medium text-sm">Klant</p>
+                  <p className="text-white/40 text-xs mt-1">Boosts & abonnementen afnemen</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAccountType('member')}
+                  className={`p-4 rounded-xl border text-left transition-all ${
+                    accountType === 'member'
+                      ? 'border-[hsl(199,89%,48%)] bg-[hsl(199,89%,48%)]/10'
+                      : 'border-white/10 bg-white/5 hover:border-white/25'
+                  }`}
+                >
+                  <Pickaxe className={`w-5 h-5 mb-2 ${accountType === 'member' ? 'text-[hsl(199,89%,48%)]' : 'text-white/50'}`} />
+                  <p className="text-white font-medium text-sm">Lid</p>
+                  <p className="text-white/40 text-xs mt-1">Minen & verdienen met GPU/IP</p>
+                </button>
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label className="text-white">Naam</Label>
               <div className="relative">
@@ -160,7 +195,7 @@ export function RegisterPage({ onBack, onSuccess, onGoLogin }: RegisterPageProps
               {isSubmitting ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                'Account aanmaken'
+                accountType === 'member' ? 'Lidaccount aanmaken' : 'Klantaccount aanmaken'
               )}
             </Button>
           </form>
