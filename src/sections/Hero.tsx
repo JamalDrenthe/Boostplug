@@ -14,7 +14,11 @@ import {
   Building2
 } from 'lucide-react';
 
-export function Hero() {
+interface HeroProps {
+  onMembers: () => void;
+}
+
+export function Hero({ onMembers }: HeroProps) {
   const { activeCategory, setActiveCategory } = useStore();
 
   const scrollToProducts = () => {
@@ -60,8 +64,8 @@ export function Hero() {
 
         {/* Subheading */}
         <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          Verhoog je streams, followers en reviews met één klik. 
-          Geen account nodig, directe levering, 100% veilig.
+          Verhoog je streams, followers en reviews met één klik — of word lid en
+          verdien mee aan het netwerk. De kracht van BoostPlug: het algoritme beïnvloeden.
         </p>
 
         {/* Category Tabs */}
@@ -109,6 +113,14 @@ export function Hero() {
             className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-xl"
           >
             Bekijk prijzen
+          </Button>
+          <Button 
+            variant="ghost"
+            size="lg"
+            onClick={onMembers}
+            className="text-white/70 hover:text-white hover:bg-white/10 px-8 py-6 text-lg rounded-xl"
+          >
+            Word lid & verdien mee →
           </Button>
         </div>
 

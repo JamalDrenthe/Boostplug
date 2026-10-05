@@ -9,6 +9,8 @@ import { LoginPage } from '@/sections/LoginPage';
 import { RegisterPage } from '@/sections/RegisterPage';
 import { AccountCenter } from '@/sections/AccountCenter';
 import { AboutPage } from '@/sections/AboutPage';
+import { MembersPage } from '@/sections/MembersPage';
+import { SubscriptionsSection } from '@/sections/SubscriptionsSection';
 import { Footer } from '@/sections/Footer';
 import { Toaster } from '@/components/ui/sonner';
 import './App.css';
@@ -19,7 +21,8 @@ type Route =
   | { page: 'login' }
   | { page: 'register' }
   | { page: 'account' }
-  | { page: 'about' };
+  | { page: 'about' }
+  | { page: 'members' };
 
 function parseHash(hash: string): Route {
   if (hash.startsWith('#/track/')) {
@@ -36,6 +39,8 @@ function parseHash(hash: string): Route {
       return { page: 'account' };
     case '#/over-ons':
       return { page: 'about' };
+    case '#/leden':
+      return { page: 'members' };
     default:
       return { page: 'home' };
   }
@@ -53,6 +58,8 @@ function routeToHash(route: Route): string {
       return '#/account';
     case 'about':
       return '#/over-ons';
+    case 'members':
+      return '#/leden';
     default:
       return '';
   }
@@ -102,8 +109,12 @@ function AppContent() {
       <main>
         {route.page === 'home' && (
           <>
-            <Hero />
+            <Hero onMembers={() => navigate({ page: 'members' })} />
             <ProductSelector onCheckout={() => setShowCheckout(true)} />
+            <SubscriptionsSection
+              onRequireLogin={() => navigate({ page: 'login' })}
+              onGoAccount={goAccount}
+            />
           </>
         )}
         {route.page === 'tracking' && (
@@ -139,6 +150,13 @@ function AppContent() {
         )}
         {route.page === 'about' && (
           <AboutPage onBack={goHome} onShop={goProducts} />
+        )}
+        {route.page === 'members' && (
+          <MembersPage
+            onBack={goHome}
+            onJoin={() => navigate({ page: 'register' })}
+            onShop={goProducts}
+          />
         )}
       </main>
 

@@ -75,6 +75,12 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: H
             <a href="#products" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
               Producten
             </a>
+            <a href="#abonnementen" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
+              Abonnementen
+            </a>
+            <a href="#/leden" className="text-sm text-[hsl(142,76%,45%)]/80 hover:text-[hsl(142,76%,45%)] transition-colors">
+              Voor leden
+            </a>
             <a href="#how-it-works" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
               Hoe het werkt
             </a>
@@ -233,6 +239,25 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: H
                     >
                       <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
                       <span className="text-white">Producten</span>
+                    </a>
+                    <a 
+                      href="#abonnementen" 
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        onHome();
+                      }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                    >
+                      <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+                      <span className="text-white">Abonnementen</span>
+                    </a>
+                    <a 
+                      href="#/leden" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                    >
+                      <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                      <span className="text-white">Voor leden</span>
                     </a>
                     <button 
                       onClick={() => {

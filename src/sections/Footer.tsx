@@ -112,6 +112,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="#/leden" className="text-white/50 hover:text-white transition-colors">
+                  Voor leden
+                </a>
+              </li>
+              <li>
                 <a href="#/account" className="text-white/50 hover:text-white transition-colors">
                   Mijn account
                 </a>

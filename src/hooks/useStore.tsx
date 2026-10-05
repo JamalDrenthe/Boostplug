@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import type { CartItem, ProductCategory, Currency, Locale, Order, OrderStatus, AuthUser } from '@/types';
+import type { CartItem, ProductCategory, Currency, Locale, Order, OrderStatus, AuthUser, Subscription } from '@/types';
 
 interface StoredUser extends AuthUser {
   password: string;
@@ -8,6 +8,7 @@ interface StoredUser extends AuthUser {
 const USERS_KEY = 'boostplug_users';
 const SESSION_KEY = 'boostplug_session';
 const ORDERS_KEY = 'boostplug_orders';
+const SUBSCRIPTIONS_KEY = 'boostplug_subscriptions';
 
 function loadJSON<T>(key: string, fallback: T): T {
   try {
@@ -61,6 +62,11 @@ interface StoreState {
   updateOrderStatus: (token: string, status: OrderStatus, progress?: number) => void;
   getOrderByToken: (token: string) => Order | undefined;
 
+  // Subscriptions
+  subscriptions: Subscription[];
+  addSubscription: (subscription: Subscription) => void;
+  cancelSubscription: (id: string) => void;
+
   // Account
   user: AuthUser | null;
   register: (name: string, email: string, password: string) => { ok: boolean; error?: string };
@@ -77,6 +83,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocale] = useState<Locale>('nl');
   const [checkoutEmail, setCheckoutEmail] = useState('');
   const [orders, setOrders] = useState<Order[]>(() => loadJSON<Order[]>(ORDERS_KEY, []));
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => loadJSON<Subscription[]>(SUBSCRIPTIONS_KEY, []));
   const [user, setUser] = useState<AuthUser | null>(() => loadJSON<AuthUser | null>(SESSION_KEY, null));
 
   const register = useCallback((name: string, email: string, password: string) => {
@@ -152,6 +159,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const addSubscription = useCallback((subscription: Subscription) => {
+    setSubscriptions(prev => {
+      const next = [subscription, ...prev];
+      saveJSON(SUBSCRIPTIONS_KEY, next);
+      return next;
+    });
+  }, []);
+
+  const cancelSubscription = useCallback((id: string) => {
+    setSubscriptions(prev => {
+      const next = prev.map(sub =>
+        sub.id === id ? { ...sub, status: 'cancelled' as const } : sub
+      );
+      saveJSON(SUBSCRIPTIONS_KEY, next);
+      return next;
+    });
+  }, []);
+
   const getOrderByToken = useCallback((token: string) => {
     return orders.find(order => order.trackingToken === token);
   }, [orders]);
@@ -174,6 +199,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addOrder,
       updateOrderStatus,
       getOrderByToken,
+      subscriptions,
+      addSubscription,
+      cancelSubscription,
       user,
       register,
       login,

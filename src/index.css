@@ -44,11 +44,20 @@
   
   body {
     @apply bg-background text-foreground antialiased;
+    font-family: 'Geist', Arial, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer utilities {
+  .eyebrow {
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
   .text-gradient {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, hsl(var(--boast-green)) 0%, hsl(var(--boast-blue)) 100%);

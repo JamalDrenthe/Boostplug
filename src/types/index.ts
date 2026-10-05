@@ -87,6 +87,29 @@ export interface AuthUser {
   createdAt: string;
 }
 
+export type SubscriptionStatus = 'active' | 'cancelled';
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  monthlyPrice: Record<Currency, number>;
+  features: string[];
+  popular?: boolean;
+}
+
+export interface Subscription {
+  id: string;
+  planId: string;
+  planName: string;
+  email: string;
+  monthlyPrice: number;
+  currency: Currency;
+  status: SubscriptionStatus;
+  startedAt: string;
+  nextBillingAt: string;
+}
+
 export interface CheckoutFormData {
   email: string;
   acceptTerms: boolean;

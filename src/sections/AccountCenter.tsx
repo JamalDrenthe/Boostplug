@@ -14,6 +14,8 @@ import {
   ShoppingBag,
   Search,
   Copy,
+  Repeat,
+  Calendar,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -33,7 +35,7 @@ const statusLabels: Record<OrderStatus, { label: string; className: string }> = 
 };
 
 export function AccountCenter({ onBack, onTrack, onShop }: AccountCenterProps) {
-  const { user, orders, logout, currency } = useStore();
+  const { user, orders, subscriptions, cancelSubscription, logout, currency } = useStore();
 
   if (!user) {
     return null;
@@ -41,6 +43,10 @@ export function AccountCenter({ onBack, onTrack, onShop }: AccountCenterProps) {
 
   const myOrders = orders.filter(
     (order) => order.email.toLowerCase() === user.email.toLowerCase()
+  );
+
+  const mySubscriptions = subscriptions.filter(
+    (sub) => sub.email.toLowerCase() === user.email.toLowerCase()
   );
 
   const copyToken = (token: string) => {
@@ -94,6 +100,78 @@ export function AccountCenter({ onBack, onTrack, onShop }: AccountCenterProps) {
               </p>
             </div>
           </div>
+        </Card>
+
+        {/* Abonnementen */}
+        <Card className="p-6 bg-white/5 border-white/10 mb-8">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <Repeat className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+              Mijn abonnementen ({mySubscriptions.length})
+            </h3>
+            <Button
+              onClick={onShop}
+              size="sm"
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              Bekijk abonnementen
+            </Button>
+          </div>
+
+          {mySubscriptions.length === 0 ? (
+            <p className="text-white/40 text-sm py-6 text-center">
+              Nog geen abonnementen. Maandelijkse boosts houden het algoritme warm voor je.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {mySubscriptions.map((sub) => (
+                <div
+                  key={sub.id}
+                  className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between flex-wrap gap-3"
+                >
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <p className="text-white font-medium">{sub.planName}</p>
+                      <Badge
+                        variant="outline"
+                        className={
+                          sub.status === 'active'
+                            ? 'border-green-500/50 text-green-400'
+                            : 'border-white/30 text-white/40'
+                        }
+                      >
+                        {sub.status === 'active' ? 'Actief' : 'Opgezegd'}
+                      </Badge>
+                    </div>
+                    <p className="text-white/40 text-sm mt-1 flex items-center gap-2">
+                      <Calendar className="w-3.5 h-3.5" />
+                      Volgende verlenging:{' '}
+                      {new Date(sub.nextBillingAt).toLocaleDateString('nl-NL')}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-white font-semibold">
+                      {formatPrice(sub.monthlyPrice, sub.currency)}/mnd
+                    </span>
+                    {sub.status === 'active' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          cancelSubscription(sub.id);
+                          toast.success('Abonnement opgezegd');
+                        }}
+                        className="border-white/20 text-white/70 hover:bg-white/10"
+                      >
+                        Opzeggen
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
 
         {/* Bestellingen */}

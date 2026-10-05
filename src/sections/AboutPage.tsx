@@ -8,6 +8,7 @@ import {
   Shield,
   Rocket,
   ExternalLink,
+  Network,
 } from 'lucide-react';
 
 interface AboutPageProps {
@@ -92,6 +93,31 @@ export function AboutPage({ onBack, onShop }: AboutPageProps) {
               Professionele processen en kwaliteitscontrole: geen bots, geen fake accounts.
             </li>
           </ul>
+        </Card>
+
+        {/* Het ecosysteem */}
+        <Card className="p-6 sm:p-8 bg-white/5 border-white/10 mb-8">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Network className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+            Het ecosysteem: klanten en leden
+          </h3>
+          <p className="text-white/60 mb-4">
+            BoostPlug heeft twee kanten. Aan de ene kant klanten die hun bereik
+            willen vergroten; aan de andere kant leden die het netwerk draaiende
+            houden via mining met IP-software en GPU. Samen met{' '}
+            <span className="text-white/80">Zheavenzy</span> (boosten van artiesten)
+            en <span className="text-white/80">Logs.rent</span> (accounts die het
+            algoritme beïnvloeden) vormt dat de kracht van BoostPlug: het
+            algoritme beïnvloeden. VVC-leden kunnen via Spontiva gebruikmaken van
+            BoostPlug.
+          </p>
+          <a
+            href="#/leden"
+            className="text-[hsl(142,76%,45%)] hover:text-white transition-colors inline-flex items-center gap-1 text-sm"
+          >
+            Ontdek de leden-kant
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
         </Card>
 
         {/* Quantum Initium Holding */}
