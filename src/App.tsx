@@ -1,17 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { StoreProvider, useStore } from '@/hooks/useStore';
 import { Header } from '@/sections/Header';
 import { Hero } from '@/sections/Hero';
 import { ProductSelector } from '@/sections/ProductSelector';
-import { CheckoutModal } from '@/sections/CheckoutModal';
-import { TrackingSection } from '@/sections/TrackingSection';
-import { LoginPage } from '@/sections/LoginPage';
-import { RegisterPage } from '@/sections/RegisterPage';
 import type { AccountType } from '@/types';
-import { AccountCenter } from '@/sections/AccountCenter';
-import { AboutPage } from '@/sections/AboutPage';
-import { MembersPage } from '@/sections/MembersPage';
 import { SubscriptionsSection } from '@/sections/SubscriptionsSection';
+
+const CheckoutModal = lazy(() => import('@/sections/CheckoutModal').then(m => ({ default: m.CheckoutModal })));
+const TrackingSection = lazy(() => import('@/sections/TrackingSection').then(m => ({ default: m.TrackingSection })));
+const LoginPage = lazy(() => import('@/sections/LoginPage').then(m => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() => import('@/sections/RegisterPage').then(m => ({ default: m.RegisterPage })));
+const AccountCenter = lazy(() => import('@/sections/AccountCenter').then(m => ({ default: m.AccountCenter })));
+const AboutPage = lazy(() => import('@/sections/AboutPage').then(m => ({ default: m.AboutPage })));
+const MembersPage = lazy(() => import('@/sections/MembersPage').then(m => ({ default: m.MembersPage })));
 import { Footer } from '@/sections/Footer';
 import { Toaster } from '@/components/ui/sonner';
 import './App.css';
@@ -120,6 +121,7 @@ function AppContent() {
             />
           </>
         )}
+        <Suspense fallback={<div className="min-h-screen" />}>
         {route.page === 'tracking' && (
           <TrackingSection initialToken={route.token} onBack={goHome} />
         )}
@@ -162,14 +164,19 @@ function AppContent() {
             onShop={goProducts}
           />
         )}
+        </Suspense>
       </main>
 
       <Footer />
 
-      <CheckoutModal
-        open={showCheckout}
-        onClose={() => setShowCheckout(false)}
-      />
+      {showCheckout && (
+        <Suspense fallback={null}>
+          <CheckoutModal
+            open={showCheckout}
+            onClose={() => setShowCheckout(false)}
+          />
+        </Suspense>
+      )}
 
       <Toaster
         position="top-right"
