@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { formatPrice } from '@/data/platforms';
 import type { OrderStatus } from '@/types';
@@ -20,6 +21,10 @@ import {
   Cpu,
   Globe,
   TrendingUp,
+  ChevronDown,
+  ExternalLink,
+  CheckCircle2,
+  Circle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -40,6 +45,7 @@ const statusLabels: Record<OrderStatus, { label: string; className: string }> = 
 
 export function AccountCenter({ onBack, onTrack, onShop }: AccountCenterProps) {
   const { user, orders, subscriptions, cancelSubscription, logout, currency } = useStore();
+  const [openPanel, setOpenPanel] = useState<string | null>(null);
 
   if (!user) {
     return null;
@@ -127,28 +133,135 @@ export function AccountCenter({ onBack, onTrack, onShop }: AccountCenterProps) {
               Leden dashboard
             </h3>
             <div className="grid sm:grid-cols-3 gap-4 mb-6">
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <Cpu className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+              {/* Mining setup */}
+              <button
+                onClick={() => setOpenPanel(openPanel === 'mining' ? null : 'mining')}
+                className={`p-4 rounded-xl border text-left transition-all ${
+                  openPanel === 'mining'
+                    ? 'border-[hsl(199,89%,48%)] bg-[hsl(199,89%,48%)]/10'
+                    : 'border-white/10 bg-white/5 hover:border-[hsl(199,89%,48%)]/40'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <Cpu className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+                  <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${openPanel === 'mining' ? 'rotate-180' : ''}`} />
+                </div>
                 <p className="text-white font-medium text-sm mb-1">Mining setup</p>
                 <p className="text-white/40 text-xs">
                   Lever rekenkracht via IP-software en GPU aan het BoostPlug-netwerk.
                 </p>
-              </div>
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <Globe className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+              </button>
+              {/* Ecosysteem */}
+              <button
+                onClick={() => setOpenPanel(openPanel === 'eco' ? null : 'eco')}
+                className={`p-4 rounded-xl border text-left transition-all ${
+                  openPanel === 'eco'
+                    ? 'border-[hsl(199,89%,48%)] bg-[hsl(199,89%,48%)]/10'
+                    : 'border-white/10 bg-white/5 hover:border-[hsl(199,89%,48%)]/40'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <Globe className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+                  <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${openPanel === 'eco' ? 'rotate-180' : ''}`} />
+                </div>
                 <p className="text-white font-medium text-sm mb-1">Ecosysteem</p>
                 <p className="text-white/40 text-xs">
                   Accounts via Logs.rent · VVC-leden krijgen voordeel via Spontiva.
                 </p>
-              </div>
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                <TrendingUp className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+              </button>
+              {/* Verdiensten */}
+              <button
+                onClick={() => setOpenPanel(openPanel === 'earn' ? null : 'earn')}
+                className={`p-4 rounded-xl border text-left transition-all ${
+                  openPanel === 'earn'
+                    ? 'border-[hsl(199,89%,48%)] bg-[hsl(199,89%,48%)]/10'
+                    : 'border-white/10 bg-white/5 hover:border-[hsl(199,89%,48%)]/40'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <TrendingUp className="w-6 h-6 text-[hsl(199,89%,48%)] mb-3" />
+                  <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${openPanel === 'earn' ? 'rotate-180' : ''}`} />
+                </div>
                 <p className="text-white font-medium text-sm mb-1">Verdiensten</p>
                 <p className="text-white/40 text-xs">
                   Verdien mee aan de algoritme-boosts van klanten zoals Zheavenzy.
                 </p>
-              </div>
+              </button>
             </div>
+
+            {/* Uitklapbaar detailpaneel */}
+            {openPanel === 'mining' && (
+              <div className="p-5 rounded-xl bg-[hsl(199,89%,48%)]/5 border border-[hsl(199,89%,48%)]/20 mb-6">
+                <p className="text-white font-medium text-sm mb-4">Zo start je met minen</p>
+                <ol className="space-y-3 mb-4">
+                  <li className="flex items-start gap-3 text-sm">
+                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
+                    <span className="text-white/60">Installeer de BoostPlug IP-software op je apparaat</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
+                    <span className="text-white/60">Koppel je GPU aan het netwerk via je mining-account</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-sm">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-[hsl(199,89%,48%)] shrink-0" />
+                    <span className="text-white/60">Lever rekenkracht — accounts via Logs.rent beïnvloeden het algoritme</span>
+                  </li>
+                </ol>
+                <Badge variant="outline" className="border-amber-500/50 text-amber-400">Status: nog niet geactiveerd</Badge>
+              </div>
+            )}
+            {openPanel === 'eco' && (
+              <div className="p-5 rounded-xl bg-[hsl(199,89%,48%)]/5 border border-[hsl(199,89%,48%)]/20 mb-6">
+                <p className="text-white font-medium text-sm mb-4">Het BoostPlug-ecosysteem</p>
+                <div className="space-y-3">
+                  <a
+                    href="https://zheavenzy.one"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 hover:border-[hsl(199,89%,48%)]/40 transition-colors"
+                  >
+                    <div>
+                      <p className="text-white text-sm font-medium">Zheavenzy.one</p>
+                      <p className="text-white/40 text-xs">Boostt hun artiesten via BoostPlug</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-[hsl(199,89%,48%)]" />
+                  </a>
+                  <a
+                    href="https://logs.rent"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 hover:border-[hsl(199,89%,48%)]/40 transition-colors"
+                  >
+                    <div>
+                      <p className="text-white text-sm font-medium">Logs.rent</p>
+                      <p className="text-white/40 text-xs">Levert de accounts die het algoritme beïnvloeden</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-[hsl(199,89%,48%)]" />
+                  </a>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+                    <div>
+                      <p className="text-white text-sm font-medium">VVC via Spontiva</p>
+                      <p className="text-white/40 text-xs">VVC-leden krijgen ledenvoordeel op BoostPlug</p>
+                    </div>
+                    <Badge variant="outline" className="border-[hsl(142,76%,45%)]/50 text-[hsl(142,76%,45%)]">Voordeel</Badge>
+                  </div>
+                </div>
+              </div>
+            )}
+            {openPanel === 'earn' && (
+              <div className="p-5 rounded-xl bg-[hsl(199,89%,48%)]/5 border border-[hsl(199,89%,48%)]/20 mb-6">
+                <p className="text-white font-medium text-sm mb-4">Zo werken je verdiensten</p>
+                <ul className="space-y-2 text-sm text-white/60 mb-4">
+                  <li>• Klanten (oa. Zheavenzy) kopen boosts via BoostPlug</li>
+                  <li>• Leden leveren de GPU- en IP-rekenkracht voor de mining</li>
+                  <li>• Jouw aandeel wordt uitbetaald op basis van je bijdrage</li>
+                </ul>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-white/60 text-sm">Beschikbaar saldo</span>
+                  <span className="text-white font-semibold">€ 0,00</span>
+                </div>
+              </div>
+            )}
             <p className="text-white/30 text-xs">
               Mining-statistieken en uitbetalingen worden hier getoond zodra jouw mining-account actief is.
             </p>
