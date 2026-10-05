@@ -68,7 +68,7 @@ export function Footer() {
 
           {/* Products */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Producten</h4>
+            <h4 className="eyebrow text-white/60 mb-6">Producten</h4>
             <ul className="space-y-3">
               <li>
                 <a href="#products" className="text-white/50 hover:text-white transition-colors flex items-center gap-2">
@@ -99,7 +99,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Bedrijf</h4>
+            <h4 className="eyebrow text-white/60 mb-6">Bedrijf</h4>
             <ul className="space-y-3">
               <li>
                 <a href="#/over-ons" className="text-white/50 hover:text-white transition-colors">
@@ -131,7 +131,7 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Juridisch</h4>
+            <h4 className="eyebrow text-white/60 mb-6">Juridisch</h4>
             <ul className="space-y-3">
               <li>
                 <a href="#" className="text-white/50 hover:text-white transition-colors">

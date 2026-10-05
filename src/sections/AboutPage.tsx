@@ -163,7 +163,7 @@ export function AboutPage({ onBack, onShop }: AboutPageProps) {
           <Button
             size="lg"
             onClick={onShop}
-            className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] font-semibold px-8 py-6 text-lg rounded-xl"
+            className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] font-semibold px-8 py-6 text-lg rounded-full"
           >
             Bekijk de producten
           </Button>

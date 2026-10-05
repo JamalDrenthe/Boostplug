@@ -38,6 +38,7 @@ export function HowItWorks() {
   return (
     <section id="how-it-works" className="py-20">
       <div className="text-center mb-16">
+        <p className="eyebrow text-[hsl(199,89%,48%)] mb-4">HOE HET WERKT</p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
           Hoe het <span className="text-gradient">werkt</span>
         </h2>

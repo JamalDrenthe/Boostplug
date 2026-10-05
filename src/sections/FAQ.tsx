@@ -48,6 +48,7 @@ export function FAQ() {
   return (
     <section className="py-20">
       <div className="text-center mb-12">
+        <p className="eyebrow text-[hsl(142,76%,45%)] mb-4">FAQ</p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
           Veelgestelde <span className="text-gradient">vragen</span>
         </h2>

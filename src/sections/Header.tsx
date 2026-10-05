@@ -155,9 +155,8 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: H
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Account / Login */}
+            {/* Account / Login — pill per design-md */}
             <Button
-              variant="ghost"
               size="sm"
               onClick={() => {
                 if (user) {
@@ -166,7 +165,11 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: H
                   window.location.hash = '#/login';
                 }
               }}
-              className="flex items-center gap-2 text-white/70 hover:text-white hover:bg-white/10"
+              className={`flex items-center gap-2 rounded-full px-5 ${
+                user
+                  ? 'bg-white/10 text-white border border-white/15 hover:bg-white/15'
+                  : 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)] hover:bg-[hsl(142,76%,40%)] font-medium'
+              }`}
             >
               {user ? (
                 <>

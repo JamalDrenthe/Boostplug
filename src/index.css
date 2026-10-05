@@ -47,6 +47,14 @@
     font-family: 'Geist', Arial, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  h1, h2, h3 {
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: hsl(var(--boast-green) / 0.35);
+  }
 }
 
 @layer utilities {

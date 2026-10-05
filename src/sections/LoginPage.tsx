@@ -94,7 +94,7 @@ export function LoginPage({ onBack, onSuccess, onGoRegister }: LoginPageProps) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] font-semibold py-6"
+              className="w-full bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] font-semibold py-6 rounded-full"
             >
               {isSubmitting ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

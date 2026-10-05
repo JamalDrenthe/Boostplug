@@ -16,6 +16,7 @@ export function ProductSelector({ onCheckout }: ProductSelectorProps) {
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">
+          <p className="eyebrow text-[hsl(142,76%,45%)] mb-4">VOOR KLANTEN — EENMALIGE BOOSTS</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             Kies je <span className="text-gradient">boost pakket</span>
           </h2>
