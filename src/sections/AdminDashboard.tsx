@@ -636,6 +636,66 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
                   </div>
                 </div>
               </div>
+
+              {/* Grover Hardware & Software Daemon Nodes Overzicht */}
+              <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs font-mono text-[hsl(199,89%,48%)] uppercase">Actieve Hardware & Software Nodes</span>
+                  <span className="text-xs text-white/40">Gekoppelde Mac Minis & BoostPlug IP Daemons</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {membersList.map((m) => {
+                    const prof = m.miningProfile;
+                    const grover = prof?.groverData;
+                    const sw = prof?.softwareConfig;
+                    const isMining = sw?.status === 'mining_active';
+
+                    return (
+                      <div key={m.id} className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-white text-sm">{m.name}</p>
+                            <p className="text-white/40 text-xs">{m.email}</p>
+                          </div>
+                          <Badge variant="outline" className={isMining ? "border-green-500/50 text-green-400 bg-green-500/10" : "border-amber-500/50 text-amber-400"}>
+                            {isMining ? "Node Actief 🟢" : "Onboarding Bezig 🟡"}
+                          </Badge>
+                        </div>
+
+                        {/* Grover info */}
+                        <div className="p-2.5 rounded-lg bg-white/5 border border-white/5 text-xs space-y-1">
+                          <p className="font-medium text-white/90 flex items-center justify-between">
+                            <span>Hardware (Grover):</span>
+                            <span className="text-amber-300 font-mono">{grover?.orderNumber || 'Geen Grover order'}</span>
+                          </p>
+                          <p className="text-white/50">
+                            Apparaat: <strong className="text-white/80">{grover?.deviceType.replace('_', ' ').toUpperCase() || 'Mac Mini M2'}</strong>
+                          </p>
+                          <p className="text-white/40 font-mono text-[11px] truncate">
+                            ID/MAC: {grover?.serialOrMac || 'In afwachting van registratie'}
+                          </p>
+                        </div>
+
+                        {/* Software Daemon info */}
+                        <div className="p-2.5 rounded-lg bg-white/5 border border-white/5 text-xs space-y-1">
+                          <p className="font-medium text-white/90 flex items-center justify-between">
+                            <span>Daemon Token:</span>
+                            <code className="text-[hsl(142,76%,45%)] font-mono">{sw?.nodeToken || 'BP-NODE-PENDING'}</code>
+                          </p>
+                          <p className="text-white/50 flex items-center justify-between">
+                            <span>Throughput:</span>
+                            <span className="text-white font-mono">{sw?.hashRateOrStreamsPerHour || 0} streams/uur</span>
+                          </p>
+                          <p className="text-white/40 text-[11px]">
+                            IP Pool: {sw?.ipPoolRegion || 'eu-west-1'} · Belasting: {sw?.threadsLimitPercent || 75}%
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </Card>
           </TabsContent>
 

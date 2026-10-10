@@ -82,12 +82,49 @@ export interface Order {
 
 export type AccountType = 'customer' | 'member' | 'admin';
 
+export interface GroverOrderData {
+  orderNumber: string;
+  deviceType: 'mac_mini_m2' | 'mac_mini_m4' | 'mac_studio' | 'custom_gpu';
+  serialOrMac: string;
+  discountCode: string;
+  rentalTermMonths: number;
+  status: 'ordered' | 'received' | 'verified';
+  submittedAt?: string;
+}
+
+export interface SoftwareConfigData {
+  nodeToken: string;
+  osPlatform: 'macos' | 'linux' | 'windows';
+  ipPoolRegion: 'eu-west-1' | 'eu-central-1' | 'us-east-1';
+  threadsLimitPercent: number;
+  autoStartOnBoot: boolean;
+  status: 'pending_installation' | 'connected' | 'mining_active';
+  lastPing?: string;
+  hashRateOrStreamsPerHour?: number;
+  assignedIp?: string;
+}
+
+export interface MemberMiningProfile {
+  userId: string;
+  currentStep: number;
+  completedSteps: number[];
+  vvcMemberCode?: string;
+  xabiWorldUsername?: string;
+  groverData?: GroverOrderData;
+  softwareConfig?: SoftwareConfigData;
+  zheavenzyArtistId?: string;
+  logsRentApiKey?: string;
+  estimatedMonthlyEarnings?: number;
+  updatedAt: string;
+}
+
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
   accountType: AccountType;
   createdAt: string;
+  miningProfile?: MemberMiningProfile;
 }
 
 export type SubscriptionStatus = 'active' | 'cancelled';

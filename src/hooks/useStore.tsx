@@ -9,7 +9,8 @@ import type {
   AuthUser, 
   AccountType, 
   Subscription, 
-  SubscriptionStatus 
+  SubscriptionStatus,
+  MemberMiningProfile,
 } from '@/types';
 import {
   signInWithGoogle,
@@ -17,6 +18,7 @@ import {
   syncSubscriptionToFirestore,
   updateFirestoreOrder,
   fetchFirestoreOrders,
+  syncMiningProfileToFirestore,
   isConfigured as isFirebaseConfigured,
 } from '@/lib/firebase';
 
@@ -95,6 +97,10 @@ interface StoreState {
   login: (email: string, password: string) => { ok: boolean; error?: string };
   loginWithGoogle: () => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
+
+  // Member Mining
+  saveMiningProfile: (profileUpdates: Partial<MemberMiningProfile>) => void;
+  getMemberMiningProfile: (userId?: string) => MemberMiningProfile;
 
   // Admin & System
   isFirebaseConfigured: boolean;
@@ -291,6 +297,69 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return orders.find(order => order.trackingToken === token);
   }, [orders]);
 
+  const getMemberMiningProfile = useCallback((userId?: string): MemberMiningProfile => {
+    const targetId = userId || user?.id || 'demo_member';
+    if (user?.id === targetId && user.miningProfile) {
+      return user.miningProfile;
+    }
+    const stored = getStoredUsers().find(u => u.id === targetId);
+    if (stored?.miningProfile) {
+      return stored.miningProfile;
+    }
+    const tokenSeed = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return {
+      userId: targetId,
+      currentStep: 1,
+      completedSteps: [],
+      vvcMemberCode: '',
+      xabiWorldUsername: '',
+      groverData: {
+        orderNumber: '',
+        deviceType: 'mac_mini_m2',
+        serialOrMac: '',
+        discountCode: 'QUANTUMBOOST20',
+        rentalTermMonths: 12,
+        status: 'ordered',
+      },
+      softwareConfig: {
+        nodeToken: `BP-NODE-${targetId.slice(0, 6).toUpperCase()}-${tokenSeed}`,
+        osPlatform: 'macos',
+        ipPoolRegion: 'eu-west-1',
+        threadsLimitPercent: 75,
+        autoStartOnBoot: true,
+        status: 'pending_installation',
+        assignedIp: '84.112.44.192 (KPN Residentieel)',
+        hashRateOrStreamsPerHour: 120,
+      },
+      estimatedMonthlyEarnings: 185,
+      updatedAt: new Date().toISOString(),
+    };
+  }, [user]);
+
+  const saveMiningProfile = useCallback((updates: Partial<MemberMiningProfile>) => {
+    if (!user) return;
+    const current = getMemberMiningProfile(user.id);
+    const updated: MemberMiningProfile = {
+      ...current,
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const updatedUser: AuthUser = {
+      ...user,
+      miningProfile: updated,
+    };
+
+    setUser(updatedUser);
+    saveJSON(SESSION_KEY, updatedUser);
+
+    const users = getStoredUsers();
+    const updatedUsers = users.map(u => u.id === user.id ? { ...u, miningProfile: updated } : u);
+    saveStoredUsers(updatedUsers);
+
+    syncMiningProfileToFirestore(updated);
+  }, [user, getMemberMiningProfile]);
+
   const getAllUsers = useCallback(() => {
     const list = getStoredUsers();
     // Zorg dat admin Jamal er altijd tussen staat
@@ -401,10 +470,60 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       },
     ];
 
+    const demoUsers: StoredUser[] = [
+      {
+        id: 'admin_jamal',
+        name: 'Jamal Drenthe',
+        email: 'info@jamaldrenthe.com',
+        accountType: 'admin',
+        createdAt: new Date(Date.now() - 3600 * 1000 * 24 * 30).toISOString(),
+      },
+      {
+        id: 'usr_member_01',
+        name: 'Lars van Dijk (VVC)',
+        email: 'lars@quantuminitium.com',
+        accountType: 'member',
+        createdAt: new Date(Date.now() - 3600 * 1000 * 24 * 14).toISOString(),
+        miningStep: 7,
+        miningProfile: {
+          userId: 'usr_member_01',
+          currentStep: 7,
+          completedSteps: [1, 2, 3, 4, 5, 6, 7],
+          vvcMemberCode: 'VVC-2026-8819',
+          xabiWorldUsername: 'lars_vvc_node',
+          groverData: {
+            orderNumber: 'GRV-771920-NL',
+            deviceType: 'mac_mini_m2',
+            serialOrMac: 'C02G8490MD6M (e0:d5:5e:12:44:a1)',
+            discountCode: 'QUANTUMBOOST20',
+            rentalTermMonths: 12,
+            status: 'verified',
+            submittedAt: new Date(Date.now() - 3600 * 1000 * 24 * 10).toISOString(),
+          },
+          softwareConfig: {
+            nodeToken: 'BP-NODE-LARS01-M2',
+            osPlatform: 'macos',
+            ipPoolRegion: 'eu-west-1',
+            threadsLimitPercent: 75,
+            autoStartOnBoot: true,
+            status: 'mining_active',
+            lastPing: 'Zojuist (12ms latency)',
+            hashRateOrStreamsPerHour: 145,
+            assignedIp: '84.112.98.14 (KPN Residentieel)',
+          },
+          zheavenzyArtistId: 'ZH-ROSTER-01',
+          logsRentApiKey: 'LR-KEY-99201',
+          estimatedMonthlyEarnings: 215,
+          updatedAt: new Date().toISOString(),
+        },
+      },
+    ];
+
     setOrders(demoOrders);
     saveJSON(ORDERS_KEY, demoOrders);
     setSubscriptions(demoSubs);
     saveJSON(SUBSCRIPTIONS_KEY, demoSubs);
+    saveStoredUsers(demoUsers);
   }, []);
 
   const syncWithFirebase = useCallback(async () => {
@@ -456,6 +575,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       login,
       loginWithGoogle: loginWithGoogleHandler,
       logout,
+      saveMiningProfile,
+      getMemberMiningProfile,
       isFirebaseConfigured,
       getAllUsers,
       seedDemoData,

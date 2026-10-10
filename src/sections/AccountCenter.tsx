@@ -23,11 +23,10 @@ import {
   TrendingUp,
   ChevronDown,
   ExternalLink,
-  CheckCircle2,
-  Circle,
   ShieldCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { MiningOnboardingFlow } from '@/sections/MiningOnboardingFlow';
 
 interface AccountCenterProps {
   onBack: () => void;
@@ -46,7 +45,7 @@ const statusLabels: Record<OrderStatus, { label: string; className: string }> = 
 };
 
 export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCenterProps) {
-  const { user, orders, subscriptions, cancelSubscription, logout, currency } = useStore();
+  const { user, orders, subscriptions, cancelSubscription, logout, currency, getMemberMiningProfile } = useStore();
   const [openPanel, setOpenPanel] = useState<string | null>(null);
 
   if (!user) {
@@ -221,39 +220,8 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
 
             {/* Uitklapbaar detailpaneel */}
             {openPanel === 'mining' && (
-              <div className="p-5 rounded-xl bg-[hsl(199,89%,48%)]/5 border border-[hsl(199,89%,48%)]/20 mb-6">
-                <p className="text-white font-medium text-sm mb-4">Zo start je met minen</p>
-                <ol className="space-y-3 mb-4">
-                  <li className="flex items-start gap-3 text-sm">
-                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
-                    <span className="text-white/60">Voltooi je VVC account</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
-                    <span className="text-white/60">Voltooi je Xabi World account</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
-                    <span className="text-white/60">Voltooi je Grover account</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
-                    <span className="text-white/60">Huur een Mac Mini via Grover en gebruik de kortingscode</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
-                    <span className="text-white/60">Installeer de BoostPlug IP-software op je apparaat</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <Circle className="w-4 h-4 mt-0.5 text-white/30 shrink-0" />
-                    <span className="text-white/60">Voltooi je Zheavenzy account</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-sm">
-                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-[hsl(199,89%,48%)] shrink-0" />
-                    <span className="text-white/60">Voltooi je Logs Rent account — je mining kan beginnen</span>
-                  </li>
-                </ol>
-                <Badge variant="outline" className="border-amber-500/50 text-amber-400">Status: stap 1 van 7</Badge>
+              <div className="mb-6 pt-2">
+                <MiningOnboardingFlow onFinish={() => setOpenPanel('earn')} />
               </div>
             )}
             {openPanel === 'eco' && (
@@ -294,20 +262,39 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
                 </div>
               </div>
             )}
-            {openPanel === 'earn' && (
-              <div className="p-5 rounded-xl bg-[hsl(199,89%,48%)]/5 border border-[hsl(199,89%,48%)]/20 mb-6">
-                <p className="text-white font-medium text-sm mb-4">Zo werken je verdiensten</p>
-                <ul className="space-y-2 text-sm text-white/60 mb-4">
-                  <li>• Klanten (oa. Zheavenzy) kopen boosts via BoostPlug</li>
-                  <li>• Leden leveren de GPU- en IP-rekenkracht voor de mining</li>
-                  <li>• Jouw aandeel wordt uitbetaald op basis van je bijdrage</li>
-                </ul>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
-                  <span className="text-white/60 text-sm">Beschikbaar saldo</span>
-                  <span className="text-white font-semibold">€ 0,00</span>
+            {openPanel === 'earn' && (() => {
+              const prof = getMemberMiningProfile(user.id);
+              const isNodeActive = prof.softwareConfig?.status === 'mining_active';
+              return (
+                <div className="p-5 rounded-xl bg-[hsl(199,89%,48%)]/5 border border-[hsl(199,89%,48%)]/20 mb-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-white font-medium text-sm">Mining Verdiensten & Node Status</p>
+                    <Badge variant="outline" className={isNodeActive ? "border-green-500/50 text-green-400 bg-green-500/10" : "border-amber-500/50 text-amber-400"}>
+                      {isNodeActive ? "Node Actief & Leverend" : "Setup Onvoltooid"}
+                    </Badge>
+                  </div>
+                  <ul className="space-y-1.5 text-xs text-white/60">
+                    <li>• Klanten (oa. Zheavenzy) kopen boosts via BoostPlug</li>
+                    <li>• Jouw hardware levert de GPU- en IP-rekenkracht voor de streaming simulatoren</li>
+                    <li>• Jouw aandeel wordt maandelijks uitgekeerd op basis van je actieve stream volume</li>
+                  </ul>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                      <span className="text-white/40 text-xs uppercase font-mono">Verwachte Maandopbrengst</span>
+                      <p className="text-xl font-bold text-[hsl(142,76%,45%)]">
+                        € {isNodeActive ? (prof.estimatedMonthlyEarnings || 195) : '0'},00
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+                      <span className="text-white/40 text-xs uppercase font-mono">Geleverde Snelheid</span>
+                      <p className="text-xl font-bold text-white">
+                        {isNodeActive ? `${prof.softwareConfig?.hashRateOrStreamsPerHour || 140} streams/uur` : '0 streams/uur'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
             <p className="text-white/30 text-xs">
               Mining-statistieken en uitbetalingen worden hier getoond zodra jouw mining-account actief is.
             </p>

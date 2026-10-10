@@ -9,7 +9,7 @@ import {
   updateDoc, 
   type Firestore 
 } from 'firebase/firestore';
-import type { Order, Subscription, AuthUser } from '@/types';
+import type { Order, Subscription, AuthUser, MemberMiningProfile } from '@/types';
 
 // Firebase configuratie met environment variables en fallback naar boostplug-dev
 const firebaseConfig = {
@@ -154,6 +154,24 @@ export async function updateFirestoreOrder(orderId: string, updates: Partial<Ord
     return true;
   } catch (error) {
     console.warn('Fout bij bijwerken van order in Firestore:', error);
+    return false;
+  }
+}
+
+/**
+ * Synchroniseer mining profiel van lid naar Firestore
+ */
+export async function syncMiningProfileToFirestore(profile: MemberMiningProfile): Promise<boolean> {
+  if (!isConfigured || !db) return false;
+  try {
+    const nodeDoc = doc(db, 'mining_nodes', profile.userId);
+    await setDoc(nodeDoc, {
+      ...profile,
+      syncedAt: new Date().toISOString(),
+    }, { merge: true });
+    return true;
+  } catch (error) {
+    console.warn('Fout bij synchroniseren van mining profiel naar Firestore:', error);
     return false;
   }
 }
