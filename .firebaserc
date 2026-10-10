@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "boostplug-dev",
+    "dev": "boostplug-dev",
+    "prod": "boostplug-prod"
+  }
+}

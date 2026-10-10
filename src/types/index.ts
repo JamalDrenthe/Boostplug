@@ -80,7 +80,7 @@ export interface Order {
   deliveredAt?: Date;
 }
 
-export type AccountType = 'customer' | 'member';
+export type AccountType = 'customer' | 'member' | 'admin';
 
 export interface AuthUser {
   id: string;

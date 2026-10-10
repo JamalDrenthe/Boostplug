@@ -10,7 +10,8 @@ import {
   Package,
   Zap,
   User,
-  LogIn
+  LogIn,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -26,9 +27,10 @@ interface HeaderProps {
   onAccount: () => void;
   onHome: () => void;
   onAbout: () => void;
+  onAdmin?: () => void;
 }
 
-export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: HeaderProps) {
+export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onAdmin }: HeaderProps) {
   const { cart, currency, setCurrency, locale, setLocale, user } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -96,6 +98,15 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: H
             >
               Over ons
             </button>
+            {user?.accountType === 'admin' && (
+              <button
+                onClick={onAdmin || (() => { window.location.hash = '#/admin'; })}
+                className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[hsl(142,76%,45%)]/15 text-[hsl(142,76%,45%)] border border-[hsl(142,76%,45%)]/30 hover:bg-[hsl(142,76%,45%)]/25 transition-colors flex items-center gap-1"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Admin
+              </button>
+            )}
           </nav>
 
           {/* Right Section */}
@@ -310,6 +321,19 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout }: H
                       )}
                       <span className="text-white">{user ? `Mijn account` : 'Inloggen'}</span>
                     </button>
+                    {user?.accountType === 'admin' && (
+                      <button 
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          if (onAdmin) onAdmin();
+                          else window.location.hash = '#/admin';
+                        }}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-[hsl(142,76%,45%)]/10 border border-[hsl(142,76%,45%)]/30 hover:bg-[hsl(142,76%,45%)]/20 transition-colors text-left"
+                      >
+                        <ShieldCheck className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                        <span className="text-white font-medium">Controlecentrum (Admin)</span>
+                      </button>
+                    )}
                   </nav>
 
                   <div className="border-t border-white/10 pt-4">

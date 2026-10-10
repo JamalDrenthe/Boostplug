@@ -13,6 +13,7 @@ const RegisterPage = lazy(() => import('@/sections/RegisterPage').then(m => ({ d
 const AccountCenter = lazy(() => import('@/sections/AccountCenter').then(m => ({ default: m.AccountCenter })));
 const AboutPage = lazy(() => import('@/sections/AboutPage').then(m => ({ default: m.AboutPage })));
 const MembersPage = lazy(() => import('@/sections/MembersPage').then(m => ({ default: m.MembersPage })));
+const AdminDashboard = lazy(() => import('@/sections/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 import { Footer } from '@/sections/Footer';
 import { Toaster } from '@/components/ui/sonner';
 import './App.css';
@@ -23,6 +24,7 @@ type Route =
   | { page: 'login' }
   | { page: 'register'; accountType?: AccountType }
   | { page: 'account' }
+  | { page: 'admin' }
   | { page: 'about' }
   | { page: 'members' };
 
@@ -41,6 +43,8 @@ function parseHash(hash: string): Route {
       return { page: 'register', accountType: 'member' };
     case '#/account':
       return { page: 'account' };
+    case '#/admin':
+      return { page: 'admin' };
     case '#/over-ons':
       return { page: 'about' };
     case '#/leden':
@@ -60,6 +64,8 @@ function routeToHash(route: Route): string {
       return route.accountType === 'member' ? '#/register/lid' : '#/register';
     case 'account':
       return '#/account';
+    case 'admin':
+      return '#/admin';
     case 'about':
       return '#/over-ons';
     case 'members':
@@ -100,6 +106,8 @@ function AppContent() {
     });
   };
 
+  const goAdmin = () => navigate({ page: 'admin' });
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[hsl(220,35%,6%)] via-[hsl(220,30%,8%)] to-[hsl(220,25%,10%)]">
       <Header
@@ -108,6 +116,7 @@ function AppContent() {
         onAccount={goAccount}
         onHome={goHome}
         onAbout={() => navigate({ page: 'about' })}
+        onAdmin={goAdmin}
       />
 
       <main>
@@ -152,6 +161,13 @@ function AppContent() {
             onBack={goHome}
             onTrack={(token) => navigate({ page: 'tracking', token })}
             onShop={goProducts}
+            onAdmin={goAdmin}
+          />
+        )}
+        {route.page === 'admin' && (
+          <AdminDashboard
+            onBack={goHome}
+            onTrack={(token) => navigate({ page: 'tracking', token })}
           />
         )}
         {route.page === 'about' && (
