@@ -15,6 +15,11 @@ export default defineConfig({
     target: 'esnext',
     cssCodeSplit: true,
     chunkSizeWarningLimit: 600,
+    modulePreload: {
+      resolveDependencies: (_filename, deps) => {
+        return deps.filter(dep => !dep.includes('firebase'));
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {

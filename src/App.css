@@ -1,10 +1,5 @@
 /* BoostPlug App Styles */
 
-/* Base touch scrolling */
-html {
-  -webkit-overflow-scrolling: touch;
-}
-
 /* Custom selection */
 ::selection {
   background: hsl(142 76% 45% / 0.3);

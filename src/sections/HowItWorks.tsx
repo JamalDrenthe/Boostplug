@@ -36,7 +36,7 @@ const stats = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20">
+    <section id="how-it-works" className="py-20 scroll-mt-24">
       <div className="text-center mb-16">
         <p className="eyebrow text-[hsl(199,89%,48%)] mb-4">HOE HET WERKT</p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">

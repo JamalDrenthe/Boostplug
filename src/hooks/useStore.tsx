@@ -12,15 +12,9 @@ import type {
   SubscriptionStatus,
   MemberMiningProfile,
 } from '@/types';
-import {
-  signInWithGoogle,
-  syncOrderToFirestore,
-  syncSubscriptionToFirestore,
-  updateFirestoreOrder,
-  fetchFirestoreOrders,
-  syncMiningProfileToFirestore,
-  isConfigured as isFirebaseConfigured,
-} from '@/lib/firebase';
+const isFirebaseConfigured = Boolean(
+  import.meta.env.VITE_FIREBASE_API_KEY && (import.meta.env.VITE_FIREBASE_PROJECT_ID || 'boostplug-dev')
+);
 
 export interface StoredUser extends AuthUser {
   password?: string;
@@ -133,17 +127,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // Optionele achtergrondsfeer-sync met Firestore als Firebase actief is
   useEffect(() => {
     if (isFirebaseConfigured && user?.accountType === 'admin') {
-      fetchFirestoreOrders().then((remoteOrders) => {
-        if (remoteOrders.length > 0) {
-          setOrders(prev => {
-            const map = new Map<string, Order>();
-            prev.forEach(o => map.set(o.id, o));
-            remoteOrders.forEach(o => map.set(o.id, o));
-            const merged = Array.from(map.values());
-            saveJSON(ORDERS_KEY, merged);
-            return merged;
-          });
-        }
+      import('@/lib/firebase').then(({ fetchFirestoreOrders }) => {
+        fetchFirestoreOrders().then((remoteOrders) => {
+          if (remoteOrders && remoteOrders.length > 0) {
+            setOrders(prev => {
+              const map = new Map<string, Order>();
+              prev.forEach(o => map.set(o.id, o));
+              remoteOrders.forEach(o => map.set(o.id, o));
+              const merged = Array.from(map.values());
+              saveJSON(ORDERS_KEY, merged);
+              return merged;
+            });
+          }
+        });
       });
     }
   }, [user]);
@@ -191,6 +187,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const loginWithGoogleHandler = useCallback(async () => {
+    const { signInWithGoogle } = await import('@/lib/firebase');
     const res = await signInWithGoogle();
     if (!res.ok || !res.user) {
       return { ok: false, error: res.error || 'Google login mislukt' };
@@ -246,7 +243,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       return next;
     });
     // Async push naar Firestore
-    syncOrderToFirestore(order);
+    import('@/lib/firebase').then(({ syncOrderToFirestore }) => syncOrderToFirestore(order));
   }, []);
 
   const updateOrderStatus = useCallback((tokenOrId: string, status: OrderStatus, progress?: number) => {
@@ -260,10 +257,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             deliveredAt: status === 'delivered' ? new Date() : order.deliveredAt
           };
           // Async update in Firestore
-          updateFirestoreOrder(order.id, { 
-            status, 
-            deliveryProgress: updated.deliveryProgress, 
-            deliveredAt: updated.deliveredAt 
+          import('@/lib/firebase').then(({ updateFirestoreOrder }) => {
+            updateFirestoreOrder(order.id, { 
+              status, 
+              deliveryProgress: updated.deliveryProgress, 
+              deliveredAt: updated.deliveredAt 
+            });
           });
           return updated;
         }
@@ -288,7 +287,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       saveJSON(SUBSCRIPTIONS_KEY, next);
       return next;
     });
-    syncSubscriptionToFirestore(subscription);
+    import('@/lib/firebase').then(({ syncSubscriptionToFirestore }) => syncSubscriptionToFirestore(subscription));
   }, []);
 
   const cancelSubscription = useCallback((id: string) => {
@@ -375,7 +374,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const updatedUsers = users.map(u => u.id === user.id ? { ...u, miningProfile: updated } : u);
     saveStoredUsers(updatedUsers);
 
-    syncMiningProfileToFirestore(updated);
+    import('@/lib/firebase').then(({ syncMiningProfileToFirestore }) => syncMiningProfileToFirestore(updated));
   }, [user, getMemberMiningProfile]);
 
   const getAllUsers = useCallback(() => {
@@ -555,6 +554,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       };
     }
     try {
+      const { syncOrderToFirestore, syncSubscriptionToFirestore } = await import('@/lib/firebase');
       for (const order of orders) {
         await syncOrderToFirestore(order);
       }

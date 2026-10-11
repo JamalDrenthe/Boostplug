@@ -6,6 +6,7 @@ import {
   ShoppingCart, 
   Globe, 
   Menu, 
+  X,
   Search,
   Package,
   Zap,
@@ -19,7 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 interface HeaderProps {
   onCheckout: () => void;
@@ -51,6 +51,17 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   const handleSectionClick = (e: React.MouseEvent, sectionId: string) => {
     e.preventDefault();
     if (onNavigateSection) {
@@ -70,10 +81,10 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
         isScrolled 
-          ? 'bg-[hsl(220,35%,6%)]/90 backdrop-blur-xl border-b border-white/10' 
-          : 'bg-transparent'
+          ? 'bg-[hsl(220,35%,6%)]/95 backdrop-blur-md border-b border-white/10 shadow-lg shadow-black/20' 
+          : 'bg-transparent border-b border-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -248,183 +259,210 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
               </span>
             </Button>
 
-            {/* Mobile Menu */}
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="lg:hidden text-white/70 hover:text-white hover:bg-white/10"
-                >
-                  <Menu className="w-6 h-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent 
-                side="right" 
-                className="w-full sm:w-80 bg-[hsl(220,35%,6%)] border-white/10"
-              >
-                <div className="flex flex-col gap-6 mt-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="relative w-10 h-10 flex items-center justify-center">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(220,30%,15%)] to-[hsl(220,35%,8%)] border border-white/10" />
-                      <div className="relative flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[hsl(142,76%,45%)]" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[hsl(199,89%,48%)]" />
-                      </div>
-                    </div>
-                    <span className="text-xl font-bold text-white">
-                      BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
-                    </span>
-                  </div>
+            {/* Mobile Menu Button */}
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open menu"
+              className="lg:hidden text-white/70 hover:text-white hover:bg-white/10 cursor-pointer"
+            >
+              <Menu className="w-6 h-6" />
+            </Button>
+          </div>
+        </div>
+      </div>
 
-                  <nav className="flex flex-col gap-4">
-                    <button 
-                      onClick={(e) => {
-                        setIsMobileMenuOpen(false);
-                        handleSectionClick(e, 'products');
-                      }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
-                    >
-                      <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                      <span className="text-white">Producten</span>
-                    </button>
-                    <button 
-                      onClick={(e) => {
-                        setIsMobileMenuOpen(false);
-                        handleSectionClick(e, 'abonnementen');
-                      }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
-                    >
-                      <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
-                      <span className="text-white">Abonnementen</span>
-                    </button>
-                    <a 
-                      href="#/leden" 
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-                    >
-                      <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                      <span className="text-white">Voor leden</span>
-                    </a>
-                    <button 
-                      onClick={(e) => {
-                        setIsMobileMenuOpen(false);
-                        handleSectionClick(e, 'how-it-works');
-                      }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
-                    >
-                      <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                      <span className="text-white">Hoe het werkt</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        onTracking();
-                      }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
-                    >
-                      <Search className="w-5 h-5 text-[hsl(199,89%,48%)]" />
-                      <span className="text-white">Track bestelling</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        onAbout();
-                      }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
-                    >
-                      <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
-                      <span className="text-white">Over ons</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        onCheckout();
-                      }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
-                    >
-                      <Package className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                      <span className="text-white">Winkelwagen ({cartItemCount})</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        if (user) {
-                          onAccount();
-                        } else {
-                          window.location.hash = '#/login';
-                        }
-                      }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
-                    >
-                      {user ? (
-                        <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                      ) : (
-                        <LogIn className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                      )}
-                      <span className="text-white">{user ? `Mijn account` : 'Inloggen'}</span>
-                    </button>
-                    {(user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com') && (
-                      <button 
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          if (onAdmin) onAdmin();
-                          else window.location.hash = '#/admin';
-                        }}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-[hsl(142,76%,45%)]/10 border border-[hsl(142,76%,45%)]/30 hover:bg-[hsl(142,76%,45%)]/20 transition-colors text-left"
-                      >
-                        <ShieldCheck className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                        <span className="text-white font-medium">Controlecentrum (Admin)</span>
-                      </button>
-                    )}
-                  </nav>
+      {/* Mobile Menu Drawer */}
+      <div 
+        className={`fixed inset-0 z-50 lg:hidden transition-opacity duration-200 ${
+          isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div 
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
 
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-sm text-white/50 mb-3">Valuta</p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant={currency === 'EUR' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setCurrency('EUR')}
-                        className={`flex-1 ${currency === 'EUR' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
-                      >
-                        € EUR
-                      </Button>
-                      <Button
-                        variant={currency === 'GBP' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setCurrency('GBP')}
-                        className={`flex-1 ${currency === 'GBP' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
-                      >
-                        £ GBP
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-sm text-white/50 mb-3">Taal</p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant={locale === 'nl' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setLocale('nl')}
-                        className={`flex-1 ${locale === 'nl' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
-                      >
-                        🇳🇱 NL
-                      </Button>
-                      <Button
-                        variant={locale === 'en' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setLocale('en')}
-                        className={`flex-1 ${locale === 'en' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
-                      >
-                        🇬🇧 EN
-                      </Button>
-                    </div>
+        {/* Slide-out Panel */}
+        <div 
+          className={`absolute top-0 right-0 bottom-0 w-full sm:w-80 bg-[hsl(220,35%,6%)] border-l border-white/10 p-6 flex flex-col justify-between overflow-y-auto transition-transform duration-300 ease-out ${
+            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="relative w-9 h-9 flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(220,30%,15%)] to-[hsl(220,35%,8%)] border border-white/10" />
+                  <div className="relative flex gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-[hsl(142,76%,45%)]" />
+                    <div className="w-2 h-2 rounded-full bg-[hsl(199,89%,48%)]" />
                   </div>
                 </div>
-              </SheetContent>
-            </Sheet>
+                <span className="text-lg font-bold text-white">
+                  BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Sluit menu"
+                className="text-white/70 hover:text-white hover:bg-white/10 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            <nav className="flex flex-col gap-3">
+              <button 
+                onClick={(e) => {
+                  setIsMobileMenuOpen(false);
+                  handleSectionClick(e, 'products');
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
+              >
+                <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                <span className="text-white">Producten</span>
+              </button>
+              <button 
+                onClick={(e) => {
+                  setIsMobileMenuOpen(false);
+                  handleSectionClick(e, 'abonnementen');
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
+              >
+                <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+                <span className="text-white">Abonnementen</span>
+              </button>
+              <a 
+                href="#/leden" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+              >
+                <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                <span className="text-white">Voor leden</span>
+              </a>
+              <button 
+                onClick={(e) => {
+                  setIsMobileMenuOpen(false);
+                  handleSectionClick(e, 'how-it-works');
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
+              >
+                <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                <span className="text-white">Hoe het werkt</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onTracking();
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+              >
+                <Search className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+                <span className="text-white">Track bestelling</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onAbout();
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+              >
+                <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
+                <span className="text-white">Over ons</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onCheckout();
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+              >
+                <Package className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                <span className="text-white">Winkelwagen ({cartItemCount})</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  if (user) {
+                    onAccount();
+                  } else {
+                    window.location.hash = '#/login';
+                  }
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+              >
+                {user ? (
+                  <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                ) : (
+                  <LogIn className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                )}
+                <span className="text-white">{user ? `Mijn account` : 'Inloggen'}</span>
+              </button>
+              {(user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com') && (
+                <button 
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    if (onAdmin) onAdmin();
+                    else window.location.hash = '#/admin';
+                  }}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-[hsl(142,76%,45%)]/10 border border-[hsl(142,76%,45%)]/30 hover:bg-[hsl(142,76%,45%)]/20 transition-colors text-left cursor-pointer"
+                >
+                  <ShieldCheck className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                  <span className="text-white font-medium">Controlecentrum (Admin)</span>
+                </button>
+              )}
+            </nav>
+          </div>
+
+          <div className="space-y-4 pt-6 mt-6 border-t border-white/10">
+            <div>
+              <p className="text-xs text-white/50 mb-2 font-mono uppercase">Valuta</p>
+              <div className="flex gap-2">
+                <Button
+                  variant={currency === 'EUR' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrency('EUR')}
+                  className={`flex-1 ${currency === 'EUR' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
+                >
+                  € EUR
+                </Button>
+                <Button
+                  variant={currency === 'GBP' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrency('GBP')}
+                  className={`flex-1 ${currency === 'GBP' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
+                >
+                  £ GBP
+                </Button>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-white/50 mb-2 font-mono uppercase">Taal</p>
+              <div className="flex gap-2">
+                <Button
+                  variant={locale === 'nl' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setLocale('nl')}
+                  className={`flex-1 ${locale === 'nl' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
+                >
+                  🇳🇱 NL
+                </Button>
+                <Button
+                  variant={locale === 'en' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setLocale('en')}
+                  className={`flex-1 ${locale === 'en' ? 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)]' : 'border-white/20 text-white'}`}
+                >
+                  🇬🇧 EN
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
