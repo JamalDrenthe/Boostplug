@@ -2,10 +2,10 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { StoreProvider, useStore } from '@/hooks/useStore';
 import { Header } from '@/sections/Header';
 import { Hero } from '@/sections/Hero';
+import { ProductSelector } from '@/sections/ProductSelector';
+import { SubscriptionsSection } from '@/sections/SubscriptionsSection';
 import type { AccountType } from '@/types';
 
-const ProductSelector = lazy(() => import('@/sections/ProductSelector').then(m => ({ default: m.ProductSelector })));
-const SubscriptionsSection = lazy(() => import('@/sections/SubscriptionsSection').then(m => ({ default: m.SubscriptionsSection })));
 const CheckoutModal = lazy(() => import('@/sections/CheckoutModal').then(m => ({ default: m.CheckoutModal })));
 const TrackingSection = lazy(() => import('@/sections/TrackingSection').then(m => ({ default: m.TrackingSection })));
 const LoginPage = lazy(() => import('@/sections/LoginPage').then(m => ({ default: m.LoginPage })));
@@ -82,30 +82,54 @@ function AppContent() {
 
   const navigate = (next: Route) => {
     setRoute(next);
-    window.location.hash = routeToHash(next);
-    window.scrollTo({ top: 0 });
+    const targetHash = routeToHash(next);
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const handleNavigateSection = (sectionId: string) => {
+    if (route.page !== 'home') {
+      navigate({ page: 'home' });
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   };
 
   useEffect(() => {
     const handleHashChange = () => {
-      const next = parseHash(window.location.hash);
+      const hash = window.location.hash;
+      // In-page ankers op home niet resetten naar 0
+      if (hash.startsWith('#products') || hash.startsWith('#abonnementen') || hash.startsWith('#how-it-works')) {
+        const id = hash.replace(/^#/, '');
+        const target = document.getElementById(id);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        return;
+      }
+
+      const next = parseHash(hash);
       setRoute(next);
-      window.scrollTo({ top: 0 });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
-    handleHashChange();
+
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const goHome = () => navigate({ page: 'home' });
   const goAccount = () => navigate({ page: 'account' });
-  const goProducts = () => {
-    navigate({ page: 'home' });
-    requestAnimationFrame(() => {
-      document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
-    });
-  };
-
   const goAdmin = () => navigate({ page: 'admin' });
 
   return (
@@ -117,71 +141,73 @@ function AppContent() {
         onHome={goHome}
         onAbout={() => navigate({ page: 'about' })}
         onAdmin={goAdmin}
+        onNavigateSection={handleNavigateSection}
       />
 
       <main>
         {route.page === 'home' && (
           <>
             <Hero onMembers={() => navigate({ page: 'members' })} />
-            <Suspense fallback={<div className="min-h-[400px] flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-[hsl(142,76%,45%)] border-t-transparent animate-spin" /></div>}>
-              <ProductSelector onCheckout={() => setShowCheckout(true)} />
-              <SubscriptionsSection
-                onRequireLogin={() => navigate({ page: 'login' })}
-                onGoAccount={goAccount}
-              />
-            </Suspense>
+            <ProductSelector onCheckout={() => setShowCheckout(true)} />
+            <SubscriptionsSection
+              onRequireLogin={() => navigate({ page: 'login' })}
+              onGoAccount={goAccount}
+            />
           </>
         )}
         <Suspense fallback={<div className="min-h-screen" />}>
-        {route.page === 'tracking' && (
-          <TrackingSection initialToken={route.token} onBack={goHome} />
-        )}
-        {route.page === 'login' && (
-          <LoginPage
-            onBack={goHome}
-            onSuccess={goAccount}
-            onGoRegister={() => navigate({ page: 'register' })}
-          />
-        )}
-        {route.page === 'register' && (
-          <RegisterPage
-            defaultType={route.accountType}
-            onBack={goHome}
-            onSuccess={goAccount}
-            onGoLogin={() => navigate({ page: 'login' })}
-          />
-        )}
-        {route.page === 'account' && !user && (
-          <LoginPage
-            onBack={goHome}
-            onSuccess={goAccount}
-            onGoRegister={() => navigate({ page: 'register' })}
-          />
-        )}
-        {route.page === 'account' && user && (
-          <AccountCenter
-            onBack={goHome}
-            onTrack={(token) => navigate({ page: 'tracking', token })}
-            onShop={goProducts}
-            onAdmin={goAdmin}
-          />
-        )}
-        {route.page === 'admin' && (
-          <AdminDashboard
-            onBack={goHome}
-            onTrack={(token) => navigate({ page: 'tracking', token })}
-          />
-        )}
-        {route.page === 'about' && (
-          <AboutPage onBack={goHome} onShop={goProducts} />
-        )}
-        {route.page === 'members' && (
-          <MembersPage
-            onBack={goHome}
-            onJoin={() => navigate({ page: 'register', accountType: 'member' })}
-            onShop={goProducts}
-          />
-        )}
+          {route.page === 'tracking' && (
+            <TrackingSection initialToken={route.token} onBack={goHome} />
+          )}
+          {route.page === 'login' && (
+            <LoginPage
+              onBack={goHome}
+              onSuccess={goAccount}
+              onGoRegister={() => navigate({ page: 'register' })}
+            />
+          )}
+          {route.page === 'register' && (
+            <RegisterPage
+              defaultType={route.accountType}
+              onBack={goHome}
+              onSuccess={goAccount}
+              onGoLogin={() => navigate({ page: 'login' })}
+            />
+          )}
+          {route.page === 'account' && !user && (
+            <LoginPage
+              onBack={goHome}
+              onSuccess={goAccount}
+              onGoRegister={() => navigate({ page: 'register' })}
+            />
+          )}
+          {route.page === 'account' && user && (
+            <AccountCenter
+              onBack={goHome}
+              onTrack={(token) => navigate({ page: 'tracking', token })}
+              onShop={() => handleNavigateSection('products')}
+              onAdmin={goAdmin}
+            />
+          )}
+          {route.page === 'admin' && (
+            <AdminDashboard
+              onBack={goHome}
+              onTrack={(token) => navigate({ page: 'tracking', token })}
+            />
+          )}
+          {route.page === 'about' && (
+            <AboutPage 
+              onBack={goHome} 
+              onShop={() => handleNavigateSection('products')} 
+            />
+          )}
+          {route.page === 'members' && (
+            <MembersPage
+              onBack={goHome}
+              onJoin={() => navigate({ page: 'register', accountType: 'member' })}
+              onShop={() => handleNavigateSection('products')}
+            />
+          )}
         </Suspense>
       </main>
 
@@ -200,9 +226,9 @@ function AppContent() {
         position="top-right"
         toastOptions={{
           style: {
-            background: 'hsl(220 20% 12%)',
-            border: '1px solid hsl(220 15% 20%)',
-            color: 'hsl(0 0% 98%)',
+            background: 'hsl(220, 20%, 12%)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: 'white',
           },
         }}
       />
@@ -210,12 +236,10 @@ function AppContent() {
   );
 }
 
-function App() {
+export default function App() {
   return (
     <StoreProvider>
       <AppContent />
     </StoreProvider>
   );
 }
-
-export default App;

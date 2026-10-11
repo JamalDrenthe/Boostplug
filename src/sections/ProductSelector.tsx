@@ -12,7 +12,7 @@ export function ProductSelector({ onCheckout }: ProductSelectorProps) {
   const { activeCategory } = useStore();
 
   return (
-    <section id="products" className="relative py-20 px-4 content-auto">
+    <section id="products" className="relative py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">

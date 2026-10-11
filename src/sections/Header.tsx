@@ -28,20 +28,40 @@ interface HeaderProps {
   onHome: () => void;
   onAbout: () => void;
   onAdmin?: () => void;
+  onNavigateSection?: (sectionId: string) => void;
 }
 
-export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onAdmin }: HeaderProps) {
+export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onAdmin, onNavigateSection }: HeaderProps) {
   const { cart, currency, setCurrency, locale, setLocale, user } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 30);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSectionClick = (e: React.MouseEvent, sectionId: string) => {
+    e.preventDefault();
+    if (onNavigateSection) {
+      onNavigateSection(sectionId);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
 
   const cartItemCount = cart.length;
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
@@ -74,18 +94,30 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            <a href="#products" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
+            <button 
+              onClick={(e) => handleSectionClick(e, 'products')} 
+              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
+            >
               Producten
-            </a>
-            <a href="#abonnementen" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
+            </button>
+            <button 
+              onClick={(e) => handleSectionClick(e, 'abonnementen')} 
+              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
+            >
               Abonnementen
-            </a>
-            <a href="#/leden" className="text-sm text-[hsl(142,76%,45%)]/80 hover:text-[hsl(142,76%,45%)] transition-colors">
+            </button>
+            <a 
+              href="#/leden" 
+              className="text-sm text-[hsl(142,76%,45%)]/80 hover:text-[hsl(142,76%,45%)] transition-colors cursor-pointer"
+            >
               Voor leden
             </a>
-            <a href="#how-it-works" onClick={onHome} className="text-sm text-white/70 hover:text-white transition-colors">
+            <button 
+              onClick={(e) => handleSectionClick(e, 'how-it-works')} 
+              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
+            >
               Hoe het werkt
-            </a>
+            </button>
             <button 
               onClick={onTracking}
               className="text-sm text-white/70 hover:text-white transition-colors"
@@ -246,25 +278,26 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
                   </div>
 
                   <nav className="flex flex-col gap-4">
-                    <a 
-                      href="#products" 
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                    <button 
+                      onClick={(e) => {
+                        setIsMobileMenuOpen(false);
+                        handleSectionClick(e, 'products');
+                      }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
                     >
                       <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
                       <span className="text-white">Producten</span>
-                    </a>
-                    <a 
-                      href="#abonnementen" 
-                      onClick={() => {
+                    </button>
+                    <button 
+                      onClick={(e) => {
                         setIsMobileMenuOpen(false);
-                        onHome();
+                        handleSectionClick(e, 'abonnementen');
                       }}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
                     >
                       <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
                       <span className="text-white">Abonnementen</span>
-                    </a>
+                    </button>
                     <a 
                       href="#/leden" 
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -273,6 +306,16 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
                       <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
                       <span className="text-white">Voor leden</span>
                     </a>
+                    <button 
+                      onClick={(e) => {
+                        setIsMobileMenuOpen(false);
+                        handleSectionClick(e, 'how-it-works');
+                      }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
+                    >
+                      <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                      <span className="text-white">Hoe het werkt</span>
+                    </button>
                     <button 
                       onClick={() => {
                         setIsMobileMenuOpen(false);

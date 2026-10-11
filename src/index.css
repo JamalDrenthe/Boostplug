@@ -39,13 +39,15 @@
   }
   
   html {
-    scroll-behavior: smooth;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
   }
   
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Geist', Arial, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
   }
 
   h1, h2, h3 {
@@ -166,12 +168,6 @@
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
-}
-
-/* Performance optimization: defer rendering for below-the-fold content */
-.content-auto {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 600px;
 }
 
 /* GPU acceleration for pulse glow */

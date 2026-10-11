@@ -1,8 +1,8 @@
 /* BoostPlug App Styles */
 
-/* Smooth scrolling */
+/* Base touch scrolling */
 html {
-  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Custom selection */

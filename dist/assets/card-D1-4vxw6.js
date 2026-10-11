@@ -1,1 +1,0 @@
-import{j as o,h as d}from"./index-Bkz8_jP6.js";function e({className:r,...a}){return o.jsx("div",{"data-slot":"card",className:d("bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",r),...a})}export{e as C};
