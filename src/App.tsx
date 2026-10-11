@@ -2,10 +2,10 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { StoreProvider, useStore } from '@/hooks/useStore';
 import { Header } from '@/sections/Header';
 import { Hero } from '@/sections/Hero';
-import { ProductSelector } from '@/sections/ProductSelector';
 import type { AccountType } from '@/types';
-import { SubscriptionsSection } from '@/sections/SubscriptionsSection';
 
+const ProductSelector = lazy(() => import('@/sections/ProductSelector').then(m => ({ default: m.ProductSelector })));
+const SubscriptionsSection = lazy(() => import('@/sections/SubscriptionsSection').then(m => ({ default: m.SubscriptionsSection })));
 const CheckoutModal = lazy(() => import('@/sections/CheckoutModal').then(m => ({ default: m.CheckoutModal })));
 const TrackingSection = lazy(() => import('@/sections/TrackingSection').then(m => ({ default: m.TrackingSection })));
 const LoginPage = lazy(() => import('@/sections/LoginPage').then(m => ({ default: m.LoginPage })));
@@ -123,11 +123,13 @@ function AppContent() {
         {route.page === 'home' && (
           <>
             <Hero onMembers={() => navigate({ page: 'members' })} />
-            <ProductSelector onCheckout={() => setShowCheckout(true)} />
-            <SubscriptionsSection
-              onRequireLogin={() => navigate({ page: 'login' })}
-              onGoAccount={goAccount}
-            />
+            <Suspense fallback={<div className="min-h-[400px] flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-[hsl(142,76%,45%)] border-t-transparent animate-spin" /></div>}>
+              <ProductSelector onCheckout={() => setShowCheckout(true)} />
+              <SubscriptionsSection
+                onRequireLogin={() => navigate({ page: 'login' })}
+                onGoAccount={goAccount}
+              />
+            </Suspense>
           </>
         )}
         <Suspense fallback={<div className="min-h-screen" />}>

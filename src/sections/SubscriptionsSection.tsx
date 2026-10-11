@@ -80,7 +80,7 @@ export function SubscriptionsSection({ onRequireLogin, onGoAccount }: Subscripti
   };
 
   return (
-    <section id="abonnementen" className="py-24 px-4">
+    <section id="abonnementen" className="py-24 px-4 content-auto">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <p className="eyebrow text-[hsl(142,76%,45%)] mb-4">VOOR KLANTEN</p>

@@ -167,3 +167,16 @@
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
+
+/* Performance optimization: defer rendering for below-the-fold content */
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 600px;
+}
+
+/* GPU acceleration for pulse glow */
+.animate-pulse-glow {
+  will-change: opacity;
+  transform: translateZ(0);
+}
+

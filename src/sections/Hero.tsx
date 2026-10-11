@@ -27,9 +27,9 @@ export function Hero({ onMembers }: HeroProps) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-20 px-4 overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[hsl(142,76%,45%)]/10 rounded-full blur-[150px] animate-pulse-glow" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[hsl(199,89%,48%)]/10 rounded-full blur-[150px] animate-pulse-glow" style={{ animationDelay: '1s' }} />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[hsl(142,76%,45%)]/10 rounded-full blur-[140px] animate-pulse-glow" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[hsl(199,89%,48%)]/10 rounded-full blur-[140px] animate-pulse-glow" style={{ animationDelay: '1s' }} />
         <div 
           className="absolute inset-0 opacity-[0.03]"
           style={{
