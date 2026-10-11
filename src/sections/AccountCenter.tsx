@@ -95,64 +95,71 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
         </div>
 
         {/* Profiel */}
-        <Card className="p-6 bg-white/5 border-white/10 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-[hsl(142,76%,45%)]/20 flex items-center justify-center">
-              <User className="w-8 h-8 text-[hsl(142,76%,45%)]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-3 flex-wrap">
-                <h2 className="text-xl font-semibold text-white">{user.name}</h2>
-                {user.accountType === 'admin' ? (
-                  <Badge variant="outline" className="border-[hsl(142,76%,45%)] text-[hsl(142,76%,45%)] bg-[hsl(142,76%,45%)]/10 font-medium">
-                    <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-                    Hoofdbeheerder (Admin)
-                  </Badge>
-                ) : user.accountType === 'member' ? (
-                  <Badge variant="outline" className="border-[hsl(199,89%,48%)]/50 text-[hsl(199,89%,48%)]">
-                    <Pickaxe className="w-3 h-3 mr-1" />
-                    Lidaccount
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="border-[hsl(142,76%,45%)]/50 text-[hsl(142,76%,45%)]">
-                    <ShoppingBag className="w-3 h-3 mr-1" />
-                    Klantaccount
-                  </Badge>
-                )}
-              </div>
-              <p className="text-white/50 flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                {user.email}
-              </p>
-              <p className="text-white/30 text-sm mt-1">
-                {user.accountType === 'admin' ? 'Beheerder' : user.accountType === 'member' ? 'Lid' : 'Klant'} sinds {new Date(user.createdAt).toLocaleDateString('nl-NL')}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Admin Dashboard banner */}
-        {user.accountType === 'admin' && (
-          <Card className="p-6 bg-gradient-to-r from-[hsl(142,76%,45%)]/15 via-white/5 to-[hsl(199,89%,48%)]/15 border-[hsl(142,76%,45%)]/30 mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <ShieldCheck className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                  <h3 className="text-lg font-bold text-white">Controlecentrum Beheerder</h3>
+        {(() => {
+          const isAdmin = user.accountType === 'admin' || user.email.toLowerCase() === 'info@jamaldrenthe.com';
+          return (
+            <>
+              <Card className="p-6 bg-white/5 border-white/10 mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-[hsl(142,76%,45%)]/20 flex items-center justify-center">
+                    <User className="w-8 h-8 text-[hsl(142,76%,45%)]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <h2 className="text-xl font-semibold text-white">{user.name}</h2>
+                      {isAdmin ? (
+                        <Badge variant="outline" className="border-[hsl(142,76%,45%)] text-[hsl(142,76%,45%)] bg-[hsl(142,76%,45%)]/10 font-medium">
+                          <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+                          Hoofdbeheerder (Admin)
+                        </Badge>
+                      ) : user.accountType === 'member' ? (
+                        <Badge variant="outline" className="border-[hsl(199,89%,48%)]/50 text-[hsl(199,89%,48%)]">
+                          <Pickaxe className="w-3 h-3 mr-1" />
+                          Lidaccount
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-[hsl(142,76%,45%)]/50 text-[hsl(142,76%,45%)]">
+                          <ShoppingBag className="w-3 h-3 mr-1" />
+                          Klantaccount
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-white/50 flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      {user.email}
+                    </p>
+                    <p className="text-white/30 text-sm mt-1">
+                      {isAdmin ? 'Beheerder' : user.accountType === 'member' ? 'Lid' : 'Klant'} sinds {new Date(user.createdAt).toLocaleDateString('nl-NL')}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-white/60 text-sm">
-                  Beheer live bestellingen, pas statussen en voortgang aan, monitor abonnementen en bekijk de Firebase status.
-                </p>
-              </div>
-              <Button
-                onClick={onAdmin || (() => { window.location.hash = '#/admin'; })}
-                className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-black font-semibold shrink-0 rounded-full px-6"
-              >
-                Open Admin Paneel
-              </Button>
-            </div>
-          </Card>
-        )}
+              </Card>
+
+              {/* Admin Dashboard banner */}
+              {isAdmin && (
+                <Card className="p-6 bg-gradient-to-r from-[hsl(142,76%,45%)]/15 via-white/5 to-[hsl(199,89%,48%)]/15 border-[hsl(142,76%,45%)]/30 mb-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <ShieldCheck className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                        <h3 className="text-lg font-bold text-white">Controlecentrum Beheerder</h3>
+                      </div>
+                      <p className="text-white/60 text-sm">
+                        Beheer live bestellingen, pas statussen en voortgang aan, monitor abonnementen en bekijk de Firebase status.
+                      </p>
+                    </div>
+                    <Button
+                      onClick={onAdmin || (() => { window.location.hash = '#/admin'; })}
+                      className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-black font-semibold shrink-0 rounded-full px-6"
+                    >
+                      Open Admin Paneel
+                    </Button>
+                  </div>
+                </Card>
+              )}
+            </>
+          );
+        })()}
 
         {/* Leden dashboard — alleen voor lidaccounts */}
         {user.accountType === 'member' && (

@@ -78,7 +78,8 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
   }, [orders, searchTerm, statusFilter]);
 
   // Alleen geautoriseerde admins
-  if (user?.accountType !== 'admin') {
+  const isAuthorizedAdmin = user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com';
+  if (!isAuthorizedAdmin) {
     return (
       <section className="min-h-screen pt-28 pb-16 px-4">
         <div className="max-w-md mx-auto text-center">

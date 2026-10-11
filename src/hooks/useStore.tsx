@@ -122,7 +122,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return raw.map(o => ({ ...o, createdAt: new Date(o.createdAt) }));
   });
   const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => loadJSON<Subscription[]>(SUBSCRIPTIONS_KEY, []));
-  const [user, setUser] = useState<AuthUser | null>(() => loadJSON<AuthUser | null>(SESSION_KEY, null));
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    const loaded = loadJSON<AuthUser | null>(SESSION_KEY, null);
+    if (loaded && loaded.email && loaded.email.toLowerCase() === 'info@jamaldrenthe.com') {
+      return { ...loaded, accountType: 'admin' };
+    }
+    return loaded;
+  });
 
   // Optionele achtergrondsfeer-sync met Firestore als Firebase actief is
   useEffect(() => {
@@ -189,13 +195,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (!res.ok || !res.user) {
       return { ok: false, error: res.error || 'Google login mislukt' };
     }
-    setUser(res.user);
-    saveJSON(SESSION_KEY, res.user);
+    const emailNorm = res.user.email.toLowerCase();
+    const isAdmin = emailNorm === 'info@jamaldrenthe.com';
+    const session: AuthUser = {
+      ...res.user,
+      accountType: isAdmin ? 'admin' : res.user.accountType,
+    };
+    setUser(session);
+    saveJSON(SESSION_KEY, session);
 
-    // Voeg toe aan lokale users als nog niet aanwezig
+    // Voeg toe aan lokale users als nog niet aanwezig of werk admin-status bij
     const users = getStoredUsers();
-    if (!users.some(u => u.email === res.user?.email)) {
-      saveStoredUsers([...users, { ...res.user, miningStep: 1 }]);
+    const existingIndex = users.findIndex(u => u.email.toLowerCase() === emailNorm);
+    if (existingIndex >= 0) {
+      if (isAdmin && users[existingIndex].accountType !== 'admin') {
+        users[existingIndex].accountType = 'admin';
+        saveStoredUsers(users);
+      }
+    } else {
+      saveStoredUsers([...users, { ...session, miningStep: 1 }]);
     }
     return { ok: true };
   }, []);
@@ -362,8 +380,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const getAllUsers = useCallback(() => {
     const list = getStoredUsers();
-    // Zorg dat admin Jamal er altijd tussen staat
-    if (!list.some(u => u.email === 'info@jamaldrenthe.com')) {
+    // Zorg dat admin Jamal er altijd tussen staat en gegarandeerd admin is
+    const jamalIndex = list.findIndex(u => u.email.toLowerCase() === 'info@jamaldrenthe.com');
+    if (jamalIndex === -1) {
       list.unshift({
         id: 'admin_jamal',
         name: 'Jamal Drenthe',
@@ -371,6 +390,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         accountType: 'admin',
         createdAt: '2026-10-10T12:00:00.000Z',
       });
+    } else {
+      list[jamalIndex].accountType = 'admin';
     }
     return list;
   }, []);

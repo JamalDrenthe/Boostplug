@@ -98,7 +98,7 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
             >
               Over ons
             </button>
-            {user?.accountType === 'admin' && (
+            {(user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com') && (
               <button
                 onClick={onAdmin || (() => { window.location.hash = '#/admin'; })}
                 className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[hsl(142,76%,45%)]/15 text-[hsl(142,76%,45%)] border border-[hsl(142,76%,45%)]/30 hover:bg-[hsl(142,76%,45%)]/25 transition-colors flex items-center gap-1"
@@ -321,7 +321,7 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
                       )}
                       <span className="text-white">{user ? `Mijn account` : 'Inloggen'}</span>
                     </button>
-                    {user?.accountType === 'admin' && (
+                    {(user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com') && (
                       <button 
                         onClick={() => {
                           setIsMobileMenuOpen(false);
