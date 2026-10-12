@@ -12,6 +12,29 @@ service cloud.firestore {
       );
     }
 
+    // Bestellingen: gasten en klanten mogen aanmaken, beheerder mag alles
+    match /orders/{orderId} {
+      allow create: if request.resource.data.totalPrice is number &&
+                       request.resource.data.email is string;
+      allow read: if isAdmin() || (signedIn() && resource.data.email == request.auth.token.email);
+      allow update, delete: if isAdmin();
+    }
+
+    // Abonnementen: aanmaken toegestaan, beheerder mag alles
+    match /subscriptions/{subId} {
+      allow create: if request.resource.data.monthlyPrice is number &&
+                       request.resource.data.email is string;
+      allow read: if isAdmin() || (signedIn() && resource.data.email == request.auth.token.email);
+      allow update, delete: if isAdmin();
+    }
+
+    // Mining nodes (leden): lid mag eigen profiel beheren
+    match /mining_nodes/{userId} {
+      allow read, write: if isAdmin() || (signedIn() && request.auth.uid == userId);
+      allow create: if signedIn();
+    }
+
+    // Fallback voor overige collecties: strikt admin
     match /{document=**} {
       allow read, write: if isAdmin();
     }

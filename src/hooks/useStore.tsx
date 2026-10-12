@@ -311,7 +311,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const getOrderByToken = useCallback((token: string) => {
-    return orders.find(order => order.trackingToken === token);
+    const norm = token.trim().toLowerCase();
+    if (!norm) return undefined;
+    return orders.find(order => 
+      order.trackingToken.toLowerCase() === norm ||
+      order.orderNumber.toLowerCase() === norm ||
+      order.id.toLowerCase() === norm
+    );
   }, [orders]);
 
   const getMemberMiningProfile = useCallback((userId?: string): MemberMiningProfile => {

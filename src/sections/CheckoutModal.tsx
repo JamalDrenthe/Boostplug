@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { formatPrice } from '@/data/platforms';
 import { Button } from '@/components/ui/button';
@@ -29,19 +29,29 @@ interface CheckoutModalProps {
   onClose: () => void;
 }
 
+function generateTrackingToken(): string {
+  return Math.random().toString(36).substring(2, 15);
+}
+
+function generateOrderNumber(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const rand = String(Math.floor(Math.random() * 100000)).padStart(5, '0');
+  return `BP-${year}${month}-${rand}`;
+}
+
+function generateOrderId(): string {
+  return Math.random().toString(36).substring(2, 9);
+}
+
 export function CheckoutModal({ open, onClose }: CheckoutModalProps) {
   const { cart, removeFromCart, clearCart, currency, addOrder, setCheckoutEmail, user } = useStore();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => user?.email || '');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [trackingToken, setTrackingToken] = useState('');
-
-  useEffect(() => {
-    if (open && user && !email) {
-      setEmail(user.email);
-    }
-  }, [open, user]);
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
 
@@ -62,11 +72,11 @@ export function CheckoutModal({ open, onClose }: CheckoutModalProps) {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Generate order
-    const token = Math.random().toString(36).substring(2, 15);
-    const orderNumber = `BP-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
+    const token = generateTrackingToken();
+    const orderNumber = generateOrderNumber();
     
     const newOrder = {
-      id: Math.random().toString(36).substring(2, 9),
+      id: generateOrderId(),
       orderNumber,
       email,
       locale: 'nl' as const,

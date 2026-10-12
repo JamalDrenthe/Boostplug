@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { formatPrice } from '@/data/platforms';
-import type { Order, OrderStatus } from '@/types';
+import type { Order, OrderStatus, CartItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -73,31 +73,31 @@ const statusConfig: Record<OrderStatus, StatusConfig> = {
 };
 
 export function TrackingSection({ initialToken, onBack }: TrackingSectionProps) {
-  const { getOrderByToken, orders } = useStore();
+  const { getOrderByToken } = useStore();
   const [searchToken, setSearchToken] = useState(initialToken);
-  const [searchedOrder, setSearchedOrder] = useState<Order | null>(null);
+  const [searchedOrder, setSearchedOrder] = useState<Order | null>(() => {
+    if (!initialToken) return null;
+    return getOrderByToken(initialToken) || null;
+  });
   const [isSearching, setIsSearching] = useState(false);
 
-  useEffect(() => {
-    if (initialToken) {
-      handleSearch(initialToken);
-    }
-  }, [initialToken, orders]);
+  const handleSearch = useCallback((tokenToSearch?: string) => {
+    const targetToken = (tokenToSearch !== undefined ? tokenToSearch : searchToken).trim();
+    if (!targetToken) return;
 
-  const handleSearch = (token: string = searchToken) => {
     setIsSearching(true);
     
-    // Simulate search delay
+    // Search with subtle debounce
     setTimeout(() => {
-      const order = getOrderByToken(token.toLowerCase());
+      const order = getOrderByToken(targetToken);
       setSearchedOrder(order || null);
       setIsSearching(false);
       
-      if (!order && token) {
+      if (!order) {
         toast.error('Bestelling niet gevonden. Controleer je tracking nummer.');
       }
-    }, 500);
-  };
+    }, 300);
+  }, [searchToken, getOrderByToken]);
 
   const status = searchedOrder ? statusConfig[searchedOrder.status] : null;
   const StatusIcon = status?.icon || Package;
@@ -175,7 +175,7 @@ export function TrackingSection({ initialToken, onBack }: TrackingSectionProps) 
             <Card className="p-6 bg-white/5 border-white/10">
               <h4 className="text-lg font-semibold text-white mb-4">Bestelde items</h4>
               <div className="space-y-3">
-                {searchedOrder.items.map((item: any, index: number) => (
+                {searchedOrder.items.map((item: CartItem, index: number) => (
                   <div 
                     key={index}
                     className="flex items-center justify-between p-4 rounded-xl bg-white/5"

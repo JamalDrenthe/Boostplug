@@ -415,7 +415,7 @@ export function MiningOnboardingFlow({ onFinish }: MiningOnboardingFlowProps) {
                   <Label className="text-white">Gekozen Apparaat (Node Type) *</Label>
                   <select
                     value={groverDeviceType}
-                    onChange={(e) => setGroverDeviceType(e.target.value as any)}
+                    onChange={(e) => setGroverDeviceType(e.target.value as GroverOrderData['deviceType'])}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[hsl(199,89%,48%)]"
                   >
                     <option value="mac_mini_m2" className="bg-neutral-900 text-white">
@@ -523,7 +523,7 @@ export function MiningOnboardingFlow({ onFinish }: MiningOnboardingFlowProps) {
                 <Label className="text-white">Besturingssysteem</Label>
                 <select
                   value={osPlatform}
-                  onChange={(e) => setOsPlatform(e.target.value as any)}
+                  onChange={(e) => setOsPlatform(e.target.value as SoftwareConfigData['osPlatform'])}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[hsl(199,89%,48%)]"
                 >
                   <option value="macos" className="bg-neutral-900 text-white">macOS (Apple Silicon M1/M2/M4)</option>
@@ -536,7 +536,7 @@ export function MiningOnboardingFlow({ onFinish }: MiningOnboardingFlowProps) {
                 <Label className="text-white">Residentiële IP Pool</Label>
                 <select
                   value={ipPoolRegion}
-                  onChange={(e) => setIpPoolRegion(e.target.value as any)}
+                  onChange={(e) => setIpPoolRegion(e.target.value as SoftwareConfigData['ipPoolRegion'])}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[hsl(199,89%,48%)]"
                 >
                   <option value="eu-west-1" className="bg-neutral-900 text-white">Nederland (KPN / Ziggo pool - 1.25x Payout)</option>
