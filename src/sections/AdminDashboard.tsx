@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useStore, type StoredUser } from '@/hooks/useStore';
 import { formatPrice } from '@/data/platforms';
 import type { OrderStatus, SubscriptionStatus } from '@/types';
@@ -23,11 +23,13 @@ import {
   Clock,
   AlertCircle,
   Download,
+  FileSpreadsheet,
   PlusCircle,
   Cpu,
   ArrowLeft,
   Sliders,
   DollarSign,
+  Radio,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -57,13 +59,42 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
     isFirebaseConfigured, 
     seedDemoData, 
     syncWithFirebase, 
-    getAllUsers 
+    getAllUsers,
+    syncLiveOrders,
   } = useStore();
 
   const [activeTab, setActiveTab] = useState<'orders' | 'subscriptions' | 'members' | 'firebase'>('orders');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isLiveActive, setIsLiveActive] = useState(false);
+
+  // Alleen geautoriseerde admins
+  const isAuthorizedAdmin = user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com';
+
+  // Realtime Firestore onSnapshot listener
+  useEffect(() => {
+    if (!isFirebaseConfigured || !isAuthorizedAdmin) return;
+
+    let unsubscribe: (() => void) | undefined;
+    import('@/lib/firebase').then(({ subscribeToFirestoreOrders }) => {
+      unsubscribe = subscribeToFirestoreOrders(
+        (liveOrders) => {
+          setIsLiveActive(true);
+          if (liveOrders && liveOrders.length > 0) {
+            syncLiveOrders(liveOrders);
+          }
+        },
+        () => {
+          setIsLiveActive(false);
+        }
+      );
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [isFirebaseConfigured, isAuthorizedAdmin, syncLiveOrders]);
 
   // Gefilterde bestellingen
   const filteredOrders = useMemo(() => {
@@ -77,8 +108,6 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
     });
   }, [orders, searchTerm, statusFilter]);
 
-  // Alleen geautoriseerde admins
-  const isAuthorizedAdmin = user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com';
   if (!isAuthorizedAdmin) {
     return (
       <section className="min-h-screen pt-28 pb-16 px-4">
@@ -130,6 +159,75 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
     }
   };
 
+  const exportOrdersCSV = () => {
+    if (orders.length === 0) {
+      toast.info('Geen bestellingen beschikbaar om te exporteren.');
+      return;
+    }
+
+    const headers = [
+      'Datum',
+      'Ordernummer',
+      'Klant Email',
+      'Platform',
+      'Categorie',
+      'Product / Type',
+      'Aantal',
+      'Bedrag',
+      'Valuta',
+      'Status',
+      'Voortgang (%)',
+      'Tracking Token',
+      'Doel URL'
+    ];
+
+    const escapeCSV = (val: unknown): string => {
+      if (val === null || val === undefined) return '""';
+      const clean = String(val).replace(/"/g, '""');
+      return `"${clean}"`;
+    };
+
+    const rows = [headers.join(';')];
+
+    orders.forEach((o) => {
+      const dateFormatted = o.createdAt instanceof Date 
+        ? o.createdAt.toISOString().replace('T', ' ').slice(0, 19)
+        : String(o.createdAt || '');
+
+      const platforms = o.items.map(i => i.platformName || i.platform).join(', ');
+      const categories = o.items.map(i => i.category).join(', ');
+      const typeNames = o.items.map(i => i.typeName || '').join(', ');
+      const totalQty = o.items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+      const urls = o.items.map(i => i.targetUrl || '').filter(Boolean).join(', ');
+
+      rows.push([
+        escapeCSV(dateFormatted),
+        escapeCSV(o.orderNumber),
+        escapeCSV(o.email),
+        escapeCSV(platforms),
+        escapeCSV(categories),
+        escapeCSV(typeNames),
+        escapeCSV(totalQty),
+        escapeCSV(o.totalPrice.toFixed(2)),
+        escapeCSV(o.currency),
+        escapeCSV(statusConfig[o.status]?.label || o.status),
+        escapeCSV(o.deliveryProgress ?? 0),
+        escapeCSV(o.trackingToken),
+        escapeCSV(urls),
+      ].join(';'));
+    });
+
+    const blob = new Blob(['\uFEFF' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const today = new Date().toISOString().slice(0, 10);
+    a.download = `boostplug-bestellingen-${today}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`${orders.length} bestelling(en) geëxporteerd naar CSV`);
+  };
+
   const exportDataJSON = () => {
     const data = {
       exportedAt: new Date().toISOString(),
@@ -168,9 +266,9 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
                 <ShieldCheck className="w-3.5 h-3.5 mr-1" />
                 info@jamaldrenthe.com
               </Badge>
-              <Badge variant="outline" className={isFirebaseConfigured ? "border-green-500/50 text-green-400" : "border-amber-500/50 text-amber-400"}>
-                <Database className="w-3 h-3 mr-1" />
-                {isFirebaseConfigured ? "Firebase: boostplug-dev (Live)" : "Firebase: boostplug-dev (Fallback)"}
+              <Badge variant="outline" className={isLiveActive ? "border-green-500/50 text-green-400 bg-green-500/10" : isFirebaseConfigured ? "border-blue-500/50 text-blue-400" : "border-amber-500/50 text-amber-400"}>
+                <Radio className={`w-3 h-3 mr-1 ${isLiveActive ? 'text-green-400 animate-pulse' : ''}`} />
+                {isLiveActive ? "Firestore: Live onSnapshot" : isFirebaseConfigured ? "Firebase: Verbonden" : "Firebase: boostplug-dev (Fallback)"}
               </Badge>
             </div>
             <p className="text-white/50 text-sm mt-1">
@@ -201,11 +299,20 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
             <Button
               variant="outline"
               size="sm"
+              onClick={exportOrdersCSV}
+              className="border-[hsl(142,76%,45%)]/40 text-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,45%)]/10 font-medium"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5" />
+              Exporteer CSV
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={exportDataJSON}
               className="border-white/15 text-white hover:bg-white/10"
             >
               <Download className="w-3.5 h-3.5 mr-1.5" />
-              Export
+              JSON
             </Button>
           </div>
         </div>

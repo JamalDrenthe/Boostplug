@@ -20,9 +20,11 @@ import {
   Lock,
   CheckCircle2,
   ArrowRight,
-  Loader2
+  Loader2,
+  ShieldCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { isStripeConfigured, getStripeMode } from '@/lib/stripe';
 
 interface CheckoutModalProps {
   open: boolean;
@@ -48,6 +50,7 @@ function generateOrderId(): string {
 export function CheckoutModal({ open, onClose }: CheckoutModalProps) {
   const { cart, removeFromCart, clearCart, currency, addOrder, setCheckoutEmail, user } = useStore();
   const [email, setEmail] = useState(() => user?.email || '');
+  const [paymentMethod, setPaymentMethod] = useState<'ideal' | 'card' | 'bancontact'>('ideal');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
@@ -211,6 +214,58 @@ export function CheckoutModal({ open, onClose }: CheckoutModalProps) {
                     <p className="text-sm text-white/50 mt-2">
                       Je ontvangt de tracking link op dit adres.
                     </p>
+                  </div>
+
+                  {/* Payment Method (Stripe) */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-white text-sm font-medium">Betaalmethode (Stripe)</Label>
+                      <Badge variant="outline" className={isStripeConfigured ? "border-green-500/50 text-green-400 text-xs" : "border-blue-500/50 text-blue-400 text-xs"}>
+                        <ShieldCheck className="w-3 h-3 mr-1" />
+                        {isStripeConfigured ? `Stripe (${getStripeMode()})` : 'Stripe Ready (Simulatie)'}
+                      </Badge>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('ideal')}
+                        className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                          paymentMethod === 'ideal'
+                            ? 'bg-[hsl(142,76%,45%)]/15 border-[hsl(142,76%,45%)] text-white'
+                            : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                        }`}
+                      >
+                        <p className="font-semibold text-xs text-white">iDEAL</p>
+                        <span className="text-[10px] text-white/50">Direct & vertrouwd</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('card')}
+                        className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                          paymentMethod === 'card'
+                            ? 'bg-[hsl(142,76%,45%)]/15 border-[hsl(142,76%,45%)] text-white'
+                            : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                        }`}
+                      >
+                        <p className="font-semibold text-xs text-white">Creditcard</p>
+                        <span className="text-[10px] text-white/50">Visa / Mastercard</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('bancontact')}
+                        className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                          paymentMethod === 'bancontact'
+                            ? 'bg-[hsl(142,76%,45%)]/15 border-[hsl(142,76%,45%)] text-white'
+                            : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                        }`}
+                      >
+                        <p className="font-semibold text-xs text-white">Bancontact</p>
+                        <span className="text-[10px] text-white/50">België</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Terms */}

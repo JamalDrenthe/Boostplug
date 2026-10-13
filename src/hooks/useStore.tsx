@@ -17,7 +17,7 @@ const isFirebaseConfigured = Boolean(
 );
 
 export interface StoredUser extends AuthUser {
-  password?: string;
+  passwordHash?: string;
   miningStep?: number;
 }
 
@@ -25,6 +25,16 @@ const USERS_KEY = 'boostplug_users';
 const SESSION_KEY = 'boostplug_session';
 const ORDERS_KEY = 'boostplug_orders';
 const SUBSCRIPTIONS_KEY = 'boostplug_subscriptions';
+
+function quickHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return 'bp_' + Math.abs(hash).toString(36);
+}
 
 function loadJSON<T>(key: string, fallback: T): T {
   try {
@@ -78,6 +88,8 @@ interface StoreState {
   updateOrderStatus: (tokenOrId: string, status: OrderStatus, progress?: number) => void;
   deleteOrder: (id: string) => void;
   getOrderByToken: (token: string) => Order | undefined;
+  fetchFirestoreOrderByToken: (token: string) => Promise<Order | null>;
+  syncLiveOrders: (remoteOrders: Order[]) => void;
 
   // Subscriptions
   subscriptions: Subscription[];
@@ -87,8 +99,8 @@ interface StoreState {
 
   // Account & Auth
   user: AuthUser | null;
-  register: (name: string, email: string, password: string, accountType: AccountType) => { ok: boolean; error?: string };
-  login: (email: string, password: string) => { ok: boolean; error?: string };
+  register: (name: string, email: string, password: string, accountType: AccountType) => Promise<{ ok: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   loginWithGoogle: () => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 
@@ -144,46 +156,76 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
-  const register = useCallback((name: string, email: string, password: string, accountType: AccountType) => {
+  const register = useCallback(async (name: string, email: string, password: string, accountType: AccountType) => {
     const normalized = email.trim().toLowerCase();
-    const users = getStoredUsers();
-    if (users.some(u => u.email === normalized)) {
-      return { ok: false, error: 'Er bestaat al een account met dit e-mailadres.' };
-    }
     const resolvedRole: AccountType = normalized === 'info@jamaldrenthe.com' ? 'admin' : accountType;
-    const newUser: StoredUser = {
-      id: Math.random().toString(36).substring(2, 10),
-      name: name.trim(),
-      email: normalized,
-      password,
+
+    // 1. Registreren via Firebase Auth (met lokale fallback in firebase.ts)
+    const { signUpWithEmail } = await import('@/lib/firebase');
+    const fbRes = await signUpWithEmail(normalized, password, name, resolvedRole);
+    if (!fbRes.ok || !fbRes.user) {
+      return { ok: false, error: fbRes.error || 'Registreren mislukt' };
+    }
+
+    const session: AuthUser = {
+      ...fbRes.user,
       accountType: resolvedRole,
-      createdAt: new Date().toISOString(),
-      miningStep: resolvedRole === 'member' ? 1 : undefined,
-    };
-    saveStoredUsers([...users, newUser]);
-    const session: AuthUser = { 
-      id: newUser.id, 
-      name: newUser.name, 
-      email: newUser.email, 
-      accountType: newUser.accountType, 
-      createdAt: newUser.createdAt 
     };
     setUser(session);
     saveJSON(SESSION_KEY, session);
+
+    // Sla gebruiker lokaal op zonder plain-text wachtwoord
+    const users = getStoredUsers();
+    const existingIndex = users.findIndex(u => u.email.toLowerCase() === normalized);
+    const storedUser: StoredUser = {
+      ...session,
+      passwordHash: quickHash(password),
+      miningStep: resolvedRole === 'member' ? 1 : undefined,
+    };
+    if (existingIndex >= 0) {
+      users[existingIndex] = storedUser;
+      saveStoredUsers(users);
+    } else {
+      saveStoredUsers([...users, storedUser]);
+    }
+
     return { ok: true };
   }, []);
 
-  const login = useCallback((email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     const normalized = email.trim().toLowerCase();
-    const found = getStoredUsers().find(u => u.email === normalized && u.password === password);
-    if (!found) {
-      return { ok: false, error: 'Onjuiste combinatie van e-mailadres en wachtwoord.' };
+    const isAdmin = normalized === 'info@jamaldrenthe.com';
+
+    // 1. Inloggen via Firebase Auth
+    const { signInWithEmail } = await import('@/lib/firebase');
+    const fbRes = await signInWithEmail(normalized, password);
+    if (fbRes.ok && fbRes.user) {
+      const session: AuthUser = {
+        ...fbRes.user,
+        accountType: isAdmin ? 'admin' : fbRes.user.accountType,
+      };
+      setUser(session);
+      saveJSON(SESSION_KEY, session);
+      return { ok: true };
     }
-    const accountType: AccountType = (found.email === 'info@jamaldrenthe.com') ? 'admin' : (found.accountType ?? 'customer');
-    const session: AuthUser = { id: found.id, name: found.name, email: found.email, accountType, createdAt: found.createdAt };
-    setUser(session);
-    saveJSON(SESSION_KEY, session);
-    return { ok: true };
+
+    // 2. Fallback controle als Firebase offline of niet geconfigureerd is
+    const localUser = getStoredUsers().find(u => u.email === normalized);
+    if (localUser && (localUser.passwordHash === quickHash(password) || !isFirebaseConfigured)) {
+      const accountType: AccountType = isAdmin ? 'admin' : (localUser.accountType ?? 'customer');
+      const session: AuthUser = {
+        id: localUser.id,
+        name: localUser.name,
+        email: localUser.email,
+        accountType,
+        createdAt: localUser.createdAt,
+      };
+      setUser(session);
+      saveJSON(SESSION_KEY, session);
+      return { ok: true };
+    }
+
+    return { ok: false, error: fbRes.error || 'Onjuiste combinatie van e-mailadres en wachtwoord.' };
   }, []);
 
   const loginWithGoogleHandler = useCallback(async () => {
@@ -319,6 +361,38 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       order.id.toLowerCase() === norm
     );
   }, [orders]);
+
+  const fetchFirestoreOrderByToken = useCallback(async (token: string): Promise<Order | null> => {
+    const cleanToken = token.trim();
+    if (!cleanToken) return null;
+
+    // Haal op uit Firestore
+    const { fetchOrderByTokenFromFirestore } = await import('@/lib/firebase');
+    const remoteOrder = await fetchOrderByTokenFromFirestore(cleanToken);
+    if (remoteOrder) {
+      setOrders(prev => {
+        if (prev.some(o => o.id === remoteOrder.id)) return prev;
+        const next = [remoteOrder, ...prev];
+        saveJSON(ORDERS_KEY, next);
+        return next;
+      });
+    }
+    return remoteOrder;
+  }, []);
+
+  const syncLiveOrders = useCallback((remoteOrders: Order[]) => {
+    if (!remoteOrders || remoteOrders.length === 0) return;
+    setOrders(prev => {
+      const map = new Map<string, Order>();
+      prev.forEach(o => map.set(o.id, o));
+      remoteOrders.forEach(o => map.set(o.id, o));
+      const merged = Array.from(map.values()).sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      saveJSON(ORDERS_KEY, merged);
+      return merged;
+    });
+  }, []);
 
   const getMemberMiningProfile = useCallback((userId?: string): MemberMiningProfile => {
     const targetId = userId || user?.id || 'demo_member';
@@ -593,6 +667,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       updateOrderStatus,
       deleteOrder,
       getOrderByToken,
+      fetchFirestoreOrderByToken,
+      syncLiveOrders,
       subscriptions,
       addSubscription,
       cancelSubscription,

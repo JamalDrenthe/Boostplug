@@ -42,7 +42,7 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       toast.error('Vul je naam in');
@@ -65,16 +65,19 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
       return;
     }
     setIsSubmitting(true);
-    setTimeout(() => {
-      const result = register(name, email, password, accountType);
-      setIsSubmitting(false);
+    try {
+      const result = await register(name, email, password, accountType);
       if (!result.ok) {
         toast.error(result.error || 'Registreren mislukt');
         return;
       }
       toast.success('Account aangemaakt — welkom bij BoostPlug!');
       onSuccess();
-    }, 400);
+    } catch {
+      toast.error('Er is een onverwachte fout opgetreden bij het registreren');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

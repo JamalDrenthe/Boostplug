@@ -3,16 +3,124 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BoostPlug — boost je online aanwezigheid met streams en reviews. Geen account nodig, directe levering. Een onderneming van Quantum Initium Holding." />
-    <meta property="og:title" content="BoostPlug — Streaming & Reviews Growth Platform" />
-    <meta property="og:description" content="Verhoog je streams, followers en reviews met één klik. Een onderneming van Quantum Initium Holding." />
-    <meta property="og:type" content="website" />
     <title>BoostPlug — Streaming & Reviews Growth Platform</title>
+    <meta name="description" content="BoostPlug — boost je online aanwezigheid met streams en reviews. Geen account nodig, directe levering en 100% veilig. Een onderneming van Quantum Initium Holding." />
+
+    <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://boostplug.com" />
+    <meta property="og:title" content="BoostPlug — Streaming & Reviews Growth Platform" />
+    <meta property="og:description" content="Verhoog je streams, followers en reviews met één klik. Directe levering, drip-feed algoritme bescherming en realtime cloud tracking." />
+    <meta property="og:image" content="https://boostplug.com/og-image.png" />
+    <meta property="og:image:secure_url" content="https://boostplug.com/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="BoostPlug — Streaming & Reviews Growth Platform Preview" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BoostPlug — Streaming & Reviews Growth Platform" />
+    <meta name="twitter:description" content="Verhoog je streams, followers en reviews met één klik. Directe veilige levering en live tracking. Een onderneming van Quantum Initium Holding." />
+    <meta name="twitter:image" content="https://boostplug.com/og-image.png" />
+    <meta name="twitter:image:alt" content="BoostPlug — Streaming & Reviews Growth Platform Preview" />
+
+    <!-- Favicons & App Icons -->
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
     <link rel="alternate icon" href="./favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-    <meta name="theme-color" content="#0e131f" />
+    <meta name="theme-color" content="#0c111d" />
+
+    <!-- Schema.org Structured Data (JSON-LD) voor FAQPage, Product/Service en Organisatie -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://boostplug.com/#organization",
+          "name": "BoostPlug",
+          "url": "https://boostplug.com",
+          "logo": "https://boostplug.com/favicon.svg",
+          "image": "https://boostplug.com/og-image.png",
+          "description": "Streaming & Reviews Growth Platform. Een onderneming van Quantum Initium Holding.",
+          "parentOrganization": {
+            "@type": "Organization",
+            "name": "Quantum Initium Holding"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "info@jamaldrenthe.com",
+            "contactType": "customer service",
+            "availableLanguage": ["Dutch", "English"]
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://boostplug.com/#service",
+          "name": "BoostPlug Algorithmic Streaming & Reputation Growth",
+          "provider": {
+            "@id": "https://boostplug.com/#organization"
+          },
+          "serviceType": "Digital Growth & Streaming Acceleration",
+          "description": "Geautomatiseerde streams, verified reviews en social lift voor Spotify, Apple Music, Google Maps, Trustpilot en SoundCloud met drip-feed distributie.",
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "EUR",
+            "lowPrice": "29",
+            "highPrice": "499",
+            "offerCount": "12"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "1420",
+            "bestRating": "5"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://boostplug.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Hoe snel begint de levering na het plaatsen van een bestelling?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "De meeste orders starten binnen 15 tot 60 minuten. Grote streaming batches worden geleidelijk (drip-feed) gedistribueerd om een natuurlijk en algoritme-veilig groeiprofiel te garanderen."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is mijn account of muziekprofiel veilig bij BoostPlug?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Ja, 100%. Wij vragen nooit om je wachtwoord of accountgegevens. Je hoeft enkel de openbare link naar je nummer, album of bedrijfsprofiel in te vullen."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Hoe werkt het realtime volgen van mijn bestelling?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Na het afronden van je bestelling ontvang je een unieke trackingcode. Hiermee kun je op ieder apparaat via de Track pagina live de status en voortgang van je levering volgen."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Wat is het BoostPlug Mining Node netwerk voor leden?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Leden van de Quantum Initium community kunnen een geconfigureerde hardware node inzetten om netwerkcapaciteit te leveren, met maandelijkse verdiensten via het protocol."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <style>
       html, body {
         background-color: #0c0f17;
@@ -22,7 +130,7 @@
       }
     </style>
     <!-- Geist fonts worden lokaal gebundeld via @fontsource (src/main.tsx) -->
-    <script type="module" crossorigin src="./assets/index-CM2xzWmu.js"></script>
+    <script type="module" crossorigin src="./assets/index-CREucPHV.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CK_tDA9A.css">
   </head>
   <body>

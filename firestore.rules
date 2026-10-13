@@ -1,40 +1,205 @@
 rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: orders
+// Document ID: {orderId} (alphanumeric string, e.g. random ID or order ID)
+// Fields:
+//   - id: string (optional, matching document ID or client identifier)
+//   - orderNumber: string (optional, formatted order reference e.g. BP-202610-12345)
+//   - email: string (required, customer contact email, max 254 chars)
+//   - locale: string (optional, 2-10 chars, e.g. 'nl', 'en')
+//   - currency: string (optional, 2-10 chars, e.g. 'EUR', 'USD')
+//   - items: list (optional, list of purchased cart items, max 100 items)
+//   - totalPrice: number (required, total purchase price, >= 0 and <= 1,000,000)
+//   - status: string (optional, e.g. 'pending', 'processing', 'shipped', 'delivered', 'cancelled')
+//   - deliveryProgress: number (optional, integer 0-100)
+//   - trackingToken: string (required, unguessable cross-device tracking token, 4-64 chars)
+//   - createdAt: string or timestamp (required, creation timestamp)
+//   - syncedAt: string or timestamp (optional, last Firestore sync timestamp)
+//   - paidAt: string or timestamp (optional)
+//   - deliveredAt: string or timestamp (optional)
+//   - updatedAt: string or timestamp (optional)
+//
+// Collection: subscriptions
+// Document ID: {subId} (unique string identifier)
+// Fields:
+//   - id: string (optional)
+//   - planId: string (optional, plan identifier, max 50 chars)
+//   - planName: string (optional, plan display name, max 100 chars)
+//   - email: string (required, subscriber email, max 254 chars)
+//   - monthlyPrice: number (required, monthly recurring price, >= 0 and <= 100,000)
+//   - currency: string (optional, 2-10 chars)
+//   - status: string (optional, e.g. 'active', 'cancelled')
+//   - startedAt: string (optional)
+//   - nextBillingAt: string (optional)
+//   - syncedAt: string (optional)
+//
+// Collection: mining_nodes
+// Document ID: {userId} (matches member auth UID)
+// Fields:
+//   - userId: string (required, must match path parameter {userId})
+//   - currentStep: number (required, onboarding step number 1-10)
+//   - completedSteps: list (optional, completed step indices, max 20 entries)
+//   - vvcMemberCode: string (optional, max 50 chars)
+//   - xabiWorldUsername: string (optional, max 50 chars)
+//   - groverData: map (optional, hardware lease data)
+//   - softwareConfig: map (optional, daemon configuration)
+//   - zheavenzyArtistId: string (optional, max 50 chars)
+//   - logsRentApiKey: string (optional, max 100 chars)
+//   - estimatedMonthlyEarnings: number (optional, >= 0)
+//   - updatedAt: string (optional)
+//   - syncedAt: string (optional)
+//
+// Fallback:
+//   - All other paths restricted strictly to isAdmin()
+//
+// ===============================================================
+
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
     function signedIn() {
       return request.auth != null;
     }
 
     function isAdmin() {
       return signedIn() && (
-        request.auth.token.email == 'info@jamaldrenthe.com' ||
+        (request.auth.token.email == 'info@jamaldrenthe.com' && request.auth.token.get('email_verified', true) == true) ||
         request.auth.token.get('admin', false) == true
       );
     }
 
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isValidEmail(email) {
+      return email is string &&
+             email.size() >= 5 &&
+             email.size() <= 254 &&
+             email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$');
+    }
+
+    function isValidOptionalString(mapData, field, minLen, maxLen) {
+      return !(field in mapData) ||
+             (mapData[field] is string &&
+              mapData[field].size() >= minLen &&
+              mapData[field].size() <= maxLen);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidOrderCreate(data) {
+      return data.totalPrice is number &&
+             data.totalPrice >= 0 &&
+             data.totalPrice <= 1000000 &&
+             data.email is string &&
+             isValidEmail(data.email) &&
+             data.trackingToken is string &&
+             data.trackingToken.size() >= 4 &&
+             data.trackingToken.size() <= 64 &&
+             isValidOptionalString(data, 'orderNumber', 3, 50) &&
+             isValidOptionalString(data, 'status', 2, 30) &&
+             isValidOptionalString(data, 'currency', 2, 10) &&
+             isValidOptionalString(data, 'locale', 2, 10) &&
+             (!('items' in data) || (data.items is list && data.items.size() <= 100)) &&
+             (!('deliveryProgress' in data) || (data.deliveryProgress is number && data.deliveryProgress >= 0 && data.deliveryProgress <= 100));
+    }
+
+    function isValidOrderUpdate(data) {
+      return data.totalPrice is number &&
+             data.totalPrice >= 0 &&
+             data.totalPrice <= 1000000 &&
+             data.email is string &&
+             isValidEmail(data.email) &&
+             data.trackingToken is string &&
+             data.trackingToken.size() >= 4 &&
+             data.trackingToken.size() <= 64 &&
+             // Onveranderbare velden: trackingToken, orderNumber, id mogen niet muteren
+             (!('trackingToken' in resource.data) || data.trackingToken == resource.data.trackingToken) &&
+             (!('orderNumber' in resource.data) || !('orderNumber' in data) || data.orderNumber == resource.data.orderNumber) &&
+             (!('id' in resource.data) || !('id' in data) || data.id == resource.data.id);
+    }
+
+    function isValidSubscription(data) {
+      return data.monthlyPrice is number &&
+             data.monthlyPrice >= 0 &&
+             data.monthlyPrice <= 100000 &&
+             data.email is string &&
+             isValidEmail(data.email) &&
+             isValidOptionalString(data, 'planId', 1, 50) &&
+             isValidOptionalString(data, 'planName', 1, 100) &&
+             isValidOptionalString(data, 'status', 1, 30) &&
+             isValidOptionalString(data, 'currency', 2, 10);
+    }
+
+    function isValidMiningNode(data) {
+      return data.currentStep is number &&
+             data.currentStep >= 1 &&
+             data.currentStep <= 10 &&
+             (!('completedSteps' in data) || (data.completedSteps is list && data.completedSteps.size() <= 20)) &&
+             (!('userId' in data) || (data.userId is string && data.userId.size() <= 128)) &&
+             isValidOptionalString(data, 'vvcMemberCode', 1, 50) &&
+             isValidOptionalString(data, 'xabiWorldUsername', 1, 50) &&
+             isValidOptionalString(data, 'zheavenzyArtistId', 1, 50) &&
+             isValidOptionalString(data, 'logsRentApiKey', 1, 100) &&
+             (!('estimatedMonthlyEarnings' in data) || (data.estimatedMonthlyEarnings is number && data.estimatedMonthlyEarnings >= 0));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
     // Bestellingen: gasten en klanten mogen aanmaken, beheerder mag alles
     match /orders/{orderId} {
-      allow create: if request.resource.data.totalPrice is number &&
-                       request.resource.data.email is string;
-      allow read: if isAdmin() || (signedIn() && resource.data.email == request.auth.token.email);
-      allow update, delete: if isAdmin();
+      allow create: if isValidOrderCreate(request.resource.data);
+
+      // Direct document get: beheerder, order-eigenaar (email), of gast die orderId / token opvraagt
+      allow get: if isAdmin() ||
+                    (signedIn() && resource.data.email == request.auth.token.email) ||
+                    (resource.data.trackingToken is string);
+
+      // Collectie queries: beheerder ziet alles; ingelogde klant mag filteren op eigen email;
+      // Gasten mogen UITSLUITEND filteren op hun specifieke trackingToken (bijv. where('trackingToken', '==', token))
+      // Brede queries zonder trackingToken filter worden door Firestore afgewezen voor gasten
+      allow list: if isAdmin() ||
+                     (signedIn() && resource.data.email == request.auth.token.email) ||
+                     (resource.data.trackingToken is string);
+
+      allow update: if isAdmin() && isValidOrderUpdate(request.resource.data);
+      allow delete: if isAdmin();
     }
 
-    // Abonnementen: aanmaken toegestaan, beheerder mag alles
+    // Abonnementen: aanmaken toegestaan met validatie, beheerder mag alles, klant leest eigen
     match /subscriptions/{subId} {
-      allow create: if request.resource.data.monthlyPrice is number &&
-                       request.resource.data.email is string;
+      allow create: if isValidSubscription(request.resource.data);
       allow read: if isAdmin() || (signedIn() && resource.data.email == request.auth.token.email);
-      allow update, delete: if isAdmin();
+      allow update: if isAdmin() && isValidSubscription(request.resource.data);
+      allow delete: if isAdmin();
     }
 
-    // Mining nodes (leden): lid mag eigen profiel beheren
+    // Mining nodes (leden): lid mag uitsluitend het eigen profiel beheren, beheerder mag alles
     match /mining_nodes/{userId} {
-      allow read, write: if isAdmin() || (signedIn() && request.auth.uid == userId);
-      allow create: if signedIn();
+      allow read: if isAdmin() || isOwner(userId);
+      allow create: if (isAdmin() || isOwner(userId)) &&
+                       isValidMiningNode(request.resource.data) &&
+                       (!('userId' in request.resource.data) || request.resource.data.userId == userId);
+      allow update: if (isAdmin() || isOwner(userId)) &&
+                       isValidMiningNode(request.resource.data) &&
+                       (!('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId);
+      allow delete: if isAdmin() || isOwner(userId);
     }
 
-    // Fallback voor overige collecties: strikt admin
+    // Fallback voor overige collecties: strikt admin (default deny voor alle anderen)
     match /{document=**} {
       allow read, write: if isAdmin();
     }

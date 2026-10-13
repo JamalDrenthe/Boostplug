@@ -35,23 +35,26 @@ export function LoginPage({ onBack, onSuccess, onGoRegister }: LoginPageProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error('Vul je e-mailadres en wachtwoord in');
       return;
     }
     setIsSubmitting(true);
-    setTimeout(() => {
-      const result = login(email, password);
-      setIsSubmitting(false);
+    try {
+      const result = await login(email, password);
       if (!result.ok) {
         toast.error(result.error || 'Inloggen mislukt');
         return;
       }
       toast.success('Welkom terug!');
       onSuccess();
-    }, 400);
+    } catch {
+      toast.error('Er is een onverwachte fout opgetreden bij het inloggen');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

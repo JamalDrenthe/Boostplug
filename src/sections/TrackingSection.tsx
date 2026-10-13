@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { formatPrice } from '@/data/platforms';
 import type { Order, OrderStatus, CartItem } from '@/types';
@@ -73,7 +73,7 @@ const statusConfig: Record<OrderStatus, StatusConfig> = {
 };
 
 export function TrackingSection({ initialToken, onBack }: TrackingSectionProps) {
-  const { getOrderByToken } = useStore();
+  const { getOrderByToken, fetchFirestoreOrderByToken } = useStore();
   const [searchToken, setSearchToken] = useState(initialToken);
   const [searchedOrder, setSearchedOrder] = useState<Order | null>(() => {
     if (!initialToken) return null;
@@ -81,23 +81,44 @@ export function TrackingSection({ initialToken, onBack }: TrackingSectionProps) 
   });
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = useCallback((tokenToSearch?: string) => {
+  const handleSearch = useCallback(async (tokenToSearch?: string) => {
     const targetToken = (tokenToSearch !== undefined ? tokenToSearch : searchToken).trim();
     if (!targetToken) return;
 
     setIsSearching(true);
     
-    // Search with subtle debounce
-    setTimeout(() => {
-      const order = getOrderByToken(targetToken);
-      setSearchedOrder(order || null);
+    // 1. Zoek eerst direct in lokale opslag
+    const local = getOrderByToken(targetToken);
+    if (local) {
+      setSearchedOrder(local);
       setIsSearching(false);
-      
-      if (!order) {
+      return;
+    }
+
+    // 2. Cross-device cloud fallback: haal eenmalig op via Firestore
+    try {
+      const remote = await fetchFirestoreOrderByToken(targetToken);
+      if (remote) {
+        setSearchedOrder(remote);
+        toast.success('Bestelling gevonden via cloud tracking!');
+      } else {
+        setSearchedOrder(null);
         toast.error('Bestelling niet gevonden. Controleer je tracking nummer.');
       }
-    }, 300);
-  }, [searchToken, getOrderByToken]);
+    } catch {
+      setSearchedOrder(null);
+      toast.error('Fout bij opzoeken van bestelling via de cloud.');
+    } finally {
+      setIsSearching(false);
+    }
+  }, [searchToken, getOrderByToken, fetchFirestoreOrderByToken]);
+
+  // Automatisch opzoeken als initialToken via deeplink/URL binnenkomt en lokaal ontbreekt
+  useEffect(() => {
+    if (initialToken && !searchedOrder) {
+      handleSearch(initialToken);
+    }
+  }, [initialToken, searchedOrder, handleSearch]);
 
   const status = searchedOrder ? statusConfig[searchedOrder.status] : null;
   const StatusIcon = status?.icon || Package;

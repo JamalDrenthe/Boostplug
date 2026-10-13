@@ -19,6 +19,9 @@ interface FirebaseBundle {
   googleProvider: import('firebase/auth').GoogleAuthProvider;
   firestore: typeof import('firebase/firestore');
   signInWithPopup: typeof import('firebase/auth').signInWithPopup;
+  signInWithEmailAndPassword: typeof import('firebase/auth').signInWithEmailAndPassword;
+  createUserWithEmailAndPassword: typeof import('firebase/auth').createUserWithEmailAndPassword;
+  updateProfile: typeof import('firebase/auth').updateProfile;
 }
 
 let firebaseBundlePromise: Promise<FirebaseBundle | null> | null = null;
@@ -31,7 +34,14 @@ async function getFirebaseBundle(): Promise<FirebaseBundle | null> {
       try {
         const [
           { initializeApp, getApps },
-          { getAuth, GoogleAuthProvider, signInWithPopup },
+          { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            updateProfile 
+          },
           firestore
         ] = await Promise.all([
           import('firebase/app'),
@@ -49,7 +59,10 @@ async function getFirebaseBundle(): Promise<FirebaseBundle | null> {
           db,
           googleProvider,
           firestore,
-          signInWithPopup
+          signInWithPopup,
+          signInWithEmailAndPassword,
+          createUserWithEmailAndPassword,
+          updateProfile
         };
       } catch (error) {
         console.warn('Firebase asynchrone initialisatie kon niet worden voltooid:', error);
@@ -206,4 +219,235 @@ export async function syncMiningProfileToFirestore(profile: MemberMiningProfile)
     console.warn('Fout bij synchroniseren van mining profiel naar Firestore:', error);
     return false;
   }
+}
+
+/**
+ * Inloggen met e-mail en wachtwoord via Firebase Auth
+ */
+export async function signInWithEmail(
+  email: string,
+  password: string
+): Promise<{ ok: boolean; user?: AuthUser; error?: string }> {
+  const normEmail = email.trim().toLowerCase();
+  if (isConfigured) {
+    try {
+      const fb = await getFirebaseBundle();
+      if (fb) {
+        const result = await fb.signInWithEmailAndPassword(fb.auth, normEmail, password);
+        const userEmail = result.user.email?.toLowerCase() || normEmail;
+        const name = result.user.displayName || userEmail.split('@')[0];
+        const isAdmin = userEmail === 'info@jamaldrenthe.com';
+        const authUser: AuthUser = {
+          id: result.user.uid,
+          name,
+          email: userEmail,
+          accountType: isAdmin ? 'admin' : 'customer',
+          createdAt: result.user.metadata?.creationTime || new Date().toISOString(),
+        };
+        return { ok: true, user: authUser };
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      let errorMsg = 'Inloggen mislukt. Controleer je gegevens.';
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        errorMsg = 'Onjuiste combinatie van e-mailadres en wachtwoord.';
+      } else if (code === 'auth/too-many-requests') {
+        errorMsg = 'Te veel pogingen. Probeer het over enkele minuten opnieuw.';
+      } else if (err instanceof Error) {
+        errorMsg = err.message;
+      }
+      return { ok: false, error: errorMsg };
+    }
+  }
+
+  // Lokale dev-fallback
+  const isAdmin = normEmail === 'info@jamaldrenthe.com';
+  return {
+    ok: true,
+    user: {
+      id: isAdmin ? 'admin_jamal' : 'dev_usr_' + Math.random().toString(36).substring(2, 8),
+      name: isAdmin ? 'Jamal Drenthe' : normEmail.split('@')[0],
+      email: normEmail,
+      accountType: isAdmin ? 'admin' : 'customer',
+      createdAt: new Date().toISOString(),
+    },
+  };
+}
+
+/**
+ * Registreren met e-mail, wachtwoord en naam via Firebase Auth
+ */
+export async function signUpWithEmail(
+  email: string,
+  password: string,
+  name: string,
+  accountType: import('@/types').AccountType = 'customer'
+): Promise<{ ok: boolean; user?: AuthUser; error?: string }> {
+  const normEmail = email.trim().toLowerCase();
+  const trimmedName = name.trim();
+  const resolvedRole: import('@/types').AccountType = normEmail === 'info@jamaldrenthe.com' ? 'admin' : accountType;
+
+  if (isConfigured) {
+    try {
+      const fb = await getFirebaseBundle();
+      if (fb) {
+        const cred = await fb.createUserWithEmailAndPassword(fb.auth, normEmail, password);
+        if (trimmedName && fb.auth.currentUser) {
+          try {
+            await fb.updateProfile(fb.auth.currentUser, { displayName: trimmedName });
+          } catch {
+            // Niet kritiek
+          }
+        }
+        const authUser: AuthUser = {
+          id: cred.user.uid,
+          name: trimmedName || cred.user.email?.split('@')[0] || normEmail.split('@')[0],
+          email: normEmail,
+          accountType: resolvedRole,
+          createdAt: cred.user.metadata?.creationTime || new Date().toISOString(),
+        };
+        return { ok: true, user: authUser };
+      }
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      let errorMsg = 'Registreren mislukt.';
+      if (code === 'auth/email-already-in-use') {
+        errorMsg = 'Er bestaat al een account met dit e-mailadres.';
+      } else if (code === 'auth/weak-password') {
+        errorMsg = 'Wachtwoord is te zwak (minimaal 6 tekens).';
+      } else if (code === 'auth/invalid-email') {
+        errorMsg = 'Ongeldig e-mailadres.';
+      } else if (err instanceof Error) {
+        errorMsg = err.message;
+      }
+      return { ok: false, error: errorMsg };
+    }
+  }
+
+  // Lokale dev-fallback
+  return {
+    ok: true,
+    user: {
+      id: resolvedRole === 'admin' ? 'admin_jamal' : 'dev_usr_' + Math.random().toString(36).substring(2, 8),
+      name: trimmedName || normEmail.split('@')[0],
+      email: normEmail,
+      accountType: resolvedRole,
+      createdAt: new Date().toISOString(),
+    },
+  };
+}
+
+/**
+ * Cross-device fallback: haal een bestelling eenmalig op via Firestore met trackingToken
+ */
+export async function fetchOrderByTokenFromFirestore(token: string): Promise<Order | null> {
+  const cleanToken = token.trim();
+  if (!cleanToken || !isConfigured) return null;
+
+  try {
+    const fb = await getFirebaseBundle();
+    if (!fb) return null;
+
+    const ordersRef = fb.firestore.collection(fb.db, 'orders');
+
+    // 1. Zoek op trackingToken
+    const q1 = fb.firestore.query(
+      ordersRef,
+      fb.firestore.where('trackingToken', '==', cleanToken),
+      fb.firestore.limit(1)
+    );
+    const snap1 = await fb.firestore.getDocs(q1);
+    if (!snap1.empty) {
+      const data = snap1.docs[0].data();
+      return {
+        ...data,
+        createdAt: new Date(data.createdAt),
+        deliveredAt: data.deliveredAt ? new Date(data.deliveredAt) : undefined,
+      } as Order;
+    }
+
+    // 2. Zoek op orderNumber
+    const q2 = fb.firestore.query(
+      ordersRef,
+      fb.firestore.where('orderNumber', '==', cleanToken),
+      fb.firestore.limit(1)
+    );
+    const snap2 = await fb.firestore.getDocs(q2);
+    if (!snap2.empty) {
+      const data = snap2.docs[0].data();
+      return {
+        ...data,
+        createdAt: new Date(data.createdAt),
+        deliveredAt: data.deliveredAt ? new Date(data.deliveredAt) : undefined,
+      } as Order;
+    }
+
+    // 3. Directe document ID controle
+    const docRef = fb.firestore.doc(fb.db, 'orders', cleanToken);
+    const docSnap = await fb.firestore.getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        ...data,
+        createdAt: new Date(data.createdAt),
+        deliveredAt: data.deliveredAt ? new Date(data.deliveredAt) : undefined,
+      } as Order;
+    }
+
+    return null;
+  } catch (err) {
+    console.warn('Fout bij ophalen van order via Firestore token lookup:', err);
+    return null;
+  }
+}
+
+/**
+ * Realtime Firestore listener voor bestellingen in het admin dashboard (onSnapshot)
+ */
+export function subscribeToFirestoreOrders(
+  onOrders: (orders: Order[]) => void,
+  onError?: (error: unknown) => void
+): () => void {
+  if (!isConfigured) {
+    return () => {};
+  }
+
+  let unsubscribe: (() => void) | null = null;
+  let isCancelled = false;
+
+  getFirebaseBundle().then((fb) => {
+    if (isCancelled || !fb) return;
+    try {
+      const ordersCol = fb.firestore.collection(fb.db, 'orders');
+      unsubscribe = fb.firestore.onSnapshot(
+        ordersCol,
+        (snapshot) => {
+          const orders: Order[] = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            orders.push({
+              ...data,
+              createdAt: new Date(data.createdAt),
+              deliveredAt: data.deliveredAt ? new Date(data.deliveredAt) : undefined,
+            } as Order);
+          });
+          onOrders(orders);
+        },
+        (err) => {
+          console.warn('Firestore onSnapshot listener fout:', err);
+          if (onError) onError(err);
+        }
+      );
+    } catch (err) {
+      console.warn('Kon Firestore onSnapshot niet starten:', err);
+      if (onError) onError(err);
+    }
+  });
+
+  return () => {
+    isCancelled = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 }
