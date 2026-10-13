@@ -2,12 +2,12 @@ import type { Order, Subscription, AuthUser, MemberMiningProfile } from '@/types
 
 // Firebase configuratie met environment variables en fallback naar boostplug-dev
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyB4MJsHlKXZpNO_sALLgPVxRX0qm-wq6lM',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'boostplug-dev.firebaseapp.com',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'boostplug-dev',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'boostplug-dev.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'boostplug-dev.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '343475014741',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:343475014741:web:859d97498891c1f10c58dc',
 };
 
 // Initialiseer Firebase alleen als een geldige apiKey aanwezig is
