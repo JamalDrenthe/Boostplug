@@ -1,76 +1,78 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
   <defs>
-    <!-- Background Gradient: Deep Obsidian to Cosmic Slate -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0c111d"/>
-      <stop offset="50%" stop-color="#070b12"/>
-      <stop offset="100%" stop-color="#030508"/>
+    <!-- Background Gradient: matching Header.tsx [hsl(220,30%,15%)] to [hsl(220,35%,8%)] -->
+    <linearGradient id="badgeBg" x1="15%" y1="15%" x2="85%" y2="85%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="45%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#080d1a"/>
     </linearGradient>
 
-    <!-- Border Gradient: Neon Green to Cyber Blue glow -->
-    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.8"/>
-      <stop offset="40%" stop-color="#1e293b" stop-opacity="0.25"/>
-      <stop offset="70%" stop-color="#0ea5e9" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="#00d2ff" stop-opacity="0.8"/>
+    <!-- Subtle Premium Border Gradient: Green hint to Cyan hint -->
+    <linearGradient id="badgeBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.5"/>
     </linearGradient>
 
-    <!-- Brand Core: Vibrant Neon Green to Cyber Cyan -->
-    <linearGradient id="brandGrad" x1="10%" y1="10%" x2="90%" y2="90%">
-      <stop offset="0%" stop-color="#22c55e"/>
-      <stop offset="45%" stop-color="#10b981"/>
-      <stop offset="100%" stop-color="#00d2ff"/>
-    </linearGradient>
-
-    <!-- Left Pin Gradient (Green) -->
-    <linearGradient id="pinGreen" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#4ade80"/>
-      <stop offset="100%" stop-color="#22c55e"/>
-    </linearGradient>
-
-    <!-- Right Pin Gradient (Cyan) -->
-    <linearGradient id="pinBlue" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="100%" stop-color="#00d2ff"/>
-    </linearGradient>
-
-    <!-- Ambient Center Glow -->
-    <radialGradient id="ambientGlow" cx="50%" cy="55%" r="50%">
-      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.25"/>
-      <stop offset="60%" stop-color="#00d2ff" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- Bolt Filter Glow -->
-    <filter id="boltGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+    <!-- Neon Glow Filter for Green Node -->
+    <filter id="glowGreen" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+
+    <!-- Neon Glow Filter for Cyan Node -->
+    <filter id="glowCyan" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Radial Green Ambient Aura -->
+    <radialGradient id="greenAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#22c55e" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Radial Cyan Ambient Aura -->
+    <radialGradient id="cyanAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#0ea5e9" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Node 3D Gradients -->
+    <linearGradient id="greenNodeGrad" x1="20%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+
+    <linearGradient id="cyanNodeGrad" x1="20%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
   </defs>
 
-  <!-- Base App Icon / Squircle -->
-  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#bgGrad)"/>
-  <rect x="4.5" y="4.5" width="119" height="119" rx="27.5" fill="none" stroke="url(#borderGrad)" stroke-width="1.8"/>
-  
-  <!-- Subtle Ambient Glow -->
-  <circle cx="64" cy="66" r="46" fill="url(#ambientGlow)"/>
+  <!-- Circular Base Badge -->
+  <circle cx="64" cy="64" r="58" fill="url(#badgeBg)"/>
+  <circle cx="64" cy="64" r="57" fill="none" stroke="url(#badgeBorder)" stroke-width="2.2"/>
 
-  <!-- Hardware Plug Pins (Left = Green, Right = Blue) -->
-  <rect x="44" y="18" width="13" height="20" rx="4.5" fill="url(#pinGreen)"/>
-  <rect x="71" y="18" width="13" height="20" rx="4.5" fill="url(#pinBlue)"/>
+  <!-- Left Green Node Ambient Glow -->
+  <circle cx="45" cy="64" r="26" fill="url(#greenAura)"/>
 
-  <!-- Hardware Plug Body / Collar with micro-bevel -->
-  <rect x="33" y="32" width="62" height="16" rx="6" fill="#111827" stroke="url(#borderGrad)" stroke-width="1.2"/>
+  <!-- Right Cyan Node Ambient Glow -->
+  <circle cx="83" cy="64" r="26" fill="url(#cyanAura)"/>
 
-  <!-- Signature Dual Core Nodes (Brand DNA from Header) -->
-  <circle cx="50.5" cy="40" r="3.5" fill="#22c55e"/>
-  <circle cx="77.5" cy="40" r="3.5" fill="#00d2ff"/>
+  <!-- Left Green Node (Hsl 142, 76%, 45% - BoostPlug Signature Green) -->
+  <circle cx="45" cy="64" r="14.5" fill="url(#greenNodeGrad)" filter="url(#glowGreen)"/>
+  <circle cx="41.5" cy="60.5" r="4.5" fill="#ffffff" opacity="0.6"/>
 
-  <!-- Boost Lightning Bolt (High-Voltage Surge) -->
-  <path d="M75 46 L43 74 H63 L47 110 L87 64 H67 L79 46 Z" 
-        fill="url(#brandGrad)" 
-        filter="url(#boltGlow)"/>
+  <!-- Right Cyan Node (Hsl 199, 89%, 48% - BoostPlug Signature Cyan) -->
+  <circle cx="83" cy="64" r="14.5" fill="url(#cyanNodeGrad)" filter="url(#glowCyan)"/>
+  <circle cx="79.5" cy="60.5" r="4.5" fill="#ffffff" opacity="0.6"/>
 </svg>
