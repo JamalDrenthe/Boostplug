@@ -96,7 +96,7 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
 
         {/* Profiel */}
         {(() => {
-          const isAdmin = user.accountType === 'admin' || user.email.toLowerCase() === 'info@jamaldrenthe.com';
+          const isAdmin = user.accountType === 'admin' || ['info@boostplug.one', 'info@jamaldrenthe.com'].includes(user.email.toLowerCase());
           return (
             <>
               <Card className="p-6 bg-white/5 border-white/10 mb-8">

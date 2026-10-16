@@ -28,6 +28,22 @@ interface FirebaseBundle {
 
 let firebaseBundlePromise: Promise<FirebaseBundle | null> | null = null;
 
+// Geautoriseerde beheerder e-mailadressen
+export const ADMIN_EMAILS = ['info@boostplug.one', 'info@jamaldrenthe.com'];
+
+export function isAdminEmail(email?: string | null): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.trim().toLowerCase());
+}
+
+export const DEFAULT_ADMIN_USER: AuthUser = {
+  id: 'admin_boostplug',
+  name: 'BoostPlug Beheerder',
+  email: 'info@boostplug.one',
+  accountType: 'admin',
+  createdAt: new Date().toISOString(),
+};
+
 async function getFirebaseBundle(): Promise<FirebaseBundle | null> {
   if (!isConfigured) return null;
 
@@ -98,7 +114,7 @@ export async function checkGoogleRedirectResult(): Promise<{ ok: boolean; user?:
     if (result && result.user) {
       const email = result.user.email?.toLowerCase() || '';
       const name = result.user.displayName || email.split('@')[0];
-      const isAdmin = email === 'info@jamaldrenthe.com';
+      const isAdmin = isAdminEmail(email);
       const authUser: AuthUser = {
         id: result.user.uid,
         name,
@@ -130,10 +146,7 @@ export async function signInWithGoogle(options?: { forceDevFallback?: boolean })
     return {
       ok: true,
       user: {
-        id: 'admin_jamal',
-        name: 'Jamal Drenthe',
-        email: 'info@jamaldrenthe.com',
-        accountType: 'admin',
+        ...DEFAULT_ADMIN_USER,
         createdAt: new Date().toISOString(),
       },
     };
@@ -160,7 +173,7 @@ export async function signInWithGoogle(options?: { forceDevFallback?: boolean })
 
       const email = result.user.email?.toLowerCase() || '';
       const name = result.user.displayName || email.split('@')[0];
-      const isAdmin = email === 'info@jamaldrenthe.com';
+      const isAdmin = isAdminEmail(email);
       
       const authUser: AuthUser = {
         id: result.user.uid,
@@ -196,14 +209,11 @@ export async function signInWithGoogle(options?: { forceDevFallback?: boolean })
     }
   }
 
-  // Lokale fallback voor development (info@jamaldrenthe.com is admin)
+  // Lokale fallback voor development
   return {
     ok: true,
     user: {
-      id: 'admin_jamal',
-      name: 'Jamal Drenthe',
-      email: 'info@jamaldrenthe.com',
-      accountType: 'admin',
+      ...DEFAULT_ADMIN_USER,
       createdAt: new Date().toISOString(),
     },
   };
@@ -329,7 +339,7 @@ export async function signInWithEmail(
         const result = await fb.signInWithEmailAndPassword(fb.auth, normEmail, password);
         const userEmail = result.user.email?.toLowerCase() || normEmail;
         const name = result.user.displayName || userEmail.split('@')[0];
-        const isAdmin = userEmail === 'info@jamaldrenthe.com';
+        const isAdmin = isAdminEmail(userEmail);
         const authUser: AuthUser = {
           id: result.user.uid,
           name,
@@ -354,12 +364,12 @@ export async function signInWithEmail(
   }
 
   // Lokale dev-fallback
-  const isAdmin = normEmail === 'info@jamaldrenthe.com';
+  const isAdmin = isAdminEmail(normEmail);
   return {
     ok: true,
     user: {
-      id: isAdmin ? 'admin_jamal' : 'dev_usr_' + Math.random().toString(36).substring(2, 8),
-      name: isAdmin ? 'Jamal Drenthe' : normEmail.split('@')[0],
+      id: isAdmin ? 'admin_boostplug' : 'dev_usr_' + Math.random().toString(36).substring(2, 8),
+      name: isAdmin ? 'BoostPlug Beheerder' : normEmail.split('@')[0],
       email: normEmail,
       accountType: isAdmin ? 'admin' : 'customer',
       createdAt: new Date().toISOString(),
@@ -378,7 +388,7 @@ export async function signUpWithEmail(
 ): Promise<{ ok: boolean; user?: AuthUser; error?: string }> {
   const normEmail = email.trim().toLowerCase();
   const trimmedName = name.trim();
-  const resolvedRole: import('@/types').AccountType = normEmail === 'info@jamaldrenthe.com' ? 'admin' : accountType;
+  const resolvedRole: import('@/types').AccountType = isAdminEmail(normEmail) ? 'admin' : accountType;
 
   if (isConfigured) {
     try {

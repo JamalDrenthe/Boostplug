@@ -71,7 +71,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return signedIn() && (
-        (request.auth.token.email == 'info@jamaldrenthe.com' && request.auth.token.get('email_verified', true) == true) ||
+        (request.auth.token.email in ['info@boostplug.one', 'info@jamaldrenthe.com'] && request.auth.token.get('email_verified', true) == true) ||
         request.auth.token.get('admin', false) == true
       );
     }

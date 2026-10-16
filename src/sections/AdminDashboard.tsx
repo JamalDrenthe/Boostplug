@@ -70,7 +70,7 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
   const [isLiveActive, setIsLiveActive] = useState(false);
 
   // Alleen geautoriseerde admins
-  const isAuthorizedAdmin = user?.accountType === 'admin' || user?.email?.toLowerCase() === 'info@jamaldrenthe.com';
+  const isAuthorizedAdmin = user?.accountType === 'admin' || (user?.email ? ['info@boostplug.one', 'info@jamaldrenthe.com'].includes(user.email.toLowerCase()) : false);
 
   // Realtime Firestore onSnapshot listener
   useEffect(() => {
@@ -116,7 +116,7 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
             <ShieldCheck className="w-12 h-12 text-red-400 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-white mb-2">Toegang geweigerd</h2>
             <p className="text-white/60 text-sm mb-6">
-              Je hebt beheerdersrechten nodig om het controlecentrum te openen. Log in met info@jamaldrenthe.com.
+              Je hebt beheerdersrechten nodig om het controlecentrum te openen. Log in met info@boostplug.one.
             </p>
             <Button onClick={onBack} variant="outline" className="border-white/20 text-white">
               Terug
@@ -264,7 +264,7 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
               </h1>
               <Badge className="bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)] border-[hsl(142,76%,45%)]/40 px-3 py-1">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-                info@jamaldrenthe.com
+                {user?.email || 'info@boostplug.one'}
               </Badge>
               <Badge variant="outline" className={isLiveActive ? "border-green-500/50 text-green-400 bg-green-500/10" : isFirebaseConfigured ? "border-blue-500/50 text-blue-400" : "border-amber-500/50 text-amber-400"}>
                 <Radio className={`w-3 h-3 mr-1 ${isLiveActive ? 'text-green-400 animate-pulse' : ''}`} />
@@ -829,7 +829,7 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
                 <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                   <p className="text-xs text-white/40 uppercase font-mono">Firestore Rules</p>
                   <p className="text-lg font-bold text-[hsl(142,76%,45%)] mt-1">Actief & Beveiligd</p>
-                  <p className="text-xs text-white/40 mt-1">Alleen admin info@jamaldrenthe.com</p>
+                  <p className="text-xs text-white/40 mt-1">Geautoriseerd voor info@boostplug.one</p>
                 </div>
                 <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                   <p className="text-xs text-white/40 uppercase font-mono">Client SDK Status</p>
@@ -851,7 +851,7 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function isAdmin() {
       return signedIn() && (
-        request.auth.token.email == 'info@jamaldrenthe.com' ||
+        request.auth.token.email in ['info@boostplug.one', 'info@jamaldrenthe.com'] ||
         request.auth.token.get('admin', false) == true
       );
     }

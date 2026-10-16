@@ -26,6 +26,12 @@ const SESSION_KEY = 'boostplug_session';
 const ORDERS_KEY = 'boostplug_orders';
 const SUBSCRIPTIONS_KEY = 'boostplug_subscriptions';
 
+const ADMIN_EMAILS = ['info@boostplug.one', 'info@jamaldrenthe.com'];
+function isAdminEmail(email?: string | null): boolean {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.trim().toLowerCase());
+}
+
 function quickHash(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -130,7 +136,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => loadJSON<Subscription[]>(SUBSCRIPTIONS_KEY, []));
   const [user, setUser] = useState<AuthUser | null>(() => {
     const loaded = loadJSON<AuthUser | null>(SESSION_KEY, null);
-    if (loaded && loaded.email && loaded.email.toLowerCase() === 'info@jamaldrenthe.com') {
+    if (loaded && loaded.email && isAdminEmail(loaded.email)) {
       return { ...loaded, accountType: 'admin' };
     }
     return loaded;
@@ -161,7 +167,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         checkGoogleRedirectResult().then((res) => {
           if (res?.ok && res.user) {
             const emailNorm = res.user.email.toLowerCase();
-            const isAdmin = emailNorm === 'info@jamaldrenthe.com';
+            const isAdmin = isAdminEmail(emailNorm);
             const session: AuthUser = {
               ...res.user,
               accountType: isAdmin ? 'admin' : res.user.accountType,
@@ -176,7 +182,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const register = useCallback(async (name: string, email: string, password: string, accountType: AccountType) => {
     const normalized = email.trim().toLowerCase();
-    const resolvedRole: AccountType = normalized === 'info@jamaldrenthe.com' ? 'admin' : accountType;
+    const resolvedRole: AccountType = isAdminEmail(normalized) ? 'admin' : accountType;
 
     // 1. Registreren via Firebase Auth (met lokale fallback in firebase.ts)
     const { signUpWithEmail } = await import('@/lib/firebase');
@@ -212,7 +218,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const normalized = email.trim().toLowerCase();
-    const isAdmin = normalized === 'info@jamaldrenthe.com';
+    const isAdmin = isAdminEmail(normalized);
 
     // 1. Inloggen via Firebase Auth
     const { signInWithEmail } = await import('@/lib/firebase');
@@ -256,7 +262,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       return { ok: false, error: res.error || 'Google login mislukt' };
     }
     const emailNorm = res.user.email.toLowerCase();
-    const isAdmin = emailNorm === 'info@jamaldrenthe.com';
+    const isAdmin = isAdminEmail(emailNorm);
     const session: AuthUser = {
       ...res.user,
       accountType: isAdmin ? 'admin' : res.user.accountType,
@@ -480,18 +486,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const getAllUsers = useCallback(() => {
     const list = getStoredUsers();
-    // Zorg dat admin Jamal er altijd tussen staat en gegarandeerd admin is
-    const jamalIndex = list.findIndex(u => u.email.toLowerCase() === 'info@jamaldrenthe.com');
-    if (jamalIndex === -1) {
+    // Zorg dat admin info@boostplug.one er altijd tussen staat en gegarandeerd admin is
+    const adminIndex = list.findIndex(u => isAdminEmail(u.email));
+    if (adminIndex === -1) {
       list.unshift({
-        id: 'admin_jamal',
-        name: 'Jamal Drenthe',
-        email: 'info@jamaldrenthe.com',
+        id: 'admin_boostplug',
+        name: 'BoostPlug Beheerder',
+        email: 'info@boostplug.one',
         accountType: 'admin',
         createdAt: '2026-10-10T12:00:00.000Z',
       });
     } else {
-      list[jamalIndex].accountType = 'admin';
+      list[adminIndex].accountType = 'admin';
     }
     return list;
   }, []);
@@ -501,7 +507,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       {
         id: 'bp_ord_101',
         orderNumber: 'BP-202610-00421',
-        email: 'info@jamaldrenthe.com',
+        email: 'info@boostplug.one',
         locale: 'nl',
         currency: 'EUR',
         items: [
@@ -582,7 +588,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         id: 'SUB-STARTER-1',
         planId: 'growth',
         planName: 'Growth',
-        email: 'info@jamaldrenthe.com',
+        email: 'info@boostplug.one',
         monthlyPrice: 79,
         currency: 'EUR',
         status: 'active',
@@ -593,9 +599,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
     const demoUsers: StoredUser[] = [
       {
-        id: 'admin_jamal',
-        name: 'Jamal Drenthe',
-        email: 'info@jamaldrenthe.com',
+        id: 'admin_boostplug',
+        name: 'BoostPlug Beheerder',
+        email: 'info@boostplug.one',
         accountType: 'admin',
         createdAt: new Date(Date.now() - 3600 * 1000 * 24 * 30).toISOString(),
       },

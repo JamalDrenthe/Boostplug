@@ -116,7 +116,7 @@ export function LoginPage({ onBack, onSuccess, onGoRegister }: LoginPageProps) {
                   onClick={() => handleGoogleLogin(true)}
                   className="w-full py-2 px-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-medium rounded-lg text-xs transition-colors cursor-pointer text-center block"
                 >
-                  ⚡ Direct doorgaan als Beheerder (Jamal Drenthe)
+                  ⚡ Direct doorgaan als Beheerder (info@boostplug.one)
                 </button>
               </div>
             )}
