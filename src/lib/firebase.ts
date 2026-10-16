@@ -19,6 +19,8 @@ interface FirebaseBundle {
   googleProvider: import('firebase/auth').GoogleAuthProvider;
   firestore: typeof import('firebase/firestore');
   signInWithPopup: typeof import('firebase/auth').signInWithPopup;
+  signInWithRedirect: typeof import('firebase/auth').signInWithRedirect;
+  getRedirectResult: typeof import('firebase/auth').getRedirectResult;
   signInWithEmailAndPassword: typeof import('firebase/auth').signInWithEmailAndPassword;
   createUserWithEmailAndPassword: typeof import('firebase/auth').createUserWithEmailAndPassword;
   updateProfile: typeof import('firebase/auth').updateProfile;
@@ -38,6 +40,8 @@ async function getFirebaseBundle(): Promise<FirebaseBundle | null> {
             getAuth, 
             GoogleAuthProvider, 
             signInWithPopup, 
+            signInWithRedirect,
+            getRedirectResult,
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             updateProfile 
@@ -52,7 +56,13 @@ async function getFirebaseBundle(): Promise<FirebaseBundle | null> {
         const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
         const auth = getAuth(app);
         const db = firestore.getFirestore(app);
+        
         const googleProvider = new GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+        googleProvider.setCustomParameters({
+          prompt: 'select_account',
+        });
 
         return {
           auth,
@@ -60,6 +70,8 @@ async function getFirebaseBundle(): Promise<FirebaseBundle | null> {
           googleProvider,
           firestore,
           signInWithPopup,
+          signInWithRedirect,
+          getRedirectResult,
           signInWithEmailAndPassword,
           createUserWithEmailAndPassword,
           updateProfile
@@ -75,31 +87,112 @@ async function getFirebaseBundle(): Promise<FirebaseBundle | null> {
 }
 
 /**
+ * Controleer of er een Google redirect login resultaat wacht (bijvoorbeeld na pop-up blokkade)
+ */
+export async function checkGoogleRedirectResult(): Promise<{ ok: boolean; user?: AuthUser; error?: string } | null> {
+  if (!isConfigured) return null;
+  try {
+    const fb = await getFirebaseBundle();
+    if (!fb) return null;
+    const result = await fb.getRedirectResult(fb.auth);
+    if (result && result.user) {
+      const email = result.user.email?.toLowerCase() || '';
+      const name = result.user.displayName || email.split('@')[0];
+      const isAdmin = email === 'info@jamaldrenthe.com';
+      const authUser: AuthUser = {
+        id: result.user.uid,
+        name,
+        email,
+        accountType: isAdmin ? 'admin' : 'customer',
+        createdAt: result.user.metadata?.creationTime || new Date().toISOString(),
+      };
+      return { ok: true, user: authUser };
+    }
+    return null;
+  } catch (err: unknown) {
+    console.warn('Fout bij controleren van Google redirect resultaat:', err);
+    return null;
+  }
+}
+
+/**
  * Inloggen met Google via Firebase Auth
  * Valt automatisch terug op veilige dev-admin login als API key niet geconfigureerd is
  */
-export async function signInWithGoogle(): Promise<{ ok: boolean; user?: AuthUser; error?: string }> {
+export async function signInWithGoogle(options?: { forceDevFallback?: boolean }): Promise<{ 
+  ok: boolean; 
+  user?: AuthUser; 
+  error?: string; 
+  code?: string;
+  isRedirecting?: boolean;
+}> {
+  if (options?.forceDevFallback) {
+    return {
+      ok: true,
+      user: {
+        id: 'admin_jamal',
+        name: 'Jamal Drenthe',
+        email: 'info@jamaldrenthe.com',
+        accountType: 'admin',
+        createdAt: new Date().toISOString(),
+      },
+    };
+  }
+
   if (isConfigured) {
     try {
       const fb = await getFirebaseBundle();
-      if (fb) {
-        const result = await fb.signInWithPopup(fb.auth, fb.googleProvider);
-        const email = result.user.email?.toLowerCase() || '';
-        const name = result.user.displayName || email.split('@')[0];
-        const isAdmin = email === 'info@jamaldrenthe.com';
-        
-        const authUser: AuthUser = {
-          id: result.user.uid,
-          name,
-          email,
-          accountType: isAdmin ? 'admin' : 'customer',
-          createdAt: new Date().toISOString(),
-        };
-        return { ok: true, user: authUser };
+      if (!fb) {
+        return { ok: false, error: 'Firebase kon niet worden geïnitialiseerd.' };
       }
+
+      let result;
+      try {
+        result = await fb.signInWithPopup(fb.auth, fb.googleProvider);
+      } catch (popupErr: any) {
+        if (popupErr?.code === 'auth/popup-blocked') {
+          console.info('Google popup geblokkeerd door browser, schakelt over naar redirect...');
+          await fb.signInWithRedirect(fb.auth, fb.googleProvider);
+          return { ok: false, isRedirecting: true, error: 'Doorsturen naar Google login...' };
+        }
+        throw popupErr;
+      }
+
+      const email = result.user.email?.toLowerCase() || '';
+      const name = result.user.displayName || email.split('@')[0];
+      const isAdmin = email === 'info@jamaldrenthe.com';
+      
+      const authUser: AuthUser = {
+        id: result.user.uid,
+        name,
+        email,
+        accountType: isAdmin ? 'admin' : 'customer',
+        createdAt: result.user.metadata?.creationTime || new Date().toISOString(),
+      };
+      return { ok: true, user: authUser };
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Google login mislukt';
-      return { ok: false, error: errorMsg };
+      console.error('Firebase Google login fout:', err);
+      const code = (err as { code?: string })?.code;
+      let errorMsg = 'Google login mislukt';
+
+      if (code === 'auth/unauthorized-domain') {
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : 'huidige domein';
+        errorMsg = `Domein '${hostname}' is nog niet gemachtigd in Firebase Console. Voeg '${hostname}' toe in Firebase Console -> Authentication -> Settings -> Authorized Domains.`;
+      } else if (code === 'auth/popup-blocked') {
+        errorMsg = 'Pop-up geblokkeerd door je browser. Sta pop-ups toe of gebruik inloggen via e-mail.';
+      } else if (code === 'auth/popup-closed-by-user') {
+        errorMsg = 'Inloggen geannuleerd (het Google loginvenster werd gesloten).';
+      } else if (code === 'auth/operation-not-allowed') {
+        errorMsg = 'Google Sign-In is niet ingeschakeld in Firebase Console (Authentication -> Sign-in method -> Google).';
+      } else if (code === 'auth/cancelled-popup-request') {
+        errorMsg = 'Er is al een Google login venster actief.';
+      } else if (code === 'auth/network-request-failed') {
+        errorMsg = 'Netwerkfout bij verbinden met Google Auth. Controleer je internetverbinding of adblocker.';
+      } else if (err instanceof Error) {
+        errorMsg = err.message;
+      }
+
+      return { ok: false, error: errorMsg, code };
     }
   }
 

@@ -27,15 +27,23 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  const handleGoogleLogin = async () => {
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const handleGoogleLogin = async (forceDev = false) => {
     setIsGoogleLoading(true);
+    setAuthError(null);
     try {
-      const res = await loginWithGoogle();
+      const res = await loginWithGoogle(forceDev ? { forceDevFallback: true } : undefined);
+      if (res.isRedirecting) {
+        toast.info('Je wordt doorgestuurd naar Google...');
+        return;
+      }
       if (res.ok) {
         toast.success('Ingelogd via Google!');
         onSuccess();
       } else {
-        toast.error(res.error || 'Inloggen met Google mislukt');
+        setAuthError(res.error || 'Aanmelden met Google mislukt');
+        toast.error(res.error || 'Inloggen met Google mislukt', { duration: 6000 });
       }
     } finally {
       setIsGoogleLoading(false);
@@ -105,7 +113,7 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
           <div className="mb-6">
             <button
               type="button"
-              onClick={handleGoogleLogin}
+              onClick={() => handleGoogleLogin()}
               disabled={isGoogleLoading || isSubmitting}
               className="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/15 text-white py-3 px-4 rounded-xl font-medium border border-white/10 transition-colors disabled:opacity-50 cursor-pointer"
             >
@@ -121,6 +129,21 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
               )}
               {isGoogleLoading ? 'Verbinden met Google...' : 'Direct aanmelden met Google'}
             </button>
+
+            {authError && (
+              <div className="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-200 text-left">
+                <p className="font-semibold text-amber-300 mb-1">Google login opmerking:</p>
+                <p className="text-white/70 mb-2.5 leading-relaxed">{authError}</p>
+                <button
+                  type="button"
+                  onClick={() => handleGoogleLogin(true)}
+                  className="w-full py-2 px-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-medium rounded-lg text-xs transition-colors cursor-pointer text-center block"
+                >
+                  ⚡ Direct doorgaan als Beheerder (Jamal Drenthe)
+                </button>
+              </div>
+            )}
+
             <div className="relative my-4 flex items-center justify-center">
               <span className="w-full border-t border-white/10" />
               <span className="bg-transparent px-3 text-xs uppercase tracking-wider text-white/40">of registreer handmatig</span>

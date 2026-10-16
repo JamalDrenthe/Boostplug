@@ -101,7 +101,7 @@ interface StoreState {
   user: AuthUser | null;
   register: (name: string, email: string, password: string, accountType: AccountType) => Promise<{ ok: boolean; error?: string }>;
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
-  loginWithGoogle: () => Promise<{ ok: boolean; error?: string }>;
+  loginWithGoogle: (options?: { forceDevFallback?: boolean }) => Promise<{ ok: boolean; error?: string; isRedirecting?: boolean }>;
   logout: () => void;
 
   // Member Mining
@@ -150,6 +150,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               saveJSON(ORDERS_KEY, merged);
               return merged;
             });
+          }
+        });
+      });
+    }
+
+    // Controleer of er een Google redirect login resultaat wacht
+    if (isFirebaseConfigured && !user) {
+      import('@/lib/firebase').then(({ checkGoogleRedirectResult }) => {
+        checkGoogleRedirectResult().then((res) => {
+          if (res?.ok && res.user) {
+            const emailNorm = res.user.email.toLowerCase();
+            const isAdmin = emailNorm === 'info@jamaldrenthe.com';
+            const session: AuthUser = {
+              ...res.user,
+              accountType: isAdmin ? 'admin' : res.user.accountType,
+            };
+            setUser(session);
+            saveJSON(SESSION_KEY, session);
           }
         });
       });
@@ -228,9 +246,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return { ok: false, error: fbRes.error || 'Onjuiste combinatie van e-mailadres en wachtwoord.' };
   }, []);
 
-  const loginWithGoogleHandler = useCallback(async () => {
+  const loginWithGoogleHandler = useCallback(async (options?: { forceDevFallback?: boolean }) => {
     const { signInWithGoogle } = await import('@/lib/firebase');
-    const res = await signInWithGoogle();
+    const res = await signInWithGoogle(options);
+    if (res.isRedirecting) {
+      return { ok: false, isRedirecting: true, error: res.error };
+    }
     if (!res.ok || !res.user) {
       return { ok: false, error: res.error || 'Google login mislukt' };
     }
