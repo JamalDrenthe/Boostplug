@@ -109,6 +109,8 @@ interface StoreState {
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   loginWithGoogle: (options?: { forceDevFallback?: boolean }) => Promise<{ ok: boolean; error?: string; isRedirecting?: boolean }>;
   logout: () => void;
+  updateUserProfile: (updates: Partial<AuthUser>) => void;
+  reorderCart: (items: CartItem[]) => void;
 
   // Member Mining
   saveMiningProfile: (profileUpdates: Partial<MemberMiningProfile>) => void;
@@ -291,6 +293,29 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // sessie blijft in memory
     }
+  }, []);
+
+  const updateUserProfile = useCallback((updates: Partial<AuthUser>) => {
+    setUser(prev => {
+      if (!prev) return null;
+      const updated: AuthUser = { ...prev, ...updates };
+      if (isAdminEmail(updated.email)) {
+        updated.accountType = 'admin';
+      }
+      saveJSON(SESSION_KEY, updated);
+
+      const users = getStoredUsers();
+      const idx = users.findIndex(u => u.email.toLowerCase() === prev.email.toLowerCase());
+      if (idx >= 0) {
+        users[idx] = { ...users[idx], ...updated };
+        saveStoredUsers(users);
+      }
+      return updated;
+    });
+  }, []);
+
+  const reorderCart = useCallback((items: CartItem[]) => {
+    setCart(items);
   }, []);
 
   const addToCart = useCallback((item: CartItem) => {
@@ -705,6 +730,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       login,
       loginWithGoogle: loginWithGoogleHandler,
       logout,
+      updateUserProfile,
+      reorderCart,
       saveMiningProfile,
       getMemberMiningProfile,
       isFirebaseConfigured,

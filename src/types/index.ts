@@ -118,6 +118,13 @@ export interface MemberMiningProfile {
   updatedAt: string;
 }
 
+export interface UserBillingAddress {
+  street?: string;
+  postalCode?: string;
+  city?: string;
+  country?: string;
+}
+
 export interface AuthUser {
   id: string;
   name: string;
@@ -125,6 +132,14 @@ export interface AuthUser {
   accountType: AccountType;
   createdAt: string;
   miningProfile?: MemberMiningProfile;
+  phone?: string;
+  companyOrArtistName?: string;
+  kvkOrVat?: string;
+  billingAddress?: UserBillingAddress;
+  ibanPayout?: string;
+  ibanHolder?: string;
+  preferredCurrency?: Currency;
+  emailNotifications?: boolean;
 }
 
 export type SubscriptionStatus = 'active' | 'cancelled';
