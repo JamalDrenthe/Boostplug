@@ -35,14 +35,12 @@ export function Footer() {
             <p className="text-white/50 mb-6">
               BoostPlug is een onderneming van{' '}
               <a
-                href="https://quantuminitium.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[hsl(142,76%,45%)] hover:text-white transition-colors"
+                href="#/quantum-initium"
+                className="text-[hsl(142,76%,45%)] hover:text-white transition-colors font-medium"
               >
-                Quantum Initium Holding
+                Quantum Initium
               </a>
-              {' '}— naast onder meer WoningVry, Spontiva, Investbotiq, VVC en Immigratie Punt.
+              {' '}— naast onder meer Verdienende Vrienden Club (VVC), Spontiva, Investbotiq, Zheavenzy en WoningVry.
             </p>
             <div className="flex gap-3">
               <a 
@@ -117,6 +115,16 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="#/quantum-initium" className="text-white/50 hover:text-[hsl(142,76%,45%)] transition-colors">
+                  Quantum Initium
+                </a>
+              </li>
+              <li>
+                <a href="#/vvc" className="text-sky-400 hover:text-sky-300 transition-colors font-medium">
+                  Verdienende Vrienden Club
+                </a>
+              </li>
+              <li>
                 <a href="#/account" className="text-white/50 hover:text-white transition-colors">
                   Mijn account
                 </a>
@@ -178,7 +186,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="border-t border-white/10 mt-8 pt-8 text-center">
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} BoostPlug — een onderneming van Quantum Initium Holding. Alle rechten voorbehouden.
+            © {new Date().getFullYear()} BoostPlug — een onderneming van Quantum Initium. Alle rechten voorbehouden.
           </p>
         </div>
       </div>

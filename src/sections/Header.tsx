@@ -16,6 +16,8 @@ import {
   Sparkles,
   ShoppingBag,
   Pickaxe,
+  Building2,
+  Users,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -32,10 +34,22 @@ interface HeaderProps {
   onHome: () => void;
   onAbout: () => void;
   onAdmin?: () => void;
+  onQuantumInitium?: () => void;
+  onVVC?: () => void;
   onNavigateSection?: (sectionId: string) => void;
 }
 
-export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onAdmin, onNavigateSection }: HeaderProps) {
+export function Header({
+  onCheckout,
+  onTracking,
+  onAccount,
+  onHome,
+  onAbout,
+  onAdmin,
+  onQuantumInitium,
+  onVVC,
+  onNavigateSection,
+}: HeaderProps) {
   const { cart, currency, setCurrency, locale, setLocale, user, isDemoUser, loginAsDemo } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -108,7 +122,7 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
             <button 
               onClick={(e) => handleSectionClick(e, 'products')} 
               className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
@@ -127,6 +141,24 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
             >
               Voor leden
             </a>
+            <button 
+              onClick={() => {
+                if (onQuantumInitium) onQuantumInitium();
+                else window.location.hash = '#/quantum-initium';
+              }} 
+              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
+            >
+              Quantum Initium
+            </button>
+            <button 
+              onClick={() => {
+                if (onVVC) onVVC();
+                else window.location.hash = '#/vvc';
+              }} 
+              className="text-sm text-sky-400 hover:text-white transition-colors cursor-pointer font-medium"
+            >
+              Verdienende Vrienden Club
+            </button>
             <button 
               onClick={(e) => handleSectionClick(e, 'how-it-works')} 
               className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
@@ -463,6 +495,28 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
               >
                 <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
                 <span className="text-white">Over ons</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  if (onQuantumInitium) onQuantumInitium();
+                  else window.location.hash = '#/quantum-initium';
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+              >
+                <Building2 className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                <span className="text-white">Quantum Initium</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  if (onVVC) onVVC();
+                  else window.location.hash = '#/vvc';
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-left cursor-pointer"
+              >
+                <Users className="w-5 h-5 text-sky-400" />
+                <span className="text-sky-300 font-medium">Verdienende Vrienden Club</span>
               </button>
               <button 
                 onClick={() => {

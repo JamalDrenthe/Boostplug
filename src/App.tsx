@@ -14,6 +14,8 @@ const AccountCenter = lazy(() => import('@/sections/AccountCenter').then(m => ({
 const AboutPage = lazy(() => import('@/sections/AboutPage').then(m => ({ default: m.AboutPage })));
 const MembersPage = lazy(() => import('@/sections/MembersPage').then(m => ({ default: m.MembersPage })));
 const AdminDashboard = lazy(() => import('@/sections/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const QuantumInitiumPage = lazy(() => import('@/sections/QuantumInitiumPage').then(m => ({ default: m.QuantumInitiumPage })));
+const VVCPage = lazy(() => import('@/sections/VVCPage').then(m => ({ default: m.VVCPage })));
 import { Footer } from '@/sections/Footer';
 import { Toaster } from '@/components/ui/sonner';
 import './App.css';
@@ -26,7 +28,9 @@ type Route =
   | { page: 'account' }
   | { page: 'admin' }
   | { page: 'about' }
-  | { page: 'members' };
+  | { page: 'members' }
+  | { page: 'quantum-initium' }
+  | { page: 'vvc' };
 
 function parseHash(hash: string): Route {
   if (hash.startsWith('#/track/')) {
@@ -49,6 +53,11 @@ function parseHash(hash: string): Route {
       return { page: 'about' };
     case '#/leden':
       return { page: 'members' };
+    case '#/quantum-initium':
+      return { page: 'quantum-initium' };
+    case '#/vvc':
+    case '#/verdienende-vrienden-club':
+      return { page: 'vvc' };
     default:
       return { page: 'home' };
   }
@@ -70,6 +79,10 @@ function routeToHash(route: Route): string {
       return '#/over-ons';
     case 'members':
       return '#/leden';
+    case 'quantum-initium':
+      return '#/quantum-initium';
+    case 'vvc':
+      return '#/vvc';
     default:
       return '';
   }
@@ -141,6 +154,8 @@ function AppContent() {
         onHome={goHome}
         onAbout={() => navigate({ page: 'about' })}
         onAdmin={goAdmin}
+        onQuantumInitium={() => navigate({ page: 'quantum-initium' })}
+        onVVC={() => navigate({ page: 'vvc' })}
         onNavigateSection={handleNavigateSection}
       />
 
@@ -187,6 +202,8 @@ function AppContent() {
               onTrack={(token) => navigate({ page: 'tracking', token })}
               onShop={() => handleNavigateSection('products')}
               onAdmin={goAdmin}
+              onQuantumInitium={() => navigate({ page: 'quantum-initium' })}
+              onVVC={() => navigate({ page: 'vvc' })}
             />
           )}
           {route.page === 'admin' && (
@@ -206,6 +223,20 @@ function AppContent() {
               onBack={goHome}
               onJoin={() => navigate({ page: 'register', accountType: 'member' })}
               onShop={() => handleNavigateSection('products')}
+            />
+          )}
+          {route.page === 'quantum-initium' && (
+            <QuantumInitiumPage
+              onBack={goHome}
+              onShop={() => handleNavigateSection('products')}
+              onGoVVC={() => navigate({ page: 'vvc' })}
+            />
+          )}
+          {route.page === 'vvc' && (
+            <VVCPage
+              onBack={goHome}
+              onJoin={() => navigate({ page: 'register', accountType: 'member' })}
+              onGoQuantumInitium={() => navigate({ page: 'quantum-initium' })}
             />
           )}
         </Suspense>

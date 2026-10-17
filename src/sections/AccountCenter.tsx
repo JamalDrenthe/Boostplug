@@ -29,7 +29,6 @@ import {
   Calendar,
   Pickaxe,
   Cpu,
-  Globe,
   TrendingUp,
   ExternalLink,
   ShieldCheck,
@@ -38,6 +37,7 @@ import {
   Sparkles,
   CreditCard,
   Building2,
+  Users,
   HelpCircle,
   RefreshCw,
   Zap,
@@ -55,6 +55,8 @@ interface AccountCenterProps {
   onTrack: (token: string) => void;
   onShop: () => void;
   onAdmin?: () => void;
+  onQuantumInitium?: () => void;
+  onVVC?: () => void;
 }
 
 const statusConfig: Record<OrderStatus, { label: string; badgeClass: string; icon: React.ComponentType<{ className?: string }> }> = {
@@ -70,7 +72,14 @@ function RotateCcwFallback({ className }: { className?: string }) {
   return <RefreshCw className={className} />;
 }
 
-export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCenterProps) {
+export function AccountCenter({
+  onBack,
+  onTrack,
+  onShop,
+  onAdmin,
+  onQuantumInitium,
+  onVVC,
+}: AccountCenterProps) {
   const {
     user,
     orders,
@@ -612,11 +621,18 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
               Profiel & Facturatie
             </TabsTrigger>
             <TabsTrigger
-              value="ecosystem"
+              value="quantum-initium"
               className="rounded-xl px-4 py-2.5 text-xs sm:text-sm data-[state=active]:bg-[hsl(142,76%,45%)] data-[state=active]:text-black font-medium transition-all"
             >
-              <Globe className="w-4 h-4 mr-2" />
-              Holding Ecosysteem
+              <Building2 className="w-4 h-4 mr-2" />
+              Quantum Initium
+            </TabsTrigger>
+            <TabsTrigger
+              value="vvc"
+              className="rounded-xl px-4 py-2.5 text-xs sm:text-sm data-[state=active]:bg-sky-500 data-[state=active]:text-black font-medium transition-all text-sky-400"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Verdienende Vrienden Club
             </TabsTrigger>
             <TabsTrigger
               value="support"
@@ -1552,25 +1568,42 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
           </TabsContent>
 
           {/* ========================================================= */}
-          {/* TAB 6: QUANTUM INITIUM HOLDING ECOSYSTEEM */}
+          {/* TAB 6: QUANTUM INITIUM */}
           {/* ========================================================= */}
-          <TabsContent value="ecosystem" className="space-y-6">
+          <TabsContent value="quantum-initium" className="space-y-6">
             <Card className="p-6 bg-white/5 border-white/10 rounded-2xl">
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-[hsl(142,76%,45%)]/20 flex items-center justify-center shrink-0">
-                  <Building2 className="w-6 h-6 text-[hsl(142,76%,45%)]" />
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[hsl(142,76%,45%)]/20 flex items-center justify-center shrink-0">
+                    <Building2 className="w-6 h-6 text-[hsl(142,76%,45%)]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-xl font-bold text-white">Quantum Initium</h3>
+                      <Badge className="bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)] border-[hsl(142,76%,45%)]/30 text-[10px]">
+                        Multi-Venture Ecosysteem
+                      </Badge>
+                    </div>
+                    <p className="text-white/60 text-sm leading-relaxed max-w-2xl">
+                      BoostPlug opereert binnen het strategische ecosysteem van{' '}
+                      <strong className="text-white">Quantum Initium</strong>. Onze synergie met gespecialiseerde venture-entiteiten garandeert enterprise betrouwbaarheid, veilige infrastructuur en continue organische innovatie.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Quantum Initium Holding Netwerk</h3>
-                  <p className="text-white/60 text-sm mt-1 leading-relaxed">
-                    BoostPlug opereert niet op een eiland. We zijn een trotse onderneming van{' '}
-                    <strong className="text-white">Quantum Initium Holding</strong>. Onze synergie met gespecialiseerde holdingbedrijven zorgt voor ongeëvenaarde betrouwbaarheid, veilige accounts en een continu draaiend ecosysteem.
-                  </p>
-                </div>
+                <Button
+                  onClick={() => {
+                    if (onQuantumInitium) onQuantumInitium();
+                    else window.location.hash = '#/quantum-initium';
+                  }}
+                  className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-black font-semibold rounded-full shrink-0 shadow-lg shadow-[hsl(142,76%,45%)]/20"
+                >
+                  Bekijk Quantum Initium Hub
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
               </div>
 
               {/* Partners Grid */}
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-2">
@@ -1621,7 +1654,15 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
                       Leden van de Verdienende Vrienden Club ontvangen via Spontiva speciale tarieven en exclusieve voordelen op alle BoostPlug diensten.
                     </p>
                   </div>
-                  <span className="text-xs text-white/30 mt-4 block">Onderdeel van Quantum Holding</span>
+                  <button
+                    onClick={() => {
+                      if (onVVC) onVVC();
+                      else window.location.hash = '#/vvc';
+                    }}
+                    className="text-xs text-sky-400 hover:underline mt-4 text-left block"
+                  >
+                    Ontdek VVC &rarr;
+                  </button>
                 </div>
 
                 <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between">
@@ -1644,7 +1685,7 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
                       <span className="text-xs text-white/40 font-mono">Real Estate</span>
                     </div>
                     <p className="text-white/50 text-xs leading-relaxed">
-                      Vastgoedplatform en woonoplossingen binnen het holding-ecosysteem.
+                      Vastgoedplatform en innovatieve woonoplossingen binnen het holding-ecosysteem.
                     </p>
                   </div>
                   <span className="text-xs text-white/30 mt-4 block">Quantum Initium Portfolio</span>
@@ -1661,6 +1702,120 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
                     </p>
                   </div>
                   <span className="text-xs text-white/30 mt-4 block">Quantum Initium Portfolio</span>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* ========================================================= */}
+          {/* TAB 7: VERDIENENDE VRIENDEN CLUB (VVC) */}
+          {/* ========================================================= */}
+          <TabsContent value="vvc" className="space-y-6">
+            <Card className="p-6 bg-gradient-to-br from-sky-500/10 via-white/5 to-transparent border-sky-500/20 rounded-2xl">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-sky-500/20 flex items-center justify-center shrink-0">
+                    <Users className="w-6 h-6 text-sky-400" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-xl font-bold text-white">Verdienende Vrienden Club (VVC)</h3>
+                      <Badge className="bg-sky-500/20 text-sky-300 border-sky-500/30 text-[10px]">
+                        Besloten Community
+                      </Badge>
+                    </div>
+                    <p className="text-white/60 text-sm leading-relaxed max-w-2xl">
+                      De besloten vereniging van ondernemende hardware- en algoritme-enthousiastelingen binnen Quantum Initium. Bouw passief inkomen op door streaming nodes te draaien en geniet van exclusieve holding voordelen.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => {
+                    if (onVVC) onVVC();
+                    else window.location.hash = '#/vvc';
+                  }}
+                  className="bg-sky-400 hover:bg-sky-300 text-black font-semibold rounded-full shrink-0 shadow-lg shadow-sky-500/20"
+                >
+                  Bekijk Volledige VVC Pagina
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+
+              {/* VVC Highlights Grid */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white font-bold text-sm">Grover Hardware Lease</span>
+                      <Badge className="bg-emerald-500/20 text-emerald-300 text-[10px]">20% Korting</Badge>
+                    </div>
+                    <p className="text-white/50 text-xs leading-relaxed mb-3">
+                      Huur kant-en-klare Apple Silicon Mac Minis of laptops via Grover. VVC-leden ontvangen 20% korting op de eerste maand.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-[11px] text-white/40">Kortingscode:</span>
+                    <code className="text-xs font-mono bg-black/40 px-2 py-0.5 rounded text-sky-300 border border-sky-500/20">
+                      QUANTUMBOOST20
+                    </code>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white font-bold text-sm">SEPA Uitbetalingen</span>
+                      <span className="text-xs text-sky-400 font-mono">1e vd maand</span>
+                    </div>
+                    <p className="text-white/50 text-xs leading-relaxed">
+                      Verdien €150 tot €400 per maand per actieve node. Automatisch en foutloos overgemaakt naar je geregistreerde IBAN.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-white/5 text-[11px] text-emerald-400 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5" /> 100% Legale achtergrondsoftware
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white font-bold text-sm">Spontiva & Netwerk Voordelen</span>
+                      <Badge className="bg-purple-500/20 text-purple-300 text-[10px]">Clubtarieven</Badge>
+                    </div>
+                    <p className="text-white/50 text-xs leading-relaxed">
+                      Toegang tot besloten meetups, Spontiva hospitality packages en holding masterclasses over fintech en algoritmes.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-white/5 text-[11px] text-white/40">
+                    Synergie met Zheavenzy & Logs.rent
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Quick Action Box */}
+              <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl bg-sky-500/10 border border-sky-500/20 gap-3">
+                <div className="text-xs text-sky-200 text-center sm:text-left">
+                  Actief lid worden of extra nodes toevoegen aan je hardware cluster?
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    size="sm"
+                    onClick={() => setActiveTab('mining')}
+                    variant="outline"
+                    className="border-sky-500/30 text-sky-300 hover:bg-sky-500/20"
+                  >
+                    Node Dashboard
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      if (onVVC) onVVC();
+                      else window.location.hash = '#/vvc';
+                    }}
+                    className="bg-sky-400 hover:bg-sky-300 text-black font-semibold"
+                  >
+                    Alles over VVC
+                  </Button>
                 </div>
               </div>
             </Card>
