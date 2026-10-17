@@ -13,7 +13,11 @@ import {
   User,
   LogIn,
   ShieldCheck,
+  Sparkles,
+  ShoppingBag,
+  Pickaxe,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +36,7 @@ interface HeaderProps {
 }
 
 export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onAdmin, onNavigateSection }: HeaderProps) {
-  const { cart, currency, setCurrency, locale, setLocale, user } = useStore();
+  const { cart, currency, setCurrency, locale, setLocale, user, isDemoUser, loginAsDemo } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -205,6 +209,91 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
                   className={`text-white/80 hover:text-white hover:bg-white/10 cursor-pointer ${locale === 'en' ? 'bg-white/10' : ''}`}
                 >
                   🇬🇧 English
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Demo Accounts Dropdown Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="hidden sm:flex items-center gap-1.5 rounded-full border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs px-3 h-8 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Demo</span>
+                  {isDemoUser && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[hsl(142,76%,45%)] animate-pulse" />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-[hsl(220,20%,12%)] border-white/10 w-64 p-2 text-white">
+                <div className="px-2 py-1.5 border-b border-white/10 mb-1">
+                  <p className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    Demo Accounts
+                  </p>
+                  <p className="text-[10px] text-white/50">Wissel direct tussen persona's</p>
+                </div>
+                <DropdownMenuItem 
+                  onClick={async () => {
+                    await loginAsDemo('customer');
+                    toast.success('Ingelogd als Klant Demo (Nova Sound)');
+                    window.location.hash = '#/account';
+                  }}
+                  className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-white/10 cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <ShoppingBag className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-xs text-white">Klant Demo</span>
+                      <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-400">Nova Sound</span>
+                    </div>
+                    <p className="text-[10px] text-white/50">Spotify 50k streams & facturen</p>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem 
+                  onClick={async () => {
+                    await loginAsDemo('member');
+                    toast.success('Ingelogd als Lid Demo (Lars van Dijk)');
+                    window.location.hash = '#/account';
+                  }}
+                  className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-white/10 cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Pickaxe className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-xs text-white">Lid Demo</span>
+                      <span className="text-[9px] px-1 py-0.2 rounded bg-sky-500/20 text-sky-400">Node</span>
+                    </div>
+                    <p className="text-[10px] text-white/50">M2 Mac mini Grover • €285/mnd</p>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem 
+                  onClick={async () => {
+                    await loginAsDemo('admin');
+                    toast.success('Ingelogd als Hoofdbeheerder');
+                    window.location.hash = '#/admin';
+                  }}
+                  className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-white/10 cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-xs text-white">Admin Demo</span>
+                      <span className="text-[9px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-400">Beheer</span>
+                    </div>
+                    <p className="text-[10px] text-white/50">Controlecentrum • Live sync</p>
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -416,6 +505,52 @@ export function Header({ onCheckout, onTracking, onAccount, onHome, onAbout, onA
                   <span className="text-white font-medium">Controlecentrum (Admin)</span>
                 </button>
               )}
+
+              {/* Mobile Demo Accounts Switcher */}
+              <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 space-y-2 mt-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-white">
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    Demo Accounts
+                  </span>
+                  <span className="text-[10px] text-white/50 font-normal">1-klik wissel</span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    onClick={async () => {
+                      setIsMobileMenuOpen(false);
+                      await loginAsDemo('customer');
+                      toast.success('Ingelogd als Klant Demo');
+                      window.location.hash = '#/account';
+                    }}
+                    className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-medium text-center cursor-pointer"
+                  >
+                    🟢 Klant
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setIsMobileMenuOpen(false);
+                      await loginAsDemo('member');
+                      toast.success('Ingelogd als Lid Demo');
+                      window.location.hash = '#/account';
+                    }}
+                    className="p-2 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 text-[11px] font-medium text-center cursor-pointer"
+                  >
+                    🔵 Lid
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setIsMobileMenuOpen(false);
+                      await loginAsDemo('admin');
+                      toast.success('Ingelogd als Admin Demo');
+                      window.location.hash = '#/admin';
+                    }}
+                    className="p-2 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 text-[11px] font-medium text-center cursor-pointer"
+                  >
+                    🟣 Admin
+                  </button>
+                </div>
+              </div>
             </nav>
           </div>
 

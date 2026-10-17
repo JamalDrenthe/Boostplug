@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { formatPrice } from '@/data/platforms';
 import type { Order, OrderStatus } from '@/types';
@@ -82,6 +82,8 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
     getMemberMiningProfile,
     updateUserProfile,
     reorderCart,
+    isDemoUser,
+    loginAsDemo,
   } = useStore();
 
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -100,6 +102,23 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
   const [ibanPayout, setIbanPayout] = useState(user?.ibanPayout || '');
   const [ibanHolder, setIbanHolder] = useState(user?.ibanHolder || user?.name || '');
   const [emailNotifications, setEmailNotifications] = useState(user?.emailNotifications ?? true);
+
+  // Synchroniseer formulier state als demo profiel of user wisselt
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setPhone(user.phone || '');
+      setCompanyOrArtist(user.companyOrArtistName || '');
+      setKvkOrVat(user.kvkOrVat || '');
+      setStreet(user.billingAddress?.street || '');
+      setPostalCode(user.billingAddress?.postalCode || '');
+      setCity(user.billingAddress?.city || '');
+      setCountry(user.billingAddress?.country || 'Nederland');
+      setIbanPayout(user.ibanPayout || '');
+      setIbanHolder(user.ibanHolder || user.name || '');
+      setEmailNotifications(user.emailNotifications ?? true);
+    }
+  }, [user]);
 
   // Support formulier state
   const [supportSubject, setSupportSubject] = useState('Bestelling & Voortgang');
@@ -362,6 +381,84 @@ export function AccountCenter({ onBack, onTrack, onShop, onAdmin }: AccountCente
             </Button>
           </div>
         </div>
+
+        {/* DEMO ACCOUNTS QUICK SWITCHER BANNER */}
+        {isDemoUser && (
+          <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-sky-500/15 to-purple-500/15 border border-white/15 backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-bold text-xs uppercase tracking-wider">Demo Modus Actief</span>
+                  <Badge className="bg-white/10 text-white text-[10px] border-white/20">
+                    {user.name} ({user.accountType === 'customer' ? 'Klantaccount' : user.accountType === 'member' ? 'Lidaccount' : 'Admin'})
+                  </Badge>
+                </div>
+                <p className="text-white/60 text-xs mt-0.5">
+                  Wissel met 1 klik naar een ander demo profiel om functionaliteiten en live data te testen:
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button
+                size="sm"
+                variant={user.accountType === 'customer' ? 'default' : 'outline'}
+                onClick={async () => {
+                  await loginAsDemo('customer');
+                  setActiveTab('overview');
+                  toast.success('Gewisseld naar Klantaccount (Nova Sound Studio)');
+                }}
+                className={`text-xs h-8 rounded-xl cursor-pointer ${
+                  user.accountType === 'customer'
+                    ? 'bg-emerald-500 hover:bg-emerald-400 text-black font-semibold'
+                    : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                }`}
+              >
+                <ShoppingBag className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                Klant Demo
+              </Button>
+
+              <Button
+                size="sm"
+                variant={user.accountType === 'member' ? 'default' : 'outline'}
+                onClick={async () => {
+                  await loginAsDemo('member');
+                  setActiveTab('mining');
+                  toast.success('Gewisseld naar Lidaccount (Lars van Dijk)');
+                }}
+                className={`text-xs h-8 rounded-xl cursor-pointer ${
+                  user.accountType === 'member'
+                    ? 'bg-sky-500 hover:bg-sky-400 text-black font-semibold'
+                    : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                }`}
+              >
+                <Pickaxe className="w-3.5 h-3.5 mr-1 text-sky-400" />
+                Lid Demo
+              </Button>
+
+              <Button
+                size="sm"
+                variant={user.accountType === 'admin' ? 'default' : 'outline'}
+                onClick={async () => {
+                  await loginAsDemo('admin');
+                  toast.success('Gewisseld naar Hoofdbeheerder (Admin)');
+                  window.location.hash = '#/admin';
+                }}
+                className={`text-xs h-8 rounded-xl cursor-pointer ${
+                  user.accountType === 'admin'
+                    ? 'bg-purple-500 hover:bg-purple-400 text-white font-semibold'
+                    : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5 mr-1 text-purple-400" />
+                Admin Demo
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Hero Profiel Card */}
         <Card className="p-6 sm:p-8 bg-gradient-to-br from-white/10 via-[hsl(220,35%,8%)] to-[hsl(220,35%,5%)] border-white/15 rounded-3xl mb-8 shadow-2xl">

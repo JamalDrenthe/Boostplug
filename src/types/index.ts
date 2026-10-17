@@ -142,6 +142,11 @@ export interface AuthUser {
   emailNotifications?: boolean;
 }
 
+export interface StoredUser extends AuthUser {
+  passwordHash?: string;
+  miningStep?: number;
+}
+
 export type SubscriptionStatus = 'active' | 'cancelled';
 
 export interface SubscriptionPlan {

@@ -11,22 +11,26 @@ import type {
   Subscription, 
   SubscriptionStatus,
   MemberMiningProfile,
+  StoredUser,
 } from '@/types';
+import {
+  DEMO_ACCOUNTS_CONFIG,
+  DEMO_ACCOUNTS_LIST,
+  isDemoEmail,
+  getDemoConfigByEmail,
+} from '@/data/demoAccounts';
 const isFirebaseConfigured = Boolean(
   import.meta.env.VITE_FIREBASE_API_KEY && (import.meta.env.VITE_FIREBASE_PROJECT_ID || 'boostplug-dev')
 );
 
-export interface StoredUser extends AuthUser {
-  passwordHash?: string;
-  miningStep?: number;
-}
+export type { StoredUser } from '@/types';
 
 const USERS_KEY = 'boostplug_users';
 const SESSION_KEY = 'boostplug_session';
 const ORDERS_KEY = 'boostplug_orders';
 const SUBSCRIPTIONS_KEY = 'boostplug_subscriptions';
 
-const ADMIN_EMAILS = ['info@boostplug.one', 'info@jamaldrenthe.com'];
+const ADMIN_EMAILS = ['info@boostplug.one', 'info@jamaldrenthe.com', 'demo-admin@boostplug.one'];
 function isAdminEmail(email?: string | null): boolean {
   if (!email) return false;
   return ADMIN_EMAILS.includes(email.trim().toLowerCase());
@@ -60,7 +64,18 @@ function saveJSON(key: string, value: unknown) {
 }
 
 function getStoredUsers(): StoredUser[] {
-  return loadJSON<StoredUser[]>(USERS_KEY, []);
+  const users = loadJSON<StoredUser[]>(USERS_KEY, []);
+  let changed = false;
+  DEMO_ACCOUNTS_LIST.forEach((demo) => {
+    if (!users.some((u) => u.email.toLowerCase() === demo.email.toLowerCase())) {
+      users.push(demo.user);
+      changed = true;
+    }
+  });
+  if (changed) {
+    saveJSON(USERS_KEY, users);
+  }
+  return users;
 }
 
 function saveStoredUsers(users: StoredUser[]) {
@@ -105,8 +120,10 @@ interface StoreState {
 
   // Account & Auth
   user: AuthUser | null;
+  isDemoUser: boolean;
   register: (name: string, email: string, password: string, accountType: AccountType) => Promise<{ ok: boolean; error?: string }>;
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  loginAsDemo: (type: 'customer' | 'member' | 'admin') => Promise<{ ok: boolean; error?: string; user?: AuthUser }>;
   loginWithGoogle: (options?: { forceDevFallback?: boolean }) => Promise<{ ok: boolean; error?: string; isRedirecting?: boolean }>;
   logout: () => void;
   updateUserProfile: (updates: Partial<AuthUser>) => void;
@@ -133,9 +150,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [checkoutEmail, setCheckoutEmail] = useState('');
   const [orders, setOrders] = useState<Order[]>(() => {
     const raw = loadJSON<Order[]>(ORDERS_KEY, []);
+    if (raw.length === 0) {
+      const initial = [
+        ...DEMO_ACCOUNTS_CONFIG.customer.orders,
+        ...DEMO_ACCOUNTS_CONFIG.member.orders,
+      ];
+      saveJSON(ORDERS_KEY, initial);
+      return initial;
+    }
     return raw.map(o => ({ ...o, createdAt: new Date(o.createdAt) }));
   });
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => loadJSON<Subscription[]>(SUBSCRIPTIONS_KEY, []));
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>(() => {
+    const raw = loadJSON<Subscription[]>(SUBSCRIPTIONS_KEY, []);
+    if (raw.length === 0) {
+      const initial = DEMO_ACCOUNTS_CONFIG.customer.subscriptions;
+      saveJSON(SUBSCRIPTIONS_KEY, initial);
+      return initial;
+    }
+    return raw;
+  });
   const [user, setUser] = useState<AuthUser | null>(() => {
     const loaded = loadJSON<AuthUser | null>(SESSION_KEY, null);
     if (loaded && loaded.email && isAdminEmail(loaded.email)) {
@@ -218,9 +251,73 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return { ok: true };
   }, []);
 
+  const loginAsDemo = useCallback(async (type: 'customer' | 'member' | 'admin') => {
+    const config = DEMO_ACCOUNTS_CONFIG[type];
+    if (!config) return { ok: false, error: 'Onbekend demo account' };
+
+    setOrders(prev => {
+      const map = new Map<string, Order>();
+      prev.forEach(o => map.set(o.id, o));
+      config.orders.forEach(o => map.set(o.id, o));
+      const merged = Array.from(map.values());
+      saveJSON(ORDERS_KEY, merged);
+      return merged;
+    });
+
+    if (config.subscriptions.length > 0) {
+      setSubscriptions(prev => {
+        const map = new Map<string, Subscription>();
+        prev.forEach(s => map.set(s.id, s));
+        config.subscriptions.forEach(s => map.set(s.id, s));
+        const merged = Array.from(map.values());
+        saveJSON(SUBSCRIPTIONS_KEY, merged);
+        return merged;
+      });
+    }
+
+    const users = getStoredUsers();
+    const idx = users.findIndex(u => u.email.toLowerCase() === config.user.email.toLowerCase());
+    if (idx >= 0) {
+      users[idx] = { ...users[idx], ...config.user };
+      saveStoredUsers(users);
+    } else {
+      saveStoredUsers([...users, config.user]);
+    }
+
+    const sessionUser: AuthUser = {
+      id: config.user.id,
+      name: config.user.name,
+      email: config.user.email,
+      accountType: config.role,
+      createdAt: config.user.createdAt,
+      phone: config.user.phone,
+      companyOrArtistName: config.user.companyOrArtistName,
+      kvkOrVat: config.user.kvkOrVat,
+      billingAddress: config.user.billingAddress,
+      ibanPayout: config.user.ibanPayout,
+      ibanHolder: config.user.ibanHolder,
+      preferredCurrency: config.user.preferredCurrency,
+      emailNotifications: config.user.emailNotifications,
+      miningProfile: config.user.miningProfile,
+    };
+
+    setUser(sessionUser);
+    saveJSON(SESSION_KEY, sessionUser);
+    return { ok: true, user: sessionUser };
+  }, []);
+
   const login = useCallback(async (email: string, password: string) => {
     const normalized = email.trim().toLowerCase();
     const isAdmin = isAdminEmail(normalized);
+
+    // 0. Snelle controle op Demo Accounts
+    const demoConfig = getDemoConfigByEmail(normalized);
+    if (demoConfig) {
+      const cleanPass = password.trim().toLowerCase();
+      if (cleanPass === 'demo1234' || cleanPass === 'demo' || cleanPass === 'boostplug' || !isFirebaseConfigured) {
+        return await loginAsDemo(demoConfig.role);
+      }
+    }
 
     // 1. Inloggen via Firebase Auth
     const { signInWithEmail } = await import('@/lib/firebase');
@@ -245,6 +342,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         email: localUser.email,
         accountType,
         createdAt: localUser.createdAt,
+        phone: localUser.phone,
+        companyOrArtistName: localUser.companyOrArtistName,
+        kvkOrVat: localUser.kvkOrVat,
+        billingAddress: localUser.billingAddress,
+        ibanPayout: localUser.ibanPayout,
+        ibanHolder: localUser.ibanHolder,
+        preferredCurrency: localUser.preferredCurrency,
+        emailNotifications: localUser.emailNotifications,
+        miningProfile: localUser.miningProfile,
       };
       setUser(session);
       saveJSON(SESSION_KEY, session);
@@ -252,7 +358,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
 
     return { ok: false, error: fbRes.error || 'Onjuiste combinatie van e-mailadres en wachtwoord.' };
-  }, []);
+  }, [loginAsDemo]);
 
   const loginWithGoogleHandler = useCallback(async (options?: { forceDevFallback?: boolean }) => {
     const { signInWithGoogle } = await import('@/lib/firebase');
@@ -529,147 +635,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const seedDemoData = useCallback(() => {
     const demoOrders: Order[] = [
-      {
-        id: 'bp_ord_101',
-        orderNumber: 'BP-202610-00421',
-        email: 'info@boostplug.one',
-        locale: 'nl',
-        currency: 'EUR',
-        items: [
-          {
-            id: 'c1',
-            category: 'streams',
-            platform: 'spotify',
-            platformName: 'Spotify',
-            typeName: 'Premium Streams',
-            quantity: 50000,
-            quality: 'premium',
-            price: 189,
-            currency: 'EUR',
-            targetUrl: 'https://open.spotify.com/artist/zheavenzy-official',
-          },
-        ],
-        totalPrice: 189,
-        status: 'processing',
-        deliveryProgress: 65,
-        trackingToken: 'BP-SPOT-7721',
-        createdAt: new Date(Date.now() - 3600 * 1000 * 24),
-      },
-      {
-        id: 'bp_ord_102',
-        orderNumber: 'BP-202610-00422',
-        email: 'member@quantuminitium.com',
-        locale: 'nl',
-        currency: 'EUR',
-        items: [
-          {
-            id: 'c2',
-            category: 'reviews',
-            platform: 'google_maps',
-            platformName: 'Google Maps',
-            quantity: 15,
-            price: 75,
-            currency: 'EUR',
-            targetUrl: 'https://maps.google.com/?cid=12345678',
-            rating: 5,
-          },
-        ],
-        totalPrice: 75,
-        status: 'delivered',
-        deliveryProgress: 100,
-        trackingToken: 'BP-GMAP-9902',
-        createdAt: new Date(Date.now() - 3600 * 1000 * 72),
-        deliveredAt: new Date(Date.now() - 3600 * 1000 * 12),
-      },
-      {
-        id: 'bp_ord_103',
-        orderNumber: 'BP-202610-00423',
-        email: 'klant@spontiva.nl',
-        locale: 'nl',
-        currency: 'EUR',
-        items: [
-          {
-            id: 'c3',
-            category: 'streams',
-            platform: 'apple_music',
-            platformName: 'Apple Music',
-            typeName: 'Plays & Saves',
-            quantity: 10000,
-            price: 49,
-            currency: 'EUR',
-            targetUrl: 'https://music.apple.com/album/example',
-          },
-        ],
-        totalPrice: 49,
-        status: 'pending',
-        deliveryProgress: 10,
-        trackingToken: 'BP-APPL-3310',
-        createdAt: new Date(),
-      },
+      ...DEMO_ACCOUNTS_CONFIG.customer.orders,
+      ...DEMO_ACCOUNTS_CONFIG.member.orders,
     ];
-
     const demoSubs: Subscription[] = [
-      {
-        id: 'SUB-STARTER-1',
-        planId: 'growth',
-        planName: 'Growth',
-        email: 'info@boostplug.one',
-        monthlyPrice: 79,
-        currency: 'EUR',
-        status: 'active',
-        startedAt: new Date(Date.now() - 3600 * 1000 * 24 * 15).toISOString(),
-        nextBillingAt: new Date(Date.now() + 3600 * 1000 * 24 * 15).toISOString(),
-      },
+      ...DEMO_ACCOUNTS_CONFIG.customer.subscriptions,
     ];
-
-    const demoUsers: StoredUser[] = [
-      {
-        id: 'admin_boostplug',
-        name: 'BoostPlug Beheerder',
-        email: 'info@boostplug.one',
-        accountType: 'admin',
-        createdAt: new Date(Date.now() - 3600 * 1000 * 24 * 30).toISOString(),
-      },
-      {
-        id: 'usr_member_01',
-        name: 'Lars van Dijk (VVC)',
-        email: 'lars@quantuminitium.com',
-        accountType: 'member',
-        createdAt: new Date(Date.now() - 3600 * 1000 * 24 * 14).toISOString(),
-        miningStep: 7,
-        miningProfile: {
-          userId: 'usr_member_01',
-          currentStep: 7,
-          completedSteps: [1, 2, 3, 4, 5, 6, 7],
-          vvcMemberCode: 'VVC-2026-8819',
-          xabiWorldUsername: 'lars_vvc_node',
-          groverData: {
-            orderNumber: 'GRV-771920-NL',
-            deviceType: 'mac_mini_m2',
-            serialOrMac: 'C02G8490MD6M (e0:d5:5e:12:44:a1)',
-            discountCode: 'QUANTUMBOOST20',
-            rentalTermMonths: 12,
-            status: 'verified',
-            submittedAt: new Date(Date.now() - 3600 * 1000 * 24 * 10).toISOString(),
-          },
-          softwareConfig: {
-            nodeToken: 'BP-NODE-LARS01-M2',
-            osPlatform: 'macos',
-            ipPoolRegion: 'eu-west-1',
-            threadsLimitPercent: 75,
-            autoStartOnBoot: true,
-            status: 'mining_active',
-            lastPing: 'Zojuist (12ms latency)',
-            hashRateOrStreamsPerHour: 145,
-            assignedIp: '84.112.98.14 (KPN Residentieel)',
-          },
-          zheavenzyArtistId: 'ZH-ROSTER-01',
-          logsRentApiKey: 'LR-KEY-99201',
-          estimatedMonthlyEarnings: 215,
-          updatedAt: new Date().toISOString(),
-        },
-      },
-    ];
+    const demoUsers: StoredUser[] = DEMO_ACCOUNTS_LIST.map(d => d.user);
 
     setOrders(demoOrders);
     saveJSON(ORDERS_KEY, demoOrders);
@@ -726,8 +698,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       cancelSubscription,
       updateSubscriptionStatus,
       user,
+      isDemoUser: isDemoEmail(user?.email),
       register,
       login,
+      loginAsDemo,
       loginWithGoogle: loginWithGoogleHandler,
       logout,
       updateUserProfile,
