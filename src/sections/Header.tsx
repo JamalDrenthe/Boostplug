@@ -18,6 +18,7 @@ import {
   Pickaxe,
   Building2,
   Users,
+  ChevronDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -122,61 +123,129 @@ export function Header({
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
+          {/* Desktop Navigation with Smart Dropdowns */}
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5">
             <button 
               onClick={(e) => handleSectionClick(e, 'products')} 
-              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
+              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer py-1 font-medium"
             >
               Producten
             </button>
             <button 
               onClick={(e) => handleSectionClick(e, 'abonnementen')} 
-              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
+              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer py-1 font-medium"
             >
               Abonnementen
             </button>
             <a 
               href="#/leden" 
-              className="text-sm text-[hsl(142,76%,45%)]/80 hover:text-[hsl(142,76%,45%)] transition-colors cursor-pointer"
+              className="text-sm text-[hsl(142,76%,45%)]/90 hover:text-[hsl(142,76%,45%)] transition-colors cursor-pointer py-1 font-medium"
             >
               Voor leden
             </a>
-            <button 
-              onClick={() => {
-                if (onQuantumInitium) onQuantumInitium();
-                else window.location.hash = '#/quantum-initium';
-              }} 
-              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
-            >
-              Quantum Initium
-            </button>
-            <button 
-              onClick={() => {
-                if (onVVC) onVVC();
-                else window.location.hash = '#/vvc';
-              }} 
-              className="text-sm text-sky-400 hover:text-white transition-colors cursor-pointer font-medium"
-            >
-              Verdienende Vrienden Club
-            </button>
-            <button 
-              onClick={(e) => handleSectionClick(e, 'how-it-works')} 
-              className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer"
-            >
-              Hoe het werkt
-            </button>
-            <button 
-              onClick={onTracking}
-              className="text-sm text-white/70 hover:text-white transition-colors"
-            >
-              Track bestelling
-            </button>
-            <button
-              onClick={onAbout}
-              className="text-sm text-white/70 hover:text-white transition-colors"
-            >
-              Over ons
-            </button>
+
+            {/* Ecosysteem Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 text-sm text-white/70 hover:text-white transition-colors cursor-pointer py-1 font-medium group">
+                  <span>Ecosysteem</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-[hsl(220,25%,10%)]/95 backdrop-blur-xl border-white/10 w-72 p-2 rounded-2xl shadow-2xl text-white">
+                <div className="px-2.5 py-1.5 border-b border-white/10 mb-1">
+                  <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Holding & Community</p>
+                </div>
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (onQuantumInitium) onQuantumInitium();
+                    else window.location.hash = '#/quantum-initium';
+                  }}
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 cursor-pointer focus:bg-white/10"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)] flex items-center justify-center shrink-0 mt-0.5">
+                    <Building2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-xs text-white">Quantum Initium</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)]">Holding</span>
+                    </div>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Multi-venture ecosysteem & portfolio</p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (onVVC) onVVC();
+                    else window.location.hash = '#/vvc';
+                  }}
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-500/10 cursor-pointer focus:bg-sky-500/10"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-xs text-sky-300">Verdienende Vrienden Club</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-400">VVC</span>
+                    </div>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Hardware mining • €150-€400/mnd rewards</p>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Info / Meer Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 text-sm text-white/70 hover:text-white transition-colors cursor-pointer py-1 font-medium group">
+                  <span>Info</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-[hsl(220,25%,10%)]/95 backdrop-blur-xl border-white/10 w-64 p-2 rounded-2xl shadow-2xl text-white">
+                <div className="px-2.5 py-1.5 border-b border-white/10 mb-1">
+                  <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Ondersteuning & Overzicht</p>
+                </div>
+                <DropdownMenuItem
+                  onClick={onTracking}
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 cursor-pointer focus:bg-white/10"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[hsl(199,89%,48%)]/20 text-[hsl(199,89%,48%)] flex items-center justify-center shrink-0 mt-0.5">
+                    <Search className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-semibold text-xs text-white">Track bestelling</span>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Live status van streams & reviews</p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => handleSectionClick(e, 'how-it-works')}
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 cursor-pointer focus:bg-white/10"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Zap className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-semibold text-xs text-white">Hoe het werkt</span>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Drip-feed & veilige werking</p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={onAbout}
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 cursor-pointer focus:bg-white/10"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-semibold text-xs text-white">Over ons</span>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Missie, holding en kwaliteitsgarantie</p>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {(user?.accountType === 'admin' || (user?.email && ['info@boostplug.one', 'info@jamaldrenthe.com'].includes(user.email.toLowerCase()))) && (
               <button
                 onClick={onAdmin || (() => { window.location.hash = '#/admin'; })}
@@ -189,17 +258,17 @@ export function Header({
           </nav>
 
           {/* Right Section */}
-          <div className="flex items-center gap-2 lg:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 xl:gap-3.5">
             {/* Currency Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="hidden sm:flex items-center gap-2 text-white/70 hover:text-white hover:bg-white/10"
+                  className="hidden xl:flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 px-2.5 h-8"
                 >
-                  <Globe className="w-4 h-4" />
-                  <span className="text-sm">{currency}</span>
+                  <Globe className="w-3.5 h-3.5" />
+                  <span className="text-xs">{currency}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-[hsl(220,20%,12%)] border-white/10">
@@ -224,9 +293,9 @@ export function Header({
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="hidden sm:flex items-center gap-2 text-white/70 hover:text-white hover:bg-white/10"
+                  className="hidden xl:flex items-center gap-1 text-white/70 hover:text-white hover:bg-white/10 px-2 h-8"
                 >
-                  <span className="text-sm uppercase">{locale}</span>
+                  <span className="text-xs uppercase font-medium">{locale}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-[hsl(220,20%,12%)] border-white/10">
@@ -251,7 +320,7 @@ export function Header({
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="hidden sm:flex items-center gap-1.5 rounded-full border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs px-3 h-8 cursor-pointer"
+                  className="hidden md:flex items-center gap-1.5 rounded-full border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs px-2.5 h-8 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   <span>Demo</span>
@@ -364,18 +433,18 @@ export function Header({
               variant="ghost"
               size="sm"
               onClick={onCheckout}
-              className="relative flex items-center gap-2 text-white/70 hover:text-white hover:bg-white/10"
+              className="relative flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 px-2.5 h-8"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-4 h-4" />
               {cartItemCount > 0 && (
                 <Badge 
                   variant="default" 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)] text-xs font-bold"
+                  className="absolute -top-1 -right-1 h-4 w-4 min-w-[1rem] flex items-center justify-center p-0 bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)] text-[10px] font-bold"
                 >
                   {cartItemCount}
                 </Badge>
               )}
-              <span className="hidden lg:inline text-sm">
+              <span className="hidden xl:inline text-xs font-medium">
                 {cartItemCount > 0 ? `${currencySymbol}${cartTotal.toFixed(2)}` : 'Winkelwagen'}
               </span>
             </Button>
@@ -437,128 +506,157 @@ export function Header({
               </Button>
             </div>
 
-            <nav className="flex flex-col gap-3">
-              <button 
-                onClick={(e) => {
-                  setIsMobileMenuOpen(false);
-                  handleSectionClick(e, 'products');
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
-              >
-                <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                <span className="text-white">Producten</span>
-              </button>
-              <button 
-                onClick={(e) => {
-                  setIsMobileMenuOpen(false);
-                  handleSectionClick(e, 'abonnementen');
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
-              >
-                <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
-                <span className="text-white">Abonnementen</span>
-              </button>
-              <a 
-                href="#/leden" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-              >
-                <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                <span className="text-white">Voor leden</span>
-              </a>
-              <button 
-                onClick={(e) => {
-                  setIsMobileMenuOpen(false);
-                  handleSectionClick(e, 'how-it-works');
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
-              >
-                <Zap className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                <span className="text-white">Hoe het werkt</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onTracking();
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
-              >
-                <Search className="w-5 h-5 text-[hsl(199,89%,48%)]" />
-                <span className="text-white">Track bestelling</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onAbout();
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
-              >
-                <Zap className="w-5 h-5 text-[hsl(199,89%,48%)]" />
-                <span className="text-white">Over ons</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  if (onQuantumInitium) onQuantumInitium();
-                  else window.location.hash = '#/quantum-initium';
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
-              >
-                <Building2 className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                <span className="text-white">Quantum Initium</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  if (onVVC) onVVC();
-                  else window.location.hash = '#/vvc';
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-left cursor-pointer"
-              >
-                <Users className="w-5 h-5 text-sky-400" />
-                <span className="text-sky-300 font-medium">Verdienende Vrienden Club</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onCheckout();
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
-              >
-                <Package className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                <span className="text-white">Winkelwagen ({cartItemCount})</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  if (user) {
-                    onAccount();
-                  } else {
-                    window.location.hash = '#/login';
-                  }
-                }}
-                className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
-              >
-                {user ? (
-                  <User className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                ) : (
-                  <LogIn className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                )}
-                <span className="text-white">{user ? `Mijn account` : 'Inloggen'}</span>
-              </button>
-              {(user?.accountType === 'admin' || (user?.email && ['info@boostplug.one', 'info@jamaldrenthe.com'].includes(user.email.toLowerCase()))) && (
-                <button 
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    if (onAdmin) onAdmin();
-                    else window.location.hash = '#/admin';
-                  }}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-[hsl(142,76%,45%)]/10 border border-[hsl(142,76%,45%)]/30 hover:bg-[hsl(142,76%,45%)]/20 transition-colors text-left cursor-pointer"
-                >
-                  <ShieldCheck className="w-5 h-5 text-[hsl(142,76%,45%)]" />
-                  <span className="text-white font-medium">Controlecentrum (Admin)</span>
-                </button>
-              )}
+            <nav className="flex flex-col gap-4">
+              {/* Categorie: Diensten */}
+              <div>
+                <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2 px-1">Diensten & Catalogus</p>
+                <div className="flex flex-col gap-1.5">
+                  <button 
+                    onClick={(e) => {
+                      setIsMobileMenuOpen(false);
+                      handleSectionClick(e, 'products');
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
+                  >
+                    <Zap className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    <span className="text-white text-sm font-medium">Producten</span>
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      setIsMobileMenuOpen(false);
+                      handleSectionClick(e, 'abonnementen');
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
+                  >
+                    <Zap className="w-4 h-4 text-[hsl(199,89%,48%)]" />
+                    <span className="text-white text-sm font-medium">Abonnementen</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Categorie: Ecosysteem & Netwerk */}
+              <div>
+                <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2 px-1">Holding & Netwerk</p>
+                <div className="flex flex-col gap-1.5">
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      if (onQuantumInitium) onQuantumInitium();
+                      else window.location.hash = '#/quantum-initium';
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+                  >
+                    <Building2 className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    <span className="text-white text-sm font-medium">Quantum Initium</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      if (onVVC) onVVC();
+                      else window.location.hash = '#/vvc';
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-left cursor-pointer"
+                  >
+                    <Users className="w-4 h-4 text-sky-400" />
+                    <span className="text-sky-300 text-sm font-medium">Verdienende Vrienden Club</span>
+                  </button>
+                  <a 
+                    href="#/leden" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                  >
+                    <User className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    <span className="text-white text-sm font-medium">Voor leden</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Categorie: Informatie & Tracking */}
+              <div>
+                <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2 px-1">Informatie & Tracking</p>
+                <div className="flex flex-col gap-1.5">
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      onTracking();
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+                  >
+                    <Search className="w-4 h-4 text-[hsl(199,89%,48%)]" />
+                    <span className="text-white text-sm">Track bestelling</span>
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      setIsMobileMenuOpen(false);
+                      handleSectionClick(e, 'how-it-works');
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left w-full cursor-pointer"
+                  >
+                    <Zap className="w-4 h-4 text-amber-400" />
+                    <span className="text-white text-sm">Hoe het werkt</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      onAbout();
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4 text-purple-400" />
+                    <span className="text-white text-sm">Over ons</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Categorie: Account & Beheer */}
+              <div>
+                <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2 px-1">Account & Beheer</p>
+                <div className="flex flex-col gap-1.5">
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      if (user) {
+                        onAccount();
+                      } else {
+                        window.location.hash = '#/login';
+                      }
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-[hsl(142,76%,45%)]/15 border border-[hsl(142,76%,45%)]/30 text-white hover:bg-[hsl(142,76%,45%)]/25 transition-colors text-left cursor-pointer"
+                  >
+                    {user ? (
+                      <User className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    ) : (
+                      <LogIn className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    )}
+                    <span className="text-white text-sm font-medium">{user ? `Mijn account (${user.name.split(' ')[0]})` : 'Inloggen / Registreren'}</span>
+                  </button>
+
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      onCheckout();
+                    }}
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+                  >
+                    <Package className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    <span className="text-white text-sm">Winkelwagen ({cartItemCount})</span>
+                  </button>
+
+                  {(user?.accountType === 'admin' || (user?.email && ['info@boostplug.one', 'info@jamaldrenthe.com'].includes(user.email.toLowerCase()))) && (
+                    <button 
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        if (onAdmin) onAdmin();
+                        else window.location.hash = '#/admin';
+                      }}
+                      className="flex items-center gap-3 p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 transition-colors text-left cursor-pointer"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-purple-400" />
+                      <span className="text-white text-sm font-medium">Controlecentrum (Admin)</span>
+                    </button>
+                  )}
+                </div>
+              </div>
 
               {/* Mobile Demo Accounts Switcher */}
               <div className="p-3 rounded-xl bg-white/[0.04] border border-white/10 space-y-2 mt-2">
