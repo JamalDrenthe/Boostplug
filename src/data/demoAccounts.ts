@@ -243,7 +243,7 @@ const ADMIN_DEMO_USER: StoredUser = {
   accountType: 'admin',
   createdAt: new Date(Date.now() - 3600 * 1000 * 24 * 90).toISOString(),
   phone: '+31 20 890 1234',
-  companyOrArtistName: 'Quantum Initium Holding B.V.',
+  companyOrArtistName: 'Quantum Initium B.V.',
   kvkOrVat: 'KvK 91029384 / NL91029384B01',
   billingAddress: {
     street: 'Herengracht 500',

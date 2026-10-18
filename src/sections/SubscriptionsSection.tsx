@@ -85,13 +85,12 @@ export function SubscriptionsSection({ onRequireLogin, onGoAccount }: Subscripti
         <div className="text-center mb-14">
           <p className="eyebrow text-[hsl(142,76%,45%)] mb-4">VOOR KLANTEN</p>
           <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
-            Abonnementen: continu{' '}
-            <span className="text-gradient">algoritme-beïnvloeding</span>
+            Abonnementen voor gestage{' '}
+            <span className="text-gradient">groei & bereik</span>
           </h2>
           <p className="text-white/60 max-w-2xl mx-auto">
-            Geen eenmalige piek, maar een maandelijkse boost die het algoritme
-            blijvend beïnvloedt. Kies een plan en wij doen de rest — maandelijks
-            opzegbaar.
+            Geen eenmalige piek, maar een continue maandelijkse spreiding die je statistieken
+            en vindbaarheid organisch versterkt. Kies een plan — maandelijks opzegbaar.
           </p>
         </div>
 

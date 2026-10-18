@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import {
   ArrowLeft,
   Cpu,
-  Globe,
   Coins,
   Music2,
   KeyRound,
@@ -21,23 +20,23 @@ interface MembersPageProps {
 const ecosystem = [
   {
     icon: Cpu,
-    title: 'Leden & mining',
-    text: 'Onze leden zijn verantwoordelijk voor de mining. Via IP-software en GPU-kracht draaien zij het netwerk dat BoostPlug aandrijft.',
+    title: 'Leden & Hardware Nodes',
+    text: 'Leden exploiteren residentiële achtergrondnodes op Apple Silicon of laptops. Zij leveren de veilige IP-capaciteit die de gecontroleerde streaming-simulaties aandrijft.',
   },
   {
     icon: Music2,
     title: 'Zheavenzy',
-    text: 'Zheavenzy gebruikt BoostPlug om hun artiesten te boosten — van opkomende namen tot gevestigde acts op zheavenzy.one.',
+    text: 'Zheavenzy gebruikt BoostPlug voor gerichte release-campagnes — van opkomende acts tot gevestigde artiesten op zheavenzy.one.',
   },
   {
     icon: KeyRound,
     title: 'Logs.rent',
-    text: 'Logs.rent levert de accounts waarmee het algoritme wordt beïnvloed — de brandstof achter elke boost.',
+    text: 'Logs.rent levert gecontroleerde accounts en IP-infrastructuur waarmee streams en reviews organisch worden opgebouwd.',
   },
   {
     icon: Users,
     title: 'VVC via Spontiva',
-    text: 'Leden van de Verdienende Vrienden Club kunnen via Spontiva gebruikmaken van BoostPlug, onderdeel van het Quantum Initium-ecosysteem.',
+    text: 'Leden van de Verdienende Vrienden Club profiteren via Spontiva van speciale clubtarieven binnen Quantum Initium.',
   },
 ];
 
@@ -54,24 +53,22 @@ export function MembersPage({ onBack, onJoin, onShop }: MembersPageProps) {
         </button>
 
         <div className="text-center mb-14">
-          <p className="eyebrow text-[hsl(199,89%,48%)] mb-4">VOOR LEDEN</p>
+          <p className="eyebrow text-[hsl(199,89%,48%)] mb-4">VOOR LEDEN & NODE OPERATORS</p>
           <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white mb-4">
-            De leden-kant van <span className="text-gradient">BoostPlug</span>
+            De leden-omgeving van <span className="text-gradient">BoostPlug</span>
           </h1>
-          <p className="text-white/60 max-w-2xl mx-auto text-lg">
-            Klanten kopen boosts. Leden maken ze mogelijk — en verdienen eraan.
-            Dat is de kracht van BoostPlug: het algoritme beïnvloeden.
+          <p className="text-white/60 max-w-2xl mx-auto text-lg leading-relaxed">
+            Klanten investeren in gerichte streams en reviews. Leden stellen residentiële hardware beschikbaar en ontvangen hiervoor een vaste maandelijkse vergoeding.
           </p>
         </div>
 
         {/* Twee kanten */}
         <div className="grid md:grid-cols-2 gap-6 mb-14">
           <Card className="p-8 bg-white/5 border-white/10 rounded-2xl">
-            <p className="eyebrow text-[hsl(142,76%,45%)] mb-3">KANT 1 — KLANTEN</p>
-            <h3 className="text-xl font-semibold text-white mb-3">Je bereik laten groeien</h3>
-            <p className="text-white/55 text-sm mb-6">
-              Artiesten, merken en ondernemers bestellen streams, followers en
-              reviews — eenmalig of als maandelijks abonnement.
+            <p className="eyebrow text-[hsl(142,76%,45%)] mb-3">PIJLER 1 — KLANTEN</p>
+            <h3 className="text-xl font-semibold text-white mb-3">Organische tractie & bereik</h3>
+            <p className="text-white/55 text-sm mb-6 leading-relaxed">
+              Artiesten, labels en lokale ondernemers bestellen streams en reviews — flexibel per campagne of als doorlopend maandabonnement.
             </p>
             <Button
               variant="outline"
@@ -83,57 +80,53 @@ export function MembersPage({ onBack, onJoin, onShop }: MembersPageProps) {
             </Button>
           </Card>
           <Card className="p-8 bg-[hsl(142,76%,45%)]/[0.06] border-[hsl(142,76%,45%)]/30 rounded-2xl">
-            <p className="eyebrow text-[hsl(142,76%,45%)] mb-3">KANT 2 — LEDEN</p>
-            <h3 className="text-xl font-semibold text-white mb-3">Verdien met je netwerkkracht</h3>
-            <p className="text-white/55 text-sm mb-6">
-              Leden leveren de mining-capaciteit — IP-software en GPU — waarmee
-              BoostPlug algoritmes beïnvloedt. Jij draait mee, jij verdient mee.
+            <p className="eyebrow text-[hsl(142,76%,45%)] mb-3">PIJLER 2 — LEDEN</p>
+            <h3 className="text-xl font-semibold text-white mb-3">Verdien maandelijks met hardware nodes</h3>
+            <p className="text-white/55 text-sm mb-6 leading-relaxed">
+              Leden draaien lichte achtergrondsoftware op Apple Silicon hardware (o.a. via Grover lease met korting) en ontvangen €150 tot €400 per maand per actieve node.
             </p>
             <Button
               onClick={onJoin}
-              className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] rounded-full font-medium"
+              className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] rounded-full font-semibold"
             >
               <Coins className="w-4 h-4 mr-2" />
-              Word lid
+              Direct Lid Worden
             </Button>
           </Card>
         </div>
 
         {/* Hoe het werkt voor leden */}
         <Card className="p-6 sm:p-10 bg-white/5 border-white/10 rounded-2xl mb-14">
-          <p className="eyebrow text-[hsl(199,89%,48%)] mb-3">ZO WERKT HET</p>
+          <p className="eyebrow text-[hsl(199,89%,48%)] mb-3">WERKWIJZE</p>
           <h2 className="text-2xl font-semibold text-white mb-8 tracking-tight">
-            Van GPU-kracht naar algoritme-impact
+            Van Hardware Node naar Maandelijkse Uitbetaling
           </h2>
           <div className="grid sm:grid-cols-3 gap-8">
             <div>
               <div className="w-11 h-11 rounded-xl bg-[hsl(142,76%,45%)]/15 flex items-center justify-center mb-4">
                 <Cpu className="w-5 h-5 text-[hsl(142,76%,45%)]" />
               </div>
-              <h4 className="text-white font-medium mb-2">1. Mining</h4>
-              <p className="text-white/50 text-sm">
-                Leden draaien de mining via IP-software en GPU — het fundament
-                van het BoostPlug-netwerk.
+              <h4 className="text-white font-medium mb-2">1. Hardware activeren</h4>
+              <p className="text-white/50 text-sm leading-relaxed">
+                Sluit een Mac mini of laptop aan en start de beveiligde BoostPlug achtergrond-client via je unieke node token.
               </p>
             </div>
             <div>
               <div className="w-11 h-11 rounded-xl bg-[hsl(199,89%,48%)]/15 flex items-center justify-center mb-4">
                 <KeyRound className="w-5 h-5 text-[hsl(199,89%,48%)]" />
               </div>
-              <h4 className="text-white font-medium mb-2">2. Accounts & reach</h4>
-              <p className="text-white/50 text-sm">
-                Via Logs.rent komen de accounts beschikbaar waarmee het
-                algoritme wordt beïnvloed.
+              <h4 className="text-white font-medium mb-2">2. Residentiële sessies</h4>
+              <p className="text-white/50 text-sm leading-relaxed">
+                Jouw verbinding levert veilige, natuurlijke Nederlandse IP-capaciteit voor gecontroleerde drip-feed streams.
               </p>
             </div>
             <div>
               <div className="w-11 h-11 rounded-xl bg-[hsl(142,76%,45%)]/15 flex items-center justify-center mb-4">
-                <Globe className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                <Coins className="w-5 h-5 text-[hsl(142,76%,45%)]" />
               </div>
-              <h4 className="text-white font-medium mb-2">3. Algoritme-boost</h4>
-              <p className="text-white/50 text-sm">
-                Klanten en partners zoals Zheavenzy boosten hun artiesten —
-                dat is de kracht van BoostPlug.
+              <h4 className="text-white font-medium mb-2">3. Vaste SEPA uitbetaling</h4>
+              <p className="text-white/50 text-sm leading-relaxed">
+                Elke 1e van de maand wordt je opgebouwde node-vergoeding (€150 - €400) automatisch overgemaakt naar je IBAN.
               </p>
             </div>
           </div>

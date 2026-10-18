@@ -101,26 +101,19 @@ export function AboutPage({ onBack, onShop }: AboutPageProps) {
             <Network className="w-5 h-5 text-[hsl(199,89%,48%)]" />
             Het ecosysteem: klanten en leden
           </h3>
-          <p className="text-white/60 mb-4">
-            BoostPlug heeft twee kanten. Aan de ene kant klanten die hun bereik
-            willen vergroten; aan de andere kant leden die het netwerk draaiende
-            houden via mining met IP-software en GPU. Samen met{' '}
-            <span className="text-white/80">Zheavenzy</span> (boosten van artiesten)
-            en <span className="text-white/80">Logs.rent</span> (accounts die het
-            algoritme beïnvloeden) vormt dat de kracht van BoostPlug: het
-            algoritme beïnvloeden. VVC-leden kunnen via Spontiva gebruikmaken van
-            BoostPlug.
+          <p className="text-white/60 mb-4 leading-relaxed">
+            BoostPlug verbindt twee pijlers: artiesten en bedrijven die hun bereik willen vergroten, en clubleden (VVC) die residentiële achtergrondnodes draaien op betrouwbare hardware (zoals Apple Silicon Mac mini's). Samen met muziekdistributie via <span className="text-white/80">Zheavenzy</span> en getoetste accounts via <span className="text-white/80">Logs.rent</span> ontstaat een veilige, natuurlijke drip-feed distributie. VVC-leden ontvangen maandelijks een vaste vergoeding en krijgen via Spontiva exclusieve clubtarieven.
           </p>
           <a
             href="#/leden"
-            className="text-[hsl(142,76%,45%)] hover:text-white transition-colors inline-flex items-center gap-1 text-sm"
+            className="text-[hsl(142,76%,45%)] hover:text-white transition-colors inline-flex items-center gap-1 text-sm font-medium"
           >
-            Ontdek de leden-kant
+            Ontdek de leden- en node-omgeving
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </Card>
 
-        {/* Quantum Initium Holding */}
+        {/* Quantum Initium */}
         <Card className="p-6 sm:p-8 bg-white/5 border-white/10 mb-8">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-[hsl(142,76%,45%)]/20 flex items-center justify-center shrink-0">
@@ -128,22 +121,19 @@ export function AboutPage({ onBack, onShop }: AboutPageProps) {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white mb-3">
-                Onderdeel van Quantum Initium Holding
+                Onderdeel van Quantum Initium
               </h3>
-              <p className="text-white/60 mb-4">
+              <p className="text-white/60 mb-4 leading-relaxed">
                 BoostPlug is een onderneming van{' '}
                 <a
-                  href="https://quantuminitium.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[hsl(142,76%,45%)] hover:text-white transition-colors inline-flex items-center gap-1"
+                  href="#/quantum-initium"
+                  className="text-[hsl(142,76%,45%)] hover:text-white transition-colors inline-flex items-center gap-1 font-medium"
                 >
-                  Quantum Initium Holding
+                  Quantum Initium
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
-                , de holding waaronder ook {siblings.slice(0, -1).join(', ')} en{' '}
-                {siblings[siblings.length - 1]} vallen. Die ruggensteuning staat voor
-                professionele processen, betrouwbare levering en een vast aanspreekpunt.
+                , het moederbedrijf waaronder ook {siblings.slice(0, -1).join(', ')} en{' '}
+                {siblings[siblings.length - 1]} vallen. Dit waarborgt duidelijke processen, geteste infrastructuur en een vast aanspreekpunt met KvK-registratie.
               </p>
               <div className="flex flex-wrap gap-2">
                 {siblings.map((name) => (

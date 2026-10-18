@@ -66,11 +66,11 @@ const vvcPillars: VVCPillar[] = [
     icon: Compass,
   },
   {
-    name: 'Zheavenzy Muzieksynergie',
+    name: 'Zheavenzy Muzieksamenwerking',
     category: 'Artiesten & Publishing',
     tag: 'Royalty Delen',
     tagColor: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    description: 'Als VVC-lid ben je nauw verbonden met zheavenzy.one. Je levert de algoritmekracht en deelt mee in het succes van opkomende artiesten.',
+    description: 'Als VVC-lid ben je nauw verbonden met zheavenzy.one. Jouw node draait gecontroleerde streamingsessies en je deelt mee in het succes van opkomende artiesten.',
     benefit: 'Toegang tot exclusieve luistersessies, VIP-gastenlijsten en distributiekansen voor eigen muziek en artiesten.',
     ctaText: 'Naar Zheavenzy',
     icon: Music2,
@@ -218,9 +218,9 @@ export function VVCPage({ onBack, onJoin, onGoQuantumInitium }: VVCPageProps) {
               <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
                 <Building2 className="w-5 h-5" />
               </div>
-              <h3 className="text-white font-bold text-sm mb-1.5">Quantum Initium Synergie</h3>
+              <h3 className="text-white font-bold text-sm mb-1.5">Quantum Initium Netwerkvoordeel</h3>
               <p className="text-white/50 text-xs leading-relaxed">
-                Als VVC-lid sta je in directe verbinding met de holding en profiteer je mee van nieuwe dochterondernemingen.
+                Als VVC-lid sta je in directe verbinding met het Quantum Initium ecosysteem en profiteer je mee van nieuwe initiatieven.
               </p>
             </Card>
           </div>
@@ -359,7 +359,7 @@ export function VVCPage({ onBack, onJoin, onGoQuantumInitium }: VVCPageProps) {
               Klaar om te Verdienen met je Hardware?
             </h3>
             <p className="text-white/60 text-xs sm:text-sm max-w-xl leading-relaxed">
-              Sluit je vandaag nog aan bij de Verdienende Vrienden Club en zet jouw verbinding in voor veilige, gecentraliseerde netwerkkracht binnen Quantum Initium.
+              Sluit je vandaag nog aan bij de Verdienende Vrienden Club en zet jouw residentiële hardware node in voor veilige streamingdistributie binnen Quantum Initium.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">

@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     question: 'Heb ik een account nodig?',
-    answer: 'Nee, dat is het mooie! Bij BoostPlug werken we met guest checkout. Je hebt geen account nodig - alleen je email adres voor de bestelbevestiging en tracking updates.',
+    answer: 'Nee. Bij BoostPlug bestel je direct via guest checkout: je hebt geen account nodig, alleen je e-mailadres voor de orderbevestiging en je unieke realtime trackingtoken.',
   },
   {
     question: 'Welke betaalmethoden accepteren jullie?',
@@ -32,11 +32,11 @@ const faqs = [
   },
   {
     question: 'Zijn de reviews echt of nep?',
-    answer: 'Onze reviews worden geschreven door echte mensen met actieve accounts op de betreffende platforms. Ze zijn uniek, relevant en voldoen aan alle richtlijnen van het platform.',
+    answer: 'Onze reviews worden geplaatst via actieve residentiële accounts op de betreffende platforms. Ze worden natuurlijk verdeeld en sluiten aan op je bedrijf of branche.',
   },
   {
     question: 'Wie zit er achter BoostPlug?',
-    answer: 'BoostPlug is een onderneming van Quantum Initium Holding, de holding waaronder ook WoningVry, Spontiva, Investbotiq, VVC (Verdienende Vrienden Club), Immigratie Punt en Xabi World vallen. Die ruggensteuning betekent professionele processen, betrouwbare levering en een vast aanspreekpunt.',
+    answer: 'BoostPlug is een onderneming van Quantum Initium, het holdingnetwerk waaronder ook WoningVry, Spontiva, Investbotiq, VVC (Verdienende Vrienden Club), Immigratie Punt en Xabi World vallen. Dit garandeert duidelijke processen, transparante facturatie en een vast KvK-aanspreekpunt.',
   },
   {
     question: 'Kan ik zelf de review tekst bepalen?',

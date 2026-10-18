@@ -179,7 +179,7 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
                 >
                   <Pickaxe className={`w-5 h-5 mb-2 ${accountType === 'member' ? 'text-[hsl(199,89%,48%)]' : 'text-white/50'}`} />
                   <p className="text-white font-medium text-sm">Lid</p>
-                  <p className="text-white/40 text-xs mt-1">Minen & verdienen met GPU/IP</p>
+                  <p className="text-white/40 text-xs mt-1">Verdienen met residentiële node</p>
                 </button>
               </div>
             </div>

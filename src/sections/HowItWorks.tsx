@@ -10,40 +10,40 @@ import {
 const steps = [
   {
     icon: MousePointerClick,
-    title: 'Kies je pakket',
-    description: 'Selecteer het platform en de hoeveelheid die bij je past. Streams of reviews, jij bepaalt.',
+    title: 'Kies je platform',
+    description: 'Kies je streamingdienst of reviewplatform en selecteer het gewenste volume.',
     color: 'hsl(142,76%,45%)',
   },
   {
     icon: CreditCard,
-    title: 'Snel afrekenen',
-    description: 'Geen account nodig. Vul je email in, betaal veilig met iDEAL of creditcard.',
+    title: 'Afrekenen zonder account',
+    description: 'Geen verplichte registratie. Vul je link in en betaal via iDEAL, Bancontact of kaart.',
     color: 'hsl(199,89%,48%)',
   },
   {
     icon: Rocket,
-    title: 'Directe levering',
-    description: 'Je bestelling wordt direct verwerkt. Track de voortgang in realtime.',
+    title: 'Drip-feed distributie',
+    description: 'De order start snel en wordt natuurlijk verspreid via actieve residentiële verbindingen.',
     color: 'hsl(142,76%,45%)',
   },
 ];
 
 const stats = [
-  { value: '10K+', label: 'Tevreden klanten', icon: TrendingUp },
-  { value: '50M+', label: 'Streams geleverd', icon: LineChart },
-  { value: '100K+', label: 'Reviews geplaatst', icon: BarChart3 },
+  { value: '1.850+', label: 'Geverifieerde campagnes', icon: TrendingUp },
+  { value: '145 /uur', label: 'Capaciteit per node', icon: LineChart },
+  { value: '99,4%', label: 'Retentiescore', icon: BarChart3 },
 ];
 
 export function HowItWorks() {
   return (
     <section id="how-it-works" className="py-20 scroll-mt-24">
       <div className="text-center mb-16">
-        <p className="eyebrow text-[hsl(199,89%,48%)] mb-4">HOE HET WERKT</p>
+        <p className="eyebrow text-[hsl(199,89%,48%)] mb-4">WERKWIJZE</p>
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
           Hoe het <span className="text-gradient">werkt</span>
         </h2>
         <p className="text-white/60 max-w-xl mx-auto">
-          In drie simpele stappen naar meer exposure. Geen gedoe, direct resultaat.
+          In drie stappen naar meer organische tractie. Eenvoudig, discreet en met live ordertracking.
         </p>
       </div>
 

@@ -41,7 +41,7 @@ const portfolioEntities: PortfolioEntity[] = [
     category: 'Algoritme & Distributie',
     tag: 'Core Platform',
     tagColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    description: 'De toonaangevende motor voor geautomatiseerde en organische streaming- en reviewgroei op Spotify, Apple Music, Google Maps en Trustpilot.',
+    description: 'Het distributieplatform voor geautomatiseerde en organische streaming- en reviewgroei op Spotify, Apple Music, Google Maps en Trustpilot.',
     synergy: 'Benut de residentiële nodes en accounts uit het holdingnetwerk voor veilige drip-feed levering.',
     internalRoute: '#products',
     icon: Sparkles,
@@ -62,7 +62,7 @@ const portfolioEntities: PortfolioEntity[] = [
     tag: 'Music Label',
     tagColor: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
     description: 'Internationaal muziek- en artiestenplatform op zheavenzy.one. Vertegenwoordigt opkomende en gevestigde artiesten met wereldwijde releases.',
-    synergy: 'BoostPlug levert de algoritmekracht voor releases; VVC-leden delen mee in het succes van de muziekcampagnes.',
+    synergy: 'BoostPlug verzorgt de organische streamingdistributie voor releases; VVC-leden delen mee in het succes van de muziekcampagnes.',
     url: 'https://zheavenzy.one',
     icon: Music2,
   },
@@ -171,8 +171,8 @@ export function QuantumInitiumPage({ onBack, onShop, onGoVVC }: QuantumInitiumPa
             Quantum <span className="text-[hsl(142,76%,45%)]">Initium</span>
           </h1>
           <p className="text-white/60 text-sm sm:text-lg max-w-3xl mx-auto leading-relaxed">
-            Quantum Initium is het dynamische holding-ecosysteem achter toonaangevende technologieën,
-            digitale algoritme-beïnvloeding, gedecentraliseerde streaming-infrastructuur en collectieve verdienmodellen.
+            Quantum Initium overkoepelt een netwerk van gespecialiseerde technologie- en mediaondernemingen,
+            gericht op residentiële streamingdistributie, muziekuitgaven en collectieve hardware-verdienmodellen.
           </p>
         </div>
 
@@ -184,7 +184,7 @@ export function QuantumInitiumPage({ onBack, onShop, onGoVVC }: QuantumInitiumPa
           </Card>
           <Card className="p-4 sm:p-5 bg-white/5 border-white/10 rounded-2xl text-center">
             <p className="text-2xl sm:text-3xl font-extrabold text-[hsl(142,76%,45%)] mb-1">100%</p>
-            <p className="text-white/50 text-xs font-medium uppercase tracking-wider">Algoritmische Synergie</p>
+            <p className="text-white/50 text-xs font-medium uppercase tracking-wider">Eigen Infrastructuur</p>
           </Card>
           <Card className="p-4 sm:p-5 bg-white/5 border-white/10 rounded-2xl text-center">
             <p className="text-2xl sm:text-3xl font-extrabold text-[hsl(199,89%,48%)] mb-1">&lt; 15 min</p>
@@ -200,7 +200,7 @@ export function QuantumInitiumPage({ onBack, onShop, onGoVVC }: QuantumInitiumPa
         <div className="mb-14">
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              De Kracht van Geïntegreerde Synergie
+              Hoe het Netwerk Elkaar Versterkt
             </h2>
             <p className="text-white/50 text-xs sm:text-sm max-w-xl mx-auto">
               Waar andere bedrijven afhankelijk zijn van externe partijen, bevindt de volledige waardeketen zich binnen Quantum Initium.
@@ -260,7 +260,7 @@ export function QuantumInitiumPage({ onBack, onShop, onGoVVC }: QuantumInitiumPa
               </h2>
             </div>
             <p className="text-white/50 text-xs max-w-md">
-              Elke onderneming vervult een specifieke rol in de keten van technologie, media, finance en ledenkracht.
+              Elke onderneming vervult een specifieke rol in de keten van technologie, media, finance en netwerkcapaciteit.
             </p>
           </div>
 

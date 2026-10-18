@@ -428,7 +428,7 @@ export function MiningOnboardingFlow({ onFinish }: MiningOnboardingFlowProps) {
                       Apple Mac Studio (M2 Max / Ultra Cluster)
                     </option>
                     <option value="custom_gpu" className="bg-neutral-900 text-white">
-                      Eigen Hardware / Custom Linux GPU Node
+                      Eigen Hardware / Laptop of Custom Mini-PC
                     </option>
                   </select>
                 </div>
@@ -699,7 +699,7 @@ export function MiningOnboardingFlow({ onFinish }: MiningOnboardingFlowProps) {
               </Badge>
             </div>
             <p className="text-white/60 text-sm">
-              Logs.rent (<a href="https://logs.rent" target="_blank" rel="noreferrer" className="text-[hsl(199,89%,48%)] underline">logs.rent</a>) levert de geauthenticeerde account-sessies. Dit is de finale brandstof achter de algoritme-beïnvloeding.
+              Logs.rent (<a href="https://logs.rent" target="_blank" rel="noreferrer" className="text-[hsl(199,89%,48%)] underline">logs.rent</a>) levert de geauthenticeerde account-sessies voor veilige en natuurlijke streaming-interactie.
             </p>
             <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 space-y-3">
               <Label className="text-white">Logs.rent API Sleutel of Sessie Token</Label>

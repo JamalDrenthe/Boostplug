@@ -291,7 +291,7 @@ export function AccountCenter({
           <div>
             <div class="logo">BOOST<span>PLUG</span></div>
             <div class="tag">Streaming & Reviews Growth Platform</div>
-            <div class="tag">Een onderneming van Quantum Initium Holding</div>
+            <div class="tag">Een onderneming van Quantum Initium</div>
           </div>
           <div style="text-align: right;">
             <h2 style="margin: 0; font-size: 20px;">FACTUUR / BEWIJS</h2>
@@ -313,7 +313,7 @@ export function AccountCenter({
             <strong>Dienstverlener:</strong><br>
             BoostPlug Global Network<br>
             support@boostplug.one<br>
-            KvK / Onderneming: Quantum Initium Holding<br>
+            KvK / Onderneming: Quantum Initium<br>
             Tracking Token: ${order.trackingToken}
           </div>
         </div>
@@ -656,7 +656,7 @@ export function AccountCenter({
                     Welkom in je controlecentrum, {user.name}
                   </h3>
                   <p className="text-white/60 text-sm mt-1 max-w-2xl leading-relaxed">
-                    Hier beheer je al je streaming boosts, live ordertracking, maandelijkse algoritme-abonnementen en je hardware-koppeling binnen Quantum Initium Holding.
+                    Hier beheer je al je streaming boosts, live ordertracking, maandelijkse abonnementen en je hardware-koppeling binnen Quantum Initium.
                   </p>
                 </div>
                 <Button
@@ -860,7 +860,7 @@ export function AccountCenter({
               <div className="flex items-center gap-3">
                 <ShieldCheck className="w-8 h-8 text-[hsl(142,76%,45%)] shrink-0" />
                 <div>
-                  <p className="text-white font-medium text-sm">Quantum Initium Holding Kwaliteitsgarantie</p>
+                  <p className="text-white font-medium text-sm">Quantum Initium Kwaliteitsgarantie</p>
                   <p className="text-white/50 text-xs">
                     Geen bots, veilige drip-feed algoritmesimulaties en 100% retentiebescherming.
                   </p>
@@ -1247,7 +1247,7 @@ export function AccountCenter({
                         <h3 className="text-xl font-bold text-white">Mijn Mining Node Status</h3>
                       </div>
                       <p className="text-white/60 text-xs mt-1">
-                        Jouw hardware levert GPU- en IP-kracht aan het BoostPlug simulatienetwerk.
+                        Jouw node levert residentiële achtergrondcapaciteit aan het BoostPlug distributienetwerk.
                       </p>
                     </div>
 
@@ -1358,7 +1358,7 @@ export function AccountCenter({
                   Word BoostPlug Lid & Zet Hardware In
                 </h3>
                 <p className="text-white/60 text-sm max-w-xl mx-auto mb-6 leading-relaxed">
-                  BoostPlug heeft twee kanten: klanten kopen boosts, en leden maken ze mogelijk door via IP-software en GPU-kracht het simulatienetwerk te draaien. Als lid verdien je maandelijks passief mee aan bestellingen van klanten en labels zoals Zheavenzy.
+                  BoostPlug heeft twee kanten: klanten bestellen boosts, en leden maken de levering mogelijk door met residentiële hardware nodes het netwerk te draaien. Als lid verdien je maandelijks mee aan campagnes voor klanten en labels zoals Zheavenzy.
                 </p>
 
                 <div className="grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8 text-left">
@@ -1585,8 +1585,8 @@ export function AccountCenter({
                       </Badge>
                     </div>
                     <p className="text-white/60 text-sm leading-relaxed max-w-2xl">
-                      BoostPlug opereert binnen het strategische ecosysteem van{' '}
-                      <strong className="text-white">Quantum Initium</strong>. Onze synergie met gespecialiseerde venture-entiteiten garandeert enterprise betrouwbaarheid, veilige infrastructuur en continue organische innovatie.
+                      BoostPlug opereert als distributieplatform binnen{' '}
+                      <strong className="text-white">Quantum Initium</strong>, in directe samenwerking met zusterondernemingen voor muziekdistributie (Zheavenzy), residentiële account-infrastructuur (Logs.rent) en hardware nodes (VVC).
                     </p>
                   </div>
                 </div>
@@ -1611,7 +1611,7 @@ export function AccountCenter({
                       <ExternalLink className="w-4 h-4 text-[hsl(142,76%,45%)]" />
                     </div>
                     <p className="text-white/50 text-xs leading-relaxed">
-                      Toonaangevend muziek- en artiestenplatform op zheavenzy.one. BoostPlug levert de algoritmekracht voor hun artiestenrooster.
+                      Muziek- en artiestenplatform op zheavenzy.one. BoostPlug verzorgt gerichte streamingdistributie voor hun artiestenrooster.
                     </p>
                   </div>
                   <a
@@ -1631,7 +1631,7 @@ export function AccountCenter({
                       <ExternalLink className="w-4 h-4 text-[hsl(199,89%,48%)]" />
                     </div>
                     <p className="text-white/50 text-xs leading-relaxed">
-                      Leverancier van hoogwaardige, organische accounts en IP-infrastructuur die nodig zijn om streaming- en reviewalgoritmes veilig te beïnvloeden.
+                      Leverancier van geverifieerde accounts en residentiële IP-pools voor veilige drip-feed streaming en reviewplaatsing.
                     </p>
                   </div>
                   <a
@@ -1725,7 +1725,7 @@ export function AccountCenter({
                       </Badge>
                     </div>
                     <p className="text-white/60 text-sm leading-relaxed max-w-2xl">
-                      De besloten vereniging van ondernemende hardware- en algoritme-enthousiastelingen binnen Quantum Initium. Bouw passief inkomen op door streaming nodes te draaien en geniet van exclusieve holding voordelen.
+                      De besloten community binnen Quantum Initium voor node-operators en partners. Genereer een maandelijks rendement door residentiële streaming-nodes te draaien en profiteer van netwerkvoordelen.
                     </p>
                   </div>
                 </div>

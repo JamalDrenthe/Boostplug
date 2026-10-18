@@ -687,10 +687,10 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
                 <div>
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
                     <Cpu className="w-5 h-5 text-[hsl(199,89%,48%)]" />
-                    Leden & Algoritme-Mining Netwerk
+                    Leden & Node Netwerk
                   </h3>
                   <p className="text-white/50 text-xs mt-1">
-                    Leden leveren GPU-kracht en IP-software om het algoritme te beïnvloeden namens artiesten en merken.
+                    Leden stellen residentiële Mac mini nodes beschikbaar voor gecontroleerde streamingsessies namens artiesten en labels.
                   </p>
                 </div>
                 <Badge className="bg-[hsl(199,89%,48%)]/20 text-[hsl(199,89%,48%)] border-[hsl(199,89%,48%)]/30">
@@ -715,7 +715,7 @@ export function AdminDashboard({ onBack, onTrack }: AdminDashboardProps) {
                       <Badge variant="outline" className="text-green-400 border-green-500/40">Actief</Badge>
                     </div>
                     <div className="flex items-center justify-between p-2 rounded bg-white/5">
-                      <span className="text-white">Quantum Initium Holding</span>
+                      <span className="text-white">Quantum Initium</span>
                       <Badge variant="outline" className="text-blue-400 border-blue-500/40">Moederorganisatie</Badge>
                     </div>
                   </div>

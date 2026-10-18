@@ -55,7 +55,7 @@ export function Hero({ onMembers }: HeroProps) {
       <div className="relative z-10 max-w-5xl mx-auto text-center">
         {/* Eyebrow */}
         <p className="eyebrow text-[hsl(142,76%,45%)] mb-6 animate-slide-up">
-          Algoritme-beïnvloeding · Onderdeel van Quantum Initium Holding
+          Streaming & Review Distributie · Quantum Initium
         </p>
 
         {/* Main Heading */}
@@ -65,9 +65,8 @@ export function Hero({ onMembers }: HeroProps) {
         </h1>
 
         {/* Subheading */}
-        <p className="text-lg sm:text-xl text-white/55 max-w-2xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          Verhoog je streams, followers en reviews met één klik — of word lid en
-          verdien mee aan het netwerk. De kracht van BoostPlug: het algoritme beïnvloeden.
+        <p className="text-lg sm:text-xl text-white/65 max-w-2xl mx-auto mb-10 animate-slide-up leading-relaxed" style={{ animationDelay: '0.2s' }}>
+          Verhoog je streams, luisteraars en reviews met gecontroleerde drip-feed levering — of word lid en ontvang maandelijks een vaste vergoeding via residentiële hardware nodes.
         </p>
 
         {/* Category Tabs */}
@@ -103,7 +102,7 @@ export function Hero({ onMembers }: HeroProps) {
             onClick={scrollToProducts}
             className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] font-semibold px-8 py-6 text-base rounded-full transition-all hover:scale-[1.03]"
           >
-            Start nu
+            Start direct
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           <Button 
@@ -112,7 +111,7 @@ export function Hero({ onMembers }: HeroProps) {
             className="bg-white/10 hover:bg-white/15 text-white border border-white/15 font-medium px-8 py-6 text-base rounded-full"
           >
             <Users className="w-5 h-5 mr-2" />
-            Voor leden
+            Voor leden & nodes
           </Button>
           <Button 
             variant="ghost"
@@ -120,30 +119,30 @@ export function Hero({ onMembers }: HeroProps) {
             onClick={scrollToProducts}
             className="text-white/60 hover:text-white hover:bg-white/5 px-6 py-6 text-base rounded-full"
           >
-            Bekijk prijzen
+            Tarieven bekijken
           </Button>
         </div>
 
         {/* Trust Indicators — mono label row */}
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 animate-slide-up" style={{ animationDelay: '0.5s' }}>
-          <div className="flex items-center gap-2 text-white/45">
+          <div className="flex items-center gap-2 text-white/60">
             <CheckCircle2 className="w-4 h-4 text-[hsl(142,76%,45%)]" />
-            <span className="text-sm">10.000+ tevreden klanten</span>
+            <span className="text-sm">99,4% Drip-Feed Retentie</span>
           </div>
           <div className="hidden sm:block w-px h-4 bg-white/15" />
-          <div className="flex items-center gap-2 text-white/45">
+          <div className="flex items-center gap-2 text-white/60">
             <Shield className="w-4 h-4 text-[hsl(142,76%,45%)]" />
-            <span className="text-sm">100% veilig & discreet</span>
+            <span className="text-sm">Echte residentiële verbindingen</span>
           </div>
           <div className="hidden sm:block w-px h-4 bg-white/15" />
-          <div className="flex items-center gap-2 text-white/45">
+          <div className="flex items-center gap-2 text-white/60">
             <Clock className="w-4 h-4 text-[hsl(142,76%,45%)]" />
-            <span className="text-sm">Directe levering</span>
+            <span className="text-sm">Start binnen 15 minuten</span>
           </div>
           <div className="hidden sm:block w-px h-4 bg-white/15" />
-          <div className="flex items-center gap-2 text-white/45">
+          <div className="flex items-center gap-2 text-white/60">
             <Building2 className="w-4 h-4 text-[hsl(142,76%,45%)]" />
-            <span className="text-sm">Quantum Initium Holding</span>
+            <span className="text-sm">Quantum Initium</span>
           </div>
         </div>
 
