@@ -35,7 +35,7 @@ export function Footer() {
             <p className="text-white/50 mb-6">
               BoostPlug is een onderneming van{' '}
               <a
-                href="#/quantum-initium"
+                href="#/integraties"
                 className="text-[hsl(142,76%,45%)] hover:text-white transition-colors font-medium"
               >
                 Quantum Initium
@@ -115,13 +115,14 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#/quantum-initium" className="text-white/50 hover:text-[hsl(142,76%,45%)] transition-colors">
-                  Quantum Initium
+                <a href="#/integraties" className="text-white/70 hover:text-[hsl(142,76%,45%)] transition-colors flex items-center gap-1.5 font-medium">
+                  Integraties & Ecosysteem
+                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)] font-mono">10</span>
                 </a>
               </li>
               <li>
-                <a href="#/vvc" className="text-sky-400 hover:text-sky-300 transition-colors font-medium">
-                  Verdienende Vrienden Club
+                <a href="#/integraties#vvc" className="text-sky-400 hover:text-sky-300 transition-colors font-medium">
+                  VVC Hardware Nodes
                 </a>
               </li>
               <li>

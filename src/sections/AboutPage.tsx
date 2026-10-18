@@ -126,7 +126,7 @@ export function AboutPage({ onBack, onShop }: AboutPageProps) {
               <p className="text-white/60 mb-4 leading-relaxed">
                 BoostPlug is een onderneming van{' '}
                 <a
-                  href="#/quantum-initium"
+                  href="#/integraties"
                   className="text-[hsl(142,76%,45%)] hover:text-white transition-colors inline-flex items-center gap-1 font-medium"
                 >
                   Quantum Initium

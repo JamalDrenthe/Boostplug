@@ -55,6 +55,7 @@ interface AccountCenterProps {
   onTrack: (token: string) => void;
   onShop: () => void;
   onAdmin?: () => void;
+  onIntegrations?: () => void;
   onQuantumInitium?: () => void;
   onVVC?: () => void;
 }
@@ -77,6 +78,7 @@ export function AccountCenter({
   onTrack,
   onShop,
   onAdmin,
+  onIntegrations,
   onQuantumInitium,
   onVVC,
 }: AccountCenterProps) {
@@ -1592,12 +1594,13 @@ export function AccountCenter({
                 </div>
                 <Button
                   onClick={() => {
-                    if (onQuantumInitium) onQuantumInitium();
-                    else window.location.hash = '#/quantum-initium';
+                    if (onIntegrations) onIntegrations();
+                    else if (onQuantumInitium) onQuantumInitium();
+                    else window.location.hash = '#/integraties';
                   }}
                   className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-black font-semibold rounded-full shrink-0 shadow-lg shadow-[hsl(142,76%,45%)]/20"
                 >
-                  Bekijk Quantum Initium Hub
+                  Bekijk Integraties Hub
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>
@@ -1731,12 +1734,13 @@ export function AccountCenter({
                 </div>
                 <Button
                   onClick={() => {
-                    if (onVVC) onVVC();
-                    else window.location.hash = '#/vvc';
+                    if (onIntegrations) onIntegrations();
+                    else if (onVVC) onVVC();
+                    else window.location.hash = '#/integraties#vvc';
                   }}
                   className="bg-sky-400 hover:bg-sky-300 text-black font-semibold rounded-full shrink-0 shadow-lg shadow-sky-500/20"
                 >
-                  Bekijk Volledige VVC Pagina
+                  Bekijk VVC Node Integratie
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>

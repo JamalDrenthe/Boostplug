@@ -16,9 +16,9 @@ import {
   Sparkles,
   ShoppingBag,
   Pickaxe,
-  Building2,
   Users,
   ChevronDown,
+  Layers,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -35,6 +35,7 @@ interface HeaderProps {
   onHome: () => void;
   onAbout: () => void;
   onAdmin?: () => void;
+  onIntegrations?: () => void;
   onQuantumInitium?: () => void;
   onVVC?: () => void;
   onNavigateSection?: (sectionId: string) => void;
@@ -47,10 +48,12 @@ export function Header({
   onHome,
   onAbout,
   onAdmin,
+  onIntegrations,
   onQuantumInitium,
   onVVC,
   onNavigateSection,
 }: HeaderProps) {
+  const handleGoIntegrations = onIntegrations || onQuantumInitium || onVVC;
   const { cart, currency, setCurrency, locale, setLocale, user, isDemoUser, loginAsDemo } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -144,40 +147,47 @@ export function Header({
               Voor leden
             </a>
 
-            {/* Ecosysteem Dropdown */}
+            {/* Integraties Dropdown (Quantum Initium & VVC) */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm text-white/70 hover:text-white transition-colors cursor-pointer py-1 font-medium group">
-                  <span>Ecosysteem</span>
+                <button
+                  onClick={() => {
+                    if (handleGoIntegrations) handleGoIntegrations();
+                    else window.location.hash = '#/integraties';
+                  }}
+                  className="flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors cursor-pointer py-1 font-medium group"
+                >
+                  <Layers className="w-3.5 h-3.5 text-[hsl(142,76%,45%)]" />
+                  <span>Integraties</span>
                   <ChevronDown className="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="bg-[hsl(220,25%,10%)]/95 backdrop-blur-xl border-white/10 w-72 p-2 rounded-2xl shadow-2xl text-white">
                 <div className="px-2.5 py-1.5 border-b border-white/10 mb-1">
-                  <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Holding & Community</p>
+                  <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Quantum Initium Ecosysteem</p>
                 </div>
                 <DropdownMenuItem
                   onClick={() => {
-                    if (onQuantumInitium) onQuantumInitium();
-                    else window.location.hash = '#/quantum-initium';
+                    if (handleGoIntegrations) handleGoIntegrations();
+                    else window.location.hash = '#/integraties';
                   }}
                   className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/10 cursor-pointer focus:bg-white/10"
                 >
                   <div className="w-8 h-8 rounded-lg bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)] flex items-center justify-center shrink-0 mt-0.5">
-                    <Building2 className="w-4 h-4" />
+                    <Layers className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-xs text-white">Quantum Initium</span>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)]">Holding</span>
+                      <span className="font-semibold text-xs text-white">Integraties Hub</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)]">10 modules</span>
                     </div>
-                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Multi-venture ecosysteem & portfolio</p>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Het complete netwerk activeren</p>
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    if (onVVC) onVVC();
-                    else window.location.hash = '#/vvc';
+                    if (handleGoIntegrations) handleGoIntegrations();
+                    else window.location.hash = '#/integraties#vvc';
                   }}
                   className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-sky-500/10 cursor-pointer focus:bg-sky-500/10"
                 >
@@ -189,7 +199,7 @@ export function Header({
                       <span className="font-semibold text-xs text-sky-300">Verdienende Vrienden Club</span>
                       <span className="text-[9px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-400">VVC</span>
                     </div>
-                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Hardware mining • €150-€400/mnd rewards</p>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Hardware verdienmodel • €150-€400/mnd</p>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -534,38 +544,43 @@ export function Header({
                 </div>
               </div>
 
-              {/* Categorie: Ecosysteem & Netwerk */}
+              {/* Categorie: Ecosysteem & Integraties */}
               <div>
-                <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2 px-1">Holding & Netwerk</p>
+                <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2 px-1">Ecosysteem & Integraties</p>
                 <div className="flex flex-col gap-1.5">
                   <button 
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      if (onQuantumInitium) onQuantumInitium();
-                      else window.location.hash = '#/quantum-initium';
+                      if (handleGoIntegrations) handleGoIntegrations();
+                      else window.location.hash = '#/integraties';
                     }}
-                    className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left cursor-pointer"
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-[hsl(142,76%,45%)]/10 border border-[hsl(142,76%,45%)]/20 hover:bg-[hsl(142,76%,45%)]/20 transition-colors text-left cursor-pointer"
                   >
-                    <Building2 className="w-4 h-4 text-[hsl(142,76%,45%)]" />
-                    <span className="text-white text-sm font-medium">Quantum Initium</span>
+                    <div className="flex items-center gap-3">
+                      <Layers className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                      <span className="text-white text-sm font-medium">Integraties</span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)] font-mono">
+                      10 modules
+                    </span>
                   </button>
                   <button 
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      if (onVVC) onVVC();
-                      else window.location.hash = '#/vvc';
+                      if (handleGoIntegrations) handleGoIntegrations();
+                      else window.location.hash = '#/integraties#vvc';
                     }}
                     className="flex items-center gap-3 p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-left cursor-pointer"
                   >
                     <Users className="w-4 h-4 text-sky-400" />
-                    <span className="text-sky-300 text-sm font-medium">Verdienende Vrienden Club</span>
+                    <span className="text-sky-300 text-sm font-medium">Verdienende Vrienden Club (VVC)</span>
                   </button>
                   <a 
                     href="#/leden" 
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
                   >
-                    <User className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    <User className="w-4 h-4 text-white/60" />
                     <span className="text-white text-sm font-medium">Voor leden</span>
                   </a>
                 </div>
