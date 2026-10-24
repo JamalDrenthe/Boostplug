@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useStore } from '@/hooks/useStore';
 import { streamPlatforms, calculateStreamPrice, formatPrice } from '@/data/platforms';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { TiltCard } from '@/components/ui/TiltCard';
 import { 
   Music2, 
   Cloud, 
@@ -16,7 +18,8 @@ import {
   Youtube,
   Apple,
   Plus,
-  Sparkles
+  Sparkles,
+  ArrowLeft
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -95,43 +98,53 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
   // Step 1: Platform Selection
   if (!selectedPlatform) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {streamPlatforms.map((platform) => {
+      <div className="space-y-8">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
+        >
+          {streamPlatforms.map((platform, idx) => {
             const Icon = iconMap[platform.icon] || Music2;
             return (
-              <button
+              <motion.div
                 key={platform.id}
-                onClick={() => setSelectedPlatform(platform.id)}
-                className="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-[hsl(142,76%,45%)]/50 hover:bg-white/10 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
               >
-                <div 
-                  className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: `${platform.color}20` }}
-                >
-                  <Icon className="w-7 h-7" style={{ color: platform.color }} />
-                </div>
-                <p className="text-white font-medium text-sm">{platform.name}</p>
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div 
-                    className="absolute inset-0 rounded-2xl"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${platform.color}10 0%, transparent 50%)`,
-                    }}
-                  />
-                </div>
-              </button>
+                <TiltCard glowColor="gold" className="h-full">
+                  <button
+                    onClick={() => setSelectedPlatform(platform.id)}
+                    className="w-full text-center p-6 rounded-2xl bg-[#0D1117]/80 border border-white/[0.08] hover:border-[#E5C583]/40 transition-all duration-300 flex flex-col items-center justify-center group h-full cursor-pointer"
+                  >
+                    <div 
+                      className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg"
+                      style={{ backgroundColor: `${platform.color}15`, border: `1px solid ${platform.color}30` }}
+                    >
+                      <Icon className="w-7 h-7" style={{ color: platform.color }} />
+                    </div>
+                    <p className="text-[#FAF8F5] font-medium text-sm tracking-wide group-hover:text-[#E5C583] transition-colors">
+                      {platform.name}
+                    </p>
+                    <span className="text-[11px] text-white/40 mt-1">
+                      {platform.types.length} audiosuites
+                    </span>
+                  </button>
+                </TiltCard>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {cart.length > 0 && (
           <div className="flex justify-center">
             <Button
               onClick={onCheckout}
-              className="bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] font-semibold"
+              className="bg-gradient-to-r from-[#E5C583] via-[#D4AF37] to-[#C5A059] text-[#090B0F] font-semibold px-8 py-6 rounded-full shadow-[0_0_20px_rgba(229,197,131,0.3)] hover:brightness-110 cursor-pointer"
             >
-              Ga naar afrekenen ({cart.length} items)
+              Ga naar afrekenen ({cart.length} {cart.length === 1 ? 'item' : 'items'})
             </Button>
           </div>
         )}
@@ -141,20 +154,22 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
 
   // Step 2: Type & Configuration
   return (
-    <Card className="p-6 sm:p-8 bg-white/5 border-white/10">
+    <Card className="p-6 sm:p-10 bg-[#0D1117]/90 backdrop-blur-2xl border border-[#E5C583]/20 shadow-2xl rounded-3xl">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-4 mb-8 pb-6 border-b border-white/10">
         <button
           onClick={() => {
             setSelectedPlatform(null);
             setSelectedType(null);
           }}
-          className="text-white/50 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-white/60 hover:text-[#E5C583] transition-colors cursor-pointer font-mono"
         >
-          ← Terug
+          <ArrowLeft className="w-4 h-4" />
+          Terug naar overzicht
         </button>
+        <div className="h-4 w-px bg-white/20" />
         <div 
-          className="w-10 h-10 rounded-lg flex items-center justify-center"
+          className="w-10 h-10 rounded-xl flex items-center justify-center"
           style={{ backgroundColor: `${platform?.color}20` }}
         >
           {platform && (() => {
@@ -163,38 +178,54 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
           })()}
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-white">{platform?.name}</h3>
-          <p className="text-sm text-white/50">Kies je boost type</p>
+          <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span>{platform?.name}</span>
+            <span className="font-serif italic text-[#E5C583] font-normal text-lg">Studio Allocatie</span>
+          </h3>
+          <p className="text-xs text-white/50">Selecteer pakket, frequentie en distributie-parameters</p>
         </div>
       </div>
 
       {/* Type Selection */}
       {!selectedType ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {platform?.types.map((type) => (
-            <button
-              key={type.id}
-              onClick={() => {
-                setSelectedType(type.id);
-                setQuantity(type.minQuantity);
-              }}
-              className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-[hsl(142,76%,45%)]/50 hover:bg-white/10 transition-all text-left"
-            >
-              <h4 className="text-lg font-medium text-white mb-1">{type.name}</h4>
-              <p className="text-sm text-white/50 mb-4">{type.description}</p>
-              <p className="text-[hsl(142,76%,45%)] font-semibold">
-                Vanaf {formatPrice(type.basePrice * type.minQuantity, currency)}
-              </p>
-            </button>
+            <TiltCard key={type.id} glowColor="gold" className="h-full">
+              <button
+                onClick={() => {
+                  setSelectedType(type.id);
+                  setQuantity(type.minQuantity);
+                }}
+                className="w-full h-full p-6 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-[#E5C583]/40 transition-all text-left flex flex-col justify-between cursor-pointer group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-base font-semibold text-white group-hover:text-[#E5C583] transition-colors">
+                      {type.name}
+                    </h4>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#E5C583]/10 text-[#E5C583] border border-[#E5C583]/20">
+                      Tier 1
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/50 mb-5 leading-relaxed">{type.description}</p>
+                </div>
+                <div className="pt-4 border-t border-white/[0.06]">
+                  <p className="text-xs text-white/40">Tarief</p>
+                  <p className="text-[#E5C583] font-serif italic text-lg font-medium">
+                    Vanaf {formatPrice(type.basePrice * type.minQuantity, currency)}
+                  </p>
+                </div>
+              </button>
+            </TiltCard>
           ))}
         </div>
       ) : (
         <div className="space-y-8">
           {/* Quantity Slider */}
-          <div>
+          <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
             <div className="flex items-center justify-between mb-4">
-              <Label className="text-white">Hoeveelheid</Label>
-              <Badge variant="outline" className="border-[hsl(142,76%,45%)] text-[hsl(142,76%,45%)]">
+              <Label className="text-[#FAF8F5] font-medium text-sm">Gewenst volume</Label>
+              <Badge variant="outline" className="border-[#E5C583]/50 text-[#E5C583] bg-[#E5C583]/10 px-3 py-1 font-mono text-xs">
                 {formatQuantity(quantity)} {streamType?.name}
               </Badge>
             </div>
@@ -206,21 +237,21 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
               step={streamType?.minQuantity || 100}
               className="py-4"
             />
-            <div className="flex justify-between text-xs text-white/40 mt-1">
-              <span>{formatQuantity(streamType?.minQuantity || 100)}</span>
-              <span>{formatQuantity(streamType?.maxQuantity || 100000)}</span>
+            <div className="flex justify-between text-xs text-white/40 mt-1 font-mono">
+              <span>Min: {formatQuantity(streamType?.minQuantity || 100)}</span>
+              <span>Max: {formatQuantity(streamType?.maxQuantity || 100000)}</span>
             </div>
           </div>
 
           {/* Quality Toggle */}
-          <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[hsl(142,76%,45%)]/20 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+          <div className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-[#E5C583]/10 border border-[#E5C583]/30 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-[#E5C583]" />
               </div>
               <div>
-                <p className="text-white font-medium">Premium kwaliteit</p>
-                <p className="text-sm text-white/50">Hogere retentie & betere distributie</p>
+                <p className="text-white font-medium text-sm">Residentiële High-Retention Audits</p>
+                <p className="text-xs text-white/50">Verhoogde dwell time, volledige tracks & organische algoritmische versterking</p>
               </div>
             </div>
             <Switch
@@ -230,43 +261,48 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
           </div>
 
           {/* Track URL Input */}
-          <div>
-            <Label className="text-white mb-2 block">Track/Artist URL (optioneel)</Label>
-            <Input
-              value={trackUrl}
-              onChange={(e) => setTrackUrl(e.target.value)}
-              placeholder={`https://open.spotify.com/track/...`}
-              className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
-            />
-          </div>
-
-          {/* Artist Name */}
-          <div>
-            <Label className="text-white mb-2 block">Artiest naam (optioneel)</Label>
-            <Input
-              value={artistName}
-              onChange={(e) => setArtistName(e.target.value)}
-              placeholder="Artiest naam"
-              className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
-            />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label className="text-white/80 text-xs mb-2 block font-medium">Track / Album / Playlist Link</Label>
+              <Input
+                value={trackUrl}
+                onChange={(e) => setTrackUrl(e.target.value)}
+                placeholder="https://open.spotify.com/track/..."
+                className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 rounded-xl focus:border-[#E5C583]/50"
+              />
+            </div>
+            <div>
+              <Label className="text-white/80 text-xs mb-2 block font-medium">Artiest / Label Identificatie (optioneel)</Label>
+              <Input
+                value={artistName}
+                onChange={(e) => setArtistName(e.target.value)}
+                placeholder="Bijv. Nova Sound Studio"
+                className="bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 rounded-xl focus:border-[#E5C583]/50"
+              />
+            </div>
           </div>
 
           {/* Price Summary */}
-          <div className="p-6 rounded-xl bg-gradient-to-r from-[hsl(142,76%,45%)]/10 to-[hsl(199,89%,48%)]/10 border border-[hsl(142,76%,45%)]/20">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#E5C583]/10 via-[#0D1117] to-[#10B981]/10 border border-[#E5C583]/25 shadow-xl">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-white/70">{formatQuantity(quantity)} × {streamType?.name}</span>
-              <span className="text-white">{formatPrice(streamType ? streamType.basePrice * quantity : 0, currency)}</span>
+              <span className="text-white/70 text-sm font-light">{formatQuantity(quantity)} × {streamType?.name}</span>
+              <span className="text-white font-mono text-sm">{formatPrice(streamType ? streamType.basePrice * quantity : 0, currency)}</span>
             </div>
             {isPremium && (
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white/70">Premium (+50%)</span>
-                <span className="text-[hsl(142,76%,45%)]">+{formatPrice(streamType ? streamType.basePrice * quantity * 0.5 : 0, currency)}</span>
+                <span className="text-white/70 text-sm font-light">High-Retention Premium allocatie (+50%)</span>
+                <span className="text-[#E5C583] font-mono text-sm">+{formatPrice(streamType ? streamType.basePrice * quantity * 0.5 : 0, currency)}</span>
               </div>
             )}
-            <div className="border-t border-white/10 pt-3 mt-3">
-              <div className="flex items-center justify-between">
-                <span className="text-white font-semibold">Totaal</span>
-                <span className="text-2xl font-bold text-[hsl(142,76%,45%)]">{formatPrice(price, currency)}</span>
+            <div className="border-t border-white/10 pt-4 mt-3">
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <span className="text-xs uppercase tracking-wider text-white/50 font-mono block">Totaal investering</span>
+                  <span className="text-xs text-white/40">Inclusief BTW & realtime trackingtoken</span>
+                </div>
+                <span className="font-serif italic text-3xl font-light text-[#E5C583]">
+                  {formatPrice(price, currency)}
+                </span>
               </div>
             </div>
           </div>
@@ -276,16 +312,16 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
             <Button
               variant="outline"
               onClick={() => setSelectedType(null)}
-              className="flex-1 border-white/20 text-white hover:bg-white/10"
+              className="flex-1 border-white/15 text-white hover:bg-white/10 rounded-full h-12 cursor-pointer"
             >
               Terug
             </Button>
             <Button
               onClick={handleAddToCart}
-              className="flex-1 bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-[hsl(220,35%,6%)] font-semibold"
+              className="flex-1 bg-gradient-to-r from-[#E5C583] via-[#D4AF37] to-[#C5A059] text-[#090B0F] font-bold rounded-full h-12 shadow-[0_0_20px_rgba(229,197,131,0.3)] hover:brightness-110 cursor-pointer"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Toevoegen
+              Toevoegen aan selectie
             </Button>
           </div>
         </div>

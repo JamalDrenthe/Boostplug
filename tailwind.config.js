@@ -41,9 +41,20 @@ module.exports = {
         boast: {
           dark: "hsl(var(--boast-dark))",
           darker: "hsl(var(--boast-darker))",
+          gold: "hsl(var(--boast-gold))",
           green: "hsl(var(--boast-green))",
           blue: "hsl(var(--boast-blue))",
         },
+        champagne: {
+          DEFAULT: "#E5C583",
+          light: "#F5E6CA",
+          dark: "#C5A059",
+        },
+      },
+      fontFamily: {
+        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'Geist', 'sans-serif'],
+        mono: ['"Space Grotesk"', '"Geist Mono"', 'monospace'],
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
@@ -56,7 +67,9 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-        glow: "0 0 20px hsl(142 76% 45% / 0.3), 0 0 40px hsl(142 76% 45% / 0.1)",
+        glow: "0 0 25px rgba(229, 197, 131, 0.35), 0 0 50px rgba(229, 197, 131, 0.15)",
+        "glow-gold": "0 0 25px rgba(229, 197, 131, 0.35), 0 0 50px rgba(229, 197, 131, 0.15)",
+        "glow-green": "0 0 20px hsl(158 64% 50% / 0.3), 0 0 40px hsl(158 64% 50% / 0.1)",
         "glow-blue": "0 0 20px hsl(199 89% 48% / 0.3), 0 0 40px hsl(199 89% 48% / 0.1)",
       },
       keyframes: {

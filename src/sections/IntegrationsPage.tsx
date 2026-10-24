@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { TiltCard } from '@/components/ui/TiltCard';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +22,6 @@ import {
   ShieldCheck,
   Zap,
   Cpu,
-  Layers,
   Power,
   Copy,
   Check,
@@ -201,62 +202,79 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
         </div>
 
         {/* Hero Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[hsl(142,76%,45%)]/10 border border-[hsl(142,76%,45%)]/30 text-[hsl(142,76%,45%)] text-xs font-semibold uppercase tracking-wider mb-4">
-            <Layers className="w-3.5 h-3.5" />
-            Quantum Initium • Ecosysteem & Integraties
+        <motion.div 
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E5C583]/10 border border-[#E5C583]/30 text-[#E5C583] text-xs font-semibold uppercase tracking-wider mb-4 font-mono">
+            <Sparkles className="w-3.5 h-3.5" />
+            QUANTUM INITIUM • ATELIER ECOSYSTEEM & INTEGRATIES
           </div>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-4">
-            Ecosysteem & <span className="text-[hsl(142,76%,45%)]">Integraties</span>
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-4">
+            Ecosysteem &{' '}
+            <span className="font-serif italic font-normal text-gold-gradient">
+              Integraties Hub
+            </span>
           </h1>
-          <p className="text-white/60 text-sm sm:text-lg max-w-3xl mx-auto leading-relaxed">
-            Activeer en configureer het complete netwerk van Quantum Initium. Van het hardware-verdienmodel van de
+          <p className="text-[#FAF8F5]/60 text-sm sm:text-lg max-w-3xl mx-auto leading-relaxed font-light">
+            Activeer en configureer het complete gedecentraliseerde netwerk van Quantum Initium. Van het hardware-verdienmodel van de
             Verdienende Vrienden Club (VVC) tot residentiële IP-pools van Logs.rent, artiestenreleases via Zheavenzy en
             geautomatiseerde treasury via Investbotiq.
           </p>
-        </div>
+        </motion.div>
 
         {/* KPI Ribbon */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <Card className="p-4 sm:p-5 bg-white/5 border-white/10 rounded-2xl text-center">
-            <p className="text-2xl sm:text-3xl font-extrabold text-white mb-1">10</p>
-            <p className="text-white/50 text-xs font-medium uppercase tracking-wider">Ecosysteem Modules</p>
-          </Card>
-          <Card className="p-4 sm:p-5 bg-white/5 border-white/10 rounded-2xl text-center">
-            <p className="text-2xl sm:text-3xl font-extrabold text-[hsl(142,76%,45%)] mb-1">€150 - €400</p>
-            <p className="text-white/50 text-xs font-medium uppercase tracking-wider">VVC Vergoeding / Node / mnd</p>
-          </Card>
-          <Card className="p-4 sm:p-5 bg-white/5 border-white/10 rounded-2xl text-center">
-            <p className="text-2xl sm:text-3xl font-extrabold text-[hsl(199,89%,48%)] mb-1">100%</p>
-            <p className="text-white/50 text-xs font-medium uppercase tracking-wider">Eigen Infrastructuur</p>
-          </Card>
-          <Card className="p-4 sm:p-5 bg-white/5 border-white/10 rounded-2xl text-center">
-            <p className="text-2xl sm:text-3xl font-extrabold text-purple-400 mb-1">
-              {activeCount} / 10
-            </p>
-            <p className="text-white/50 text-xs font-medium uppercase tracking-wider">Nu Actief Gekoppeld</p>
-          </Card>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-14">
+          <TiltCard glowColor="gold">
+            <div className="p-5 bg-[#0D1117]/80 border border-white/[0.08] hover:border-[#E5C583]/40 rounded-2xl text-center transition-all">
+              <p className="font-serif italic text-3xl sm:text-4xl font-light text-[#E5C583] mb-1">10</p>
+              <p className="text-white/50 text-[11px] font-mono uppercase tracking-wider">Ecosysteem Modules</p>
+            </div>
+          </TiltCard>
+          <TiltCard glowColor="gold">
+            <div className="p-5 bg-[#0D1117]/80 border border-white/[0.08] hover:border-[#E5C583]/40 rounded-2xl text-center transition-all">
+              <p className="font-serif italic text-2xl sm:text-3xl font-light text-[#FAF8F5] mb-1">€150 - €400</p>
+              <p className="text-white/50 text-[11px] font-mono uppercase tracking-wider">VVC Rendement / Node / mnd</p>
+            </div>
+          </TiltCard>
+          <TiltCard glowColor="emerald">
+            <div className="p-5 bg-[#0D1117]/80 border border-white/[0.08] hover:border-emerald-500/40 rounded-2xl text-center transition-all">
+              <p className="font-serif italic text-3xl sm:text-4xl font-light text-emerald-400 mb-1">100%</p>
+              <p className="text-white/50 text-[11px] font-mono uppercase tracking-wider">Eigen Infrastructuur</p>
+            </div>
+          </TiltCard>
+          <TiltCard glowColor="gold">
+            <div className="p-5 bg-[#0D1117]/80 border border-white/[0.08] hover:border-[#E5C583]/40 rounded-2xl text-center transition-all">
+              <p className="font-serif italic text-3xl sm:text-4xl font-light text-[#E5C583] mb-1">
+                {activeCount} / 10
+              </p>
+              <p className="text-white/50 text-[11px] font-mono uppercase tracking-wider">Nu Actief Gekoppeld</p>
+            </div>
+          </TiltCard>
         </div>
 
         {/* ========================================================================= */}
         {/* FLAGSHIP UITGELICHT: VERDIENENDE VRIENDEN CLUB (VVC) & HARDWARE NODES     */}
         {/* ========================================================================= */}
         <div id="vvc" className="mb-16 scroll-mt-28">
-          <Card className="p-6 sm:p-8 bg-gradient-to-br from-[hsl(199,89%,48%)]/15 via-white/[0.04] to-[hsl(142,76%,45%)]/10 border-[hsl(199,89%,48%)]/30 rounded-3xl relative overflow-hidden shadow-2xl">
+          <div className="p-6 sm:p-10 bg-gradient-to-br from-[#E5C583]/15 via-[#0D1117] to-[#10B981]/15 border-2 border-[#E5C583]/40 rounded-3xl relative overflow-hidden shadow-[0_20px_60px_rgba(229,197,131,0.12)]">
             <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 mb-8">
               <div className="space-y-3 max-w-2xl">
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-sky-500/20 text-sky-400 border-sky-500/40 text-xs px-3 py-0.5">
-                    Flagship Verdienmodel
+                  <Badge className="bg-[#E5C583]/20 text-[#E5C583] border-[#E5C583]/40 text-xs px-3 py-0.5 font-mono">
+                    FLAGSHIP HARDWARE ASSET
                   </Badge>
-                  <Badge className="bg-white/10 text-white/70 border-white/10 text-xs">
+                  <Badge className="bg-white/10 text-[#FAF8F5]/80 border-white/10 text-xs font-mono">
                     Quantum Initium Community
                   </Badge>
                 </div>
-                <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                  Verdienende Vrienden Club <span className="text-[hsl(199,89%,48%)]">(VVC)</span>
+                <h2 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">
+                  Verdienende Vrienden Club{' '}
+                  <span className="font-serif italic font-normal text-gold-gradient">(VVC)</span>
                 </h2>
-                <p className="text-white/70 text-sm sm:text-base leading-relaxed">
+                <p className="text-[#FAF8F5]/70 text-sm sm:text-base leading-relaxed font-light">
                   De Verdienende Vrienden Club is de exclusieve community binnen Quantum Initium waar leden maandelijks
                   een vast rendement genereren door een residentiële node (Apple Mac mini M2/M4 of laptop) in te zetten.
                   Jouw hardware voert op de achtergrond gecontroleerde streamingsessies uit over Nederlandse KPN- en
@@ -264,18 +282,18 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
-                    <span className="text-xs text-[hsl(142,76%,45%)] font-mono font-bold">1. HARDWARE</span>
+                  <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10">
+                    <span className="text-xs text-[#E5C583] font-mono font-bold">1. HARDWARE</span>
                     <p className="text-white text-xs font-medium mt-1">Lease via Grover</p>
                     <p className="text-white/40 text-[11px]">Code QUANTUMBOOST20 (20% korting)</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
-                    <span className="text-xs text-[hsl(199,89%,48%)] font-mono font-bold">2. ACTIVATIE</span>
+                  <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10">
+                    <span className="text-xs text-[#10B981] font-mono font-bold">2. ACTIVATIE</span>
                     <p className="text-white text-xs font-medium mt-1">Achtergrond Daemon</p>
                     <p className="text-white/40 text-[11px]">Draait geruisloos zonder zware belasting</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
-                    <span className="text-xs text-purple-400 font-mono font-bold">3. UITBETALING</span>
+                  <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10">
+                    <span className="text-xs text-[#FAF8F5] font-mono font-bold">3. UITBETALING</span>
                     <p className="text-white text-xs font-medium mt-1">1e vd Maand</p>
                     <p className="text-white/40 text-[11px]">€150 - €400 per node via SEPA</p>
                   </div>
@@ -283,25 +301,25 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
               </div>
 
               {/* Grover Partner Card & Quick Action */}
-              <div className="lg:w-80 shrink-0 p-5 rounded-2xl bg-black/50 border border-white/15 space-y-4">
+              <div className="lg:w-80 shrink-0 p-6 rounded-2xl bg-[#090B0F]/90 border border-[#E5C583]/30 space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-white/70 uppercase tracking-wider">Grover Hardware Deal</span>
-                  <Badge variant="outline" className="border-green-500/50 text-green-400 text-[10px]">
+                  <span className="text-xs font-semibold text-[#E5C583] uppercase tracking-wider font-mono">Grover Hardware Deal</span>
+                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px] bg-emerald-500/10">
                     20% Korting
                   </Badge>
                 </div>
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between gap-2">
-                  <span className="font-mono text-sm font-bold text-white tracking-wider">QUANTUMBOOST20</span>
+                <div className="p-3 rounded-xl bg-white/[0.04] border border-[#E5C583]/30 flex items-center justify-between gap-2">
+                  <span className="font-mono text-sm font-bold text-[#FAF8F5] tracking-wider">QUANTUMBOOST20</span>
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={handleCopyGroverCode}
-                    className="h-7 px-2 text-white/70 hover:text-white"
+                    className="h-7 px-2 text-[#E5C583] hover:text-white hover:bg-white/10"
                   >
-                    {copiedCode ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                   </Button>
                 </div>
-                <p className="text-[11px] text-white/50 leading-relaxed">
+                <p className="text-[11px] text-white/50 leading-relaxed font-light">
                   Gebruik deze code bij Grover voor directe korting op je Mac mini M2 (€29,90/mnd) of M4 lease.
                 </p>
                 <div className="space-y-2 pt-1">
@@ -310,7 +328,7 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
                       const vvc = ECOSYSTEM_INTEGRATIONS.find((i) => i.id === 'vvc_node');
                       if (vvc) handleOpenConfigure(vvc);
                     }}
-                    className="w-full bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-black font-semibold text-xs h-10 rounded-xl"
+                    className="w-full bg-gradient-to-r from-[#E5C583] via-[#D4AF37] to-[#C5A059] text-[#090B0F] font-bold text-xs h-10 rounded-full shadow-[0_0_15px_rgba(229,197,131,0.3)] hover:brightness-110 cursor-pointer"
                   >
                     <Cpu className="w-4 h-4 mr-1.5" />
                     {integrationsState['vvc_node']?.isActive ? 'VVC Node Geconfigureerd' : 'Activeer VVC Node Nu'}
@@ -319,7 +337,7 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
                     href="https://www.grover.com/nl-nl/computers/apple-mac-mini"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-1.5 text-xs text-white/70 hover:text-white h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                    className="w-full inline-flex items-center justify-center gap-1.5 text-xs text-white/70 hover:text-white h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
                   >
                     Bekijk Mac mini op Grover
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -329,20 +347,20 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
             </div>
 
             {/* Interactieve VVC Calculator */}
-            <div className="p-6 rounded-2xl bg-black/40 border border-white/10 space-y-6">
+            <div className="p-6 rounded-2xl bg-black/50 border border-white/10 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2">
-                    <Coins className="w-4 h-4 text-[hsl(142,76%,45%)]" />
+                    <Coins className="w-4 h-4 text-[#E5C583]" />
                     Rendementscalculator Verdienende Vrienden Club
                   </h3>
-                  <p className="text-white/50 text-xs mt-0.5">
+                  <p className="text-white/50 text-xs mt-0.5 font-light">
                     Sleep de balk om je geschatte maandelijkse en jaarlijkse nettowinst te berekenen.
                   </p>
                 </div>
                 <div className="text-right">
                   <span className="text-xs uppercase font-mono text-white/40">Geselecteerd:</span>
-                  <p className="text-lg font-bold text-white font-mono">
+                  <p className="text-lg font-bold text-[#E5C583] font-mono">
                     {vvcNodesCount} {vvcNodesCount === 1 ? 'Hardware Node' : 'Hardware Nodes'}
                   </p>
                 </div>
@@ -358,33 +376,33 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
               />
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10">
                   <span className="text-[10px] text-white/40 uppercase font-mono">Bruto Vergoeding</span>
-                  <p className="text-lg font-bold text-white mt-0.5">€ {vvcGrossTotal.toFixed(0)},-</p>
+                  <p className="font-serif italic text-xl font-light text-white mt-0.5">€ {vvcGrossTotal.toFixed(0)},-</p>
                   <span className="text-[10px] text-white/40">€285 per machine / mnd</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10">
                   <span className="text-[10px] text-white/40 uppercase font-mono">Grover Leasekosten</span>
-                  <p className="text-lg font-bold text-white/70 mt-0.5">- € {vvcLeaseTotal.toFixed(0)},-</p>
+                  <p className="font-serif italic text-xl font-light text-white/70 mt-0.5">- € {vvcLeaseTotal.toFixed(0)},-</p>
                   <span className="text-[10px] text-white/40">~€29,90 per machine / mnd</span>
                 </div>
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
                   <span className="text-[10px] text-emerald-400 uppercase font-mono font-bold">Netto Winst / Maand</span>
-                  <p className="text-xl font-extrabold text-[hsl(142,76%,45%)] mt-0.5">
+                  <p className="font-serif italic text-2xl font-light text-emerald-400 mt-0.5">
                     € {vvcNetMonthly.toFixed(2)}
                   </p>
                   <span className="text-[10px] text-emerald-400/70">Vaste SEPA op de 1e</span>
                 </div>
-                <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/30">
-                  <span className="text-[10px] text-sky-400 uppercase font-mono font-bold">Netto Winst / Jaar</span>
-                  <p className="text-xl font-extrabold text-sky-400 mt-0.5">
+                <div className="p-3.5 rounded-2xl bg-[#E5C583]/10 border border-[#E5C583]/30">
+                  <span className="text-[10px] text-[#E5C583] uppercase font-mono font-bold">Netto Winst / Jaar</span>
+                  <p className="font-serif italic text-2xl font-light text-[#E5C583] mt-0.5">
                     € {vvcNetYearly.toFixed(2)}
                   </p>
-                  <span className="text-[10px] text-sky-400/70">Passief jaarinkomen</span>
+                  <span className="text-[10px] text-[#E5C583]/70">Passief jaarinkomen</span>
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* ========================================================================= */}
@@ -429,7 +447,7 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
           </div>
 
           {/* Categorie Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-8 scrollbar-none">
             {[
               { id: 'all', label: 'Alles (10)' },
               { id: 'hardware', label: 'Hardware & Nodes' },
@@ -442,10 +460,10 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id as IntegrationCategory)}
-                className={`text-xs px-3.5 py-1.5 rounded-full whitespace-nowrap transition-colors cursor-pointer font-medium ${
+                className={`text-xs px-4 py-2 rounded-full whitespace-nowrap transition-all cursor-pointer font-medium ${
                   selectedCategory === cat.id
-                    ? 'bg-white/15 text-white border border-white/20'
-                    : 'text-white/50 hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-r from-[#E5C583] to-[#D4AF37] text-[#090B0F] font-semibold shadow-[0_0_15px_rgba(229,197,131,0.3)]'
+                    : 'bg-white/[0.03] text-white/60 hover:text-white border border-white/[0.08] hover:bg-white/[0.08]'
                 }`}
               >
                 {cat.label}
@@ -460,93 +478,94 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
               const isConfigured = integrationsState[item.id]?.isActive;
 
               return (
-                <Card
-                  key={item.id}
-                  className={`p-6 rounded-2xl transition-all flex flex-col justify-between group ${
-                    isConfigured
-                      ? 'bg-white/[0.06] border-[hsl(142,76%,45%)]/40 shadow-lg shadow-[hsl(142,76%,45%)]/5'
-                      : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20'
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-                        <IconComp className="w-5 h-5 text-[hsl(142,76%,45%)]" />
+                <TiltCard key={item.id} glowColor={isConfigured ? 'emerald' : 'gold'} className="h-full">
+                  <div
+                    className={`p-6 rounded-2xl transition-all flex flex-col justify-between group h-full ${
+                      isConfigured
+                        ? 'bg-[#0D1117]/90 border border-emerald-500/40 shadow-lg shadow-emerald-500/5'
+                        : 'bg-[#0D1117]/80 hover:bg-[#0D1117]/95 border border-white/[0.08] hover:border-[#E5C583]/40'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-2 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+                          <IconComp className="w-5 h-5 text-[#E5C583]" />
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Badge className={`${item.tagColor} text-[10px] border`}>
+                            {item.tag}
+                          </Badge>
+                          {isConfigured && (
+                            <span className="flex h-2 w-2 relative">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Badge className={`${item.tagColor} text-[10px] border`}>
-                          {item.tag}
-                        </Badge>
-                        {isConfigured && (
-                          <span className="flex h-2 w-2 relative">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(142,76%,45%)] opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[hsl(142,76%,45%)]" />
-                          </span>
-                        )}
+
+                      <div className="mb-2">
+                        <h3 className="text-base font-bold text-white flex items-center gap-1.5">
+                          {item.name}
+                        </h3>
+                        <p className="text-xs text-[#E5C583] font-mono mt-0.5">{item.subtitle}</p>
+                      </div>
+
+                      <p className="text-white/60 text-xs leading-relaxed mb-4 font-light">
+                        {item.description}
+                      </p>
+
+                      <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-[11px] text-white/50 leading-relaxed mb-4">
+                        <strong className="text-white/80 block mb-0.5">Holding Synergie:</strong>
+                        {item.synergy}
                       </div>
                     </div>
 
-                    <div className="mb-2">
-                      <h3 className="text-base font-bold text-white flex items-center gap-1.5">
-                        {item.name}
-                      </h3>
-                      <p className="text-xs text-[hsl(199,89%,48%)] font-mono mt-0.5">{item.subtitle}</p>
-                    </div>
-
-                    <p className="text-white/60 text-xs leading-relaxed mb-4">
-                      {item.description}
-                    </p>
-
-                    <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-[11px] text-white/50 leading-relaxed mb-4">
-                      <strong className="text-white/80 block mb-0.5">Holding Synergie:</strong>
-                      {item.synergy}
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-white/10 space-y-2.5">
-                    {item.metrics && (
-                      <div className="flex items-center justify-between text-[11px] text-white/40">
-                        <span>{item.metrics.label}</span>
-                        <span className="font-mono text-white/80 font-medium">{item.metrics.value}</span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        onClick={() => handleOpenConfigure(item)}
-                        className={`flex-1 text-xs h-9 rounded-xl font-medium cursor-pointer ${
-                          isConfigured
-                            ? 'bg-white/10 hover:bg-white/15 text-white border border-white/15'
-                            : 'bg-[hsl(142,76%,45%)] hover:bg-[hsl(142,76%,40%)] text-black font-semibold'
-                        }`}
-                      >
-                        {isConfigured ? (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-400" />
-                            Geactiveerd • Wijzigen
-                          </>
-                        ) : (
-                          <>
-                            <Zap className="w-3.5 h-3.5 mr-1.5" />
-                            Activeren
-                          </>
-                        )}
-                      </Button>
-
-                      {item.externalUrl && (
-                        <a
-                          href={item.externalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-colors"
-                          title="Bezoek officiële website"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
+                    <div className="pt-3 border-t border-white/10 space-y-2.5">
+                      {item.metrics && (
+                        <div className="flex items-center justify-between text-[11px] text-white/40">
+                          <span>{item.metrics.label}</span>
+                          <span className="font-mono text-white/80 font-medium">{item.metrics.value}</span>
+                        </div>
                       )}
+
+                      <div className="flex items-center gap-2">
+                        <Button
+                          onClick={() => handleOpenConfigure(item)}
+                          className={`flex-1 text-xs h-9 rounded-full font-medium cursor-pointer ${
+                            isConfigured
+                              ? 'bg-white/10 hover:bg-white/15 text-white border border-emerald-500/30'
+                              : 'bg-gradient-to-r from-[#E5C583] via-[#D4AF37] to-[#C5A059] text-[#090B0F] font-bold shadow-[0_0_12px_rgba(229,197,131,0.25)] hover:brightness-110'
+                          }`}
+                        >
+                          {isConfigured ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-emerald-400" />
+                              Geactiveerd • Wijzigen
+                            </>
+                          ) : (
+                            <>
+                              <Zap className="w-3.5 h-3.5 mr-1.5" />
+                              Activeren
+                            </>
+                          )}
+                        </Button>
+
+                        {item.externalUrl && (
+                          <a
+                            href={item.externalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+                            title="Bezoek officiële website"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </Card>
+                </TiltCard>
               );
             })}
           </div>

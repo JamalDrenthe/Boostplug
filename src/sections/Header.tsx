@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useStore } from '@/hooks/useStore';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -102,10 +103,13 @@ export function Header({
   const currencySymbol = currency === 'EUR' ? '€' : '£';
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
+    <motion.header 
+      initial={{ y: -24, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-[hsl(220,35%,6%)]/95 backdrop-blur-md border-b border-white/10 shadow-lg shadow-black/20' 
+          ? 'bg-[#090B0F]/90 backdrop-blur-2xl border-b border-[#E5C583]/20 shadow-[0_12px_40px_rgba(0,0,0,0.7)]' 
           : 'bg-transparent border-b border-transparent'
       }`}
     >
@@ -114,15 +118,20 @@ export function Header({
           {/* Logo */}
           <a href="#" onClick={(e) => { e.preventDefault(); onHome(); }} className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(220,30%,15%)] to-[hsl(220,35%,8%)] border border-white/10 group-hover:border-[hsl(142,76%,45%)]/50 transition-colors" />
-              <div className="relative flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-[hsl(142,76%,45%)] shadow-[0_0_8px_hsl(142,76%,45%)] animate-pulse" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[hsl(199,89%,48%)] shadow-[0_0_8px_hsl(199,89%,48%)] animate-pulse" style={{ animationDelay: '0.5s' }} />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#1C2331] to-[#090B0F] border border-[#E5C583]/30 group-hover:border-[#E5C583]/80 group-hover:shadow-[0_0_15px_rgba(229,197,131,0.3)] transition-all duration-300" />
+              <div className="relative flex gap-1.5 items-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-[0_0_8px_#10B981] animate-pulse" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#E5C583] shadow-[0_0_8px_#E5C583] animate-pulse" style={{ animationDelay: '0.5s' }} />
               </div>
             </div>
-            <span className="text-xl font-bold tracking-tight text-white">
-              BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
-            </span>
+            <div className="flex items-baseline tracking-tight">
+              <span className="text-xl font-bold tracking-tight text-white font-sans">
+                BOOST
+              </span>
+              <span className="font-serif italic text-2xl text-[#E5C583] font-normal ml-0.5">
+                Plug
+              </span>
+            </div>
           </a>
 
           {/* Desktop Navigation */}
@@ -162,9 +171,9 @@ export function Header({
                   <ChevronDown className="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="bg-[hsl(220,25%,10%)]/95 backdrop-blur-xl border-white/10 w-72 p-2 rounded-2xl shadow-2xl text-white">
+              <DropdownMenuContent align="start" className="bg-[#0D1117]/95 backdrop-blur-2xl border border-[#E5C583]/25 w-72 p-2 rounded-2xl shadow-2xl text-white">
                 <div className="px-2.5 py-1.5 border-b border-white/10 mb-1">
-                  <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Quantum Initium Ecosysteem</p>
+                  <p className="text-[10px] font-semibold text-[#E5C583] uppercase tracking-wider font-serif">Quantum Initium Ecosysteem</p>
                 </div>
                 <DropdownMenuItem
                   onClick={() => {
@@ -213,9 +222,9 @@ export function Header({
                   <ChevronDown className="w-3.5 h-3.5 text-white/40 group-hover:text-white transition-transform duration-200" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="bg-[hsl(220,25%,10%)]/95 backdrop-blur-xl border-white/10 w-64 p-2 rounded-2xl shadow-2xl text-white">
+              <DropdownMenuContent align="start" className="bg-[#0D1117]/95 backdrop-blur-2xl border border-[#E5C583]/25 w-64 p-2 rounded-2xl shadow-2xl text-white">
                 <div className="px-2.5 py-1.5 border-b border-white/10 mb-1">
-                  <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">Ondersteuning & Overzicht</p>
+                  <p className="text-[10px] font-semibold text-[#E5C583] uppercase tracking-wider font-serif">Ondersteuning & Overzicht</p>
                 </div>
                 <DropdownMenuItem
                   onClick={onTracking}
@@ -330,19 +339,19 @@ export function Header({
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="hidden md:flex items-center gap-1.5 rounded-full border-white/20 bg-white/5 hover:bg-white/10 text-white text-xs px-2.5 h-8 cursor-pointer"
+                  className="hidden md:flex items-center gap-1.5 rounded-full border-[#E5C583]/30 bg-[#E5C583]/5 hover:bg-[#E5C583]/15 hover:border-[#E5C583]/60 text-[#FAF8F5] text-xs px-3 h-8 cursor-pointer transition-all duration-300"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Demo</span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#E5C583]" />
+                  <span className="font-medium">Demo</span>
                   {isDemoUser && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[hsl(142,76%,45%)] animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-[hsl(220,20%,12%)] border-white/10 w-64 p-2 text-white">
+              <DropdownMenuContent align="end" className="bg-[#0D1117]/95 backdrop-blur-2xl border border-[#E5C583]/25 w-64 p-2 text-white shadow-2xl rounded-2xl">
                 <div className="px-2 py-1.5 border-b border-white/10 mb-1">
-                  <p className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <p className="text-xs font-bold text-[#E5C583] flex items-center gap-1.5 font-serif">
+                    <Sparkles className="w-3.5 h-3.5 text-[#E5C583]" />
                     Demo Accounts
                   </p>
                   <p className="text-[10px] text-white/50">Wissel direct tussen persona's</p>
@@ -395,13 +404,13 @@ export function Header({
                   }}
                   className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-white/10 cursor-pointer"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-7 h-7 rounded-lg bg-[#E5C583]/20 text-[#E5C583] flex items-center justify-center shrink-0 mt-0.5">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-xs text-white">Admin Demo</span>
-                      <span className="text-[9px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-400">Beheer</span>
+                      <span className="text-[9px] px-1 py-0.2 rounded bg-[#E5C583]/20 text-[#E5C583]">Beheer</span>
                     </div>
                     <p className="text-[10px] text-white/50">Controlecentrum • Live sync</p>
                   </div>
@@ -409,7 +418,7 @@ export function Header({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Account / Login — pill per design-md */}
+            {/* Account / Login — atelier pill */}
             <Button
               size="sm"
               onClick={() => {
@@ -419,16 +428,16 @@ export function Header({
                   window.location.hash = '#/login';
                 }
               }}
-              className={`flex items-center gap-2 rounded-full px-5 ${
+              className={`flex items-center gap-2 rounded-full px-5 h-9 transition-all duration-300 ${
                 user
-                  ? 'bg-white/10 text-white border border-white/15 hover:bg-white/15'
-                  : 'bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)] hover:bg-[hsl(142,76%,40%)] font-medium'
+                  ? 'bg-white/10 text-white border border-[#E5C583]/30 hover:border-[#E5C583]/60 hover:bg-[#E5C583]/10'
+                  : 'bg-gradient-to-r from-[#E5C583] via-[#D4AF37] to-[#C5A059] text-[#090B0F] hover:brightness-110 font-semibold shadow-[0_0_15px_rgba(229,197,131,0.25)]'
               }`}
             >
               {user ? (
                 <>
-                  <User className="w-4 h-4" />
-                  <span className="hidden md:inline text-sm">{user.name.split(' ')[0]}</span>
+                  <User className="w-4 h-4 text-[#E5C583]" />
+                  <span className="hidden md:inline text-sm font-medium">{user.name.split(' ')[0]}</span>
                 </>
               ) : (
                 <>
@@ -443,13 +452,13 @@ export function Header({
               variant="ghost"
               size="sm"
               onClick={onCheckout}
-              className="relative flex items-center gap-1.5 text-white/70 hover:text-white hover:bg-white/10 px-2.5 h-8"
+              className="relative flex items-center gap-1.5 text-white/80 hover:text-white hover:bg-white/10 px-2.5 h-9 rounded-full"
             >
               <ShoppingCart className="w-4 h-4" />
               {cartItemCount > 0 && (
                 <Badge 
                   variant="default" 
-                  className="absolute -top-1 -right-1 h-4 w-4 min-w-[1rem] flex items-center justify-center p-0 bg-[hsl(142,76%,45%)] text-[hsl(220,35%,6%)] text-[10px] font-bold"
+                  className="absolute -top-1 -right-1 h-4 w-4 min-w-[1rem] flex items-center justify-center p-0 bg-gradient-to-r from-[#E5C583] to-[#D4AF37] text-[#090B0F] text-[10px] font-bold shadow-[0_0_8px_rgba(229,197,131,0.5)] border-0"
                 >
                   {cartItemCount}
                 </Badge>
@@ -768,6 +777,6 @@ export function Header({
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }
