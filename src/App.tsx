@@ -15,6 +15,7 @@ const AboutPage = lazy(() => import('@/sections/AboutPage').then(m => ({ default
 const MembersPage = lazy(() => import('@/sections/MembersPage').then(m => ({ default: m.MembersPage })));
 const AdminDashboard = lazy(() => import('@/sections/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const IntegrationsPage = lazy(() => import('@/sections/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
+const VacanciesPage = lazy(() => import('@/sections/VacanciesPage').then(m => ({ default: m.VacanciesPage })));
 import { Footer } from '@/sections/Footer';
 import { Toaster } from '@/components/ui/sonner';
 import './App.css';
@@ -30,7 +31,8 @@ type Route =
   | { page: 'members' }
   | { page: 'integraties' }
   | { page: 'quantum-initium' }
-  | { page: 'vvc' };
+  | { page: 'vvc' }
+  | { page: 'vacancies' };
 
 function parseHash(hash: string): Route {
   if (hash.startsWith('#/track/')) {
@@ -53,6 +55,10 @@ function parseHash(hash: string): Route {
       return { page: 'about' };
     case '#/leden':
       return { page: 'members' };
+    case '#/vacatures':
+    case '#/careers':
+    case '#/jobs':
+      return { page: 'vacancies' };
     case '#/integraties':
     case '#/integraties#vvc':
     case '#/ecosysteem':
@@ -81,6 +87,8 @@ function routeToHash(route: Route): string {
       return '#/over-ons';
     case 'members':
       return '#/leden';
+    case 'vacancies':
+      return '#/vacatures';
     case 'integraties':
       return '#/integraties';
     case 'quantum-initium':
@@ -160,6 +168,7 @@ function AppContent() {
         onIntegrations={() => navigate({ page: 'integraties' })}
         onQuantumInitium={() => navigate({ page: 'integraties' })}
         onVVC={() => navigate({ page: 'integraties' })}
+        onVacancies={() => navigate({ page: 'vacancies' })}
         onNavigateSection={handleNavigateSection}
       />
 
@@ -235,6 +244,12 @@ function AppContent() {
               onBack={goHome}
               onShop={() => handleNavigateSection('products')}
               onJoin={() => navigate({ page: 'register', accountType: 'member' })}
+            />
+          )}
+          {route.page === 'vacancies' && (
+            <VacanciesPage
+              onBack={goHome}
+              onIntegrations={() => navigate({ page: 'integraties' })}
             />
           )}
         </Suspense>

@@ -1,4 +1,6 @@
-import type { Order, Subscription, AuthUser, MemberMiningProfile } from '@/types';
+import type { Order, Subscription, AuthUser, MemberMiningProfile, Vacancy, JobApplication } from '@/types';
+import { loadStoredVacancies, saveStoredVacancies } from '@/data/vacancies';
+import { postVacancyToDjobba } from '@/lib/djobbaApi';
 
 // Firebase configuratie met environment variables en fallback naar boostplug-dev
 const firebaseConfig = {
@@ -554,3 +556,246 @@ export function subscribeToFirestoreOrders(
     }
   };
 }
+
+// ===============================================================
+// Vacancies (Vacatures) & Djobba.works API Sync
+// ===============================================================
+
+/**
+ * Haal alle vacatures op uit Firestore met automatische fallback naar lokale seed/cache data
+ */
+export async function getVacanciesFromFirestore(): Promise<Vacancy[]> {
+  const localVacancies = loadStoredVacancies();
+  if (!isConfigured) return localVacancies;
+
+  try {
+    const fb = await getFirebaseBundle();
+    if (!fb) return localVacancies;
+
+    const vacCol = fb.firestore.collection(fb.db, 'vacancies');
+    const snapshot = await fb.firestore.getDocs(vacCol);
+
+    if (snapshot.empty) {
+      // Seed initiële vacatures naar Firestore als de collectie nog leeg is
+      for (const vac of localVacancies) {
+        try {
+          const docRef = fb.firestore.doc(fb.db, 'vacancies', vac.id);
+          await fb.firestore.setDoc(docRef, vac, { merge: true });
+        } catch {
+          // negeer seed fouten
+        }
+      }
+      return localVacancies;
+    }
+
+    const vacancies: Vacancy[] = [];
+    snapshot.forEach((doc) => {
+      vacancies.push(doc.data() as Vacancy);
+    });
+
+    saveStoredVacancies(vacancies);
+    return vacancies;
+  } catch (err) {
+    console.warn('Fout bij ophalen van vacatures uit Firestore, fallback naar lokaal:', err);
+    return localVacancies;
+  }
+}
+
+/**
+ * Realtime listener voor actieve vacatures
+ */
+export function subscribeToVacancies(
+  onUpdate: (vacancies: Vacancy[]) => void,
+  onError?: (error: unknown) => void
+): () => void {
+  if (!isConfigured) {
+    onUpdate(loadStoredVacancies());
+    return () => {};
+  }
+
+  let unsubscribe: (() => void) | null = null;
+  let isCancelled = false;
+
+  getFirebaseBundle().then((fb) => {
+    if (isCancelled || !fb) return;
+    try {
+      const vacCol = fb.firestore.collection(fb.db, 'vacancies');
+      unsubscribe = fb.firestore.onSnapshot(
+        vacCol,
+        (snapshot) => {
+          const vacancies: Vacancy[] = [];
+          snapshot.forEach((doc) => {
+            vacancies.push(doc.data() as Vacancy);
+          });
+          if (vacancies.length > 0) {
+            saveStoredVacancies(vacancies);
+            onUpdate(vacancies);
+          } else {
+            onUpdate(loadStoredVacancies());
+          }
+        },
+        (err) => {
+          console.warn('Firestore onSnapshot vacatures listener fout:', err);
+          if (onError) onError(err);
+        }
+      );
+    } catch (err) {
+      console.warn('Kon Firestore onSnapshot vacatures niet starten:', err);
+      if (onError) onError(err);
+    }
+  });
+
+  return () => {
+    isCancelled = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
+}
+
+/**
+ * Voeg een nieuwe vacature toe aan Firestore en optioneel direct aan Djobba
+ */
+export async function createVacancyInFirestore(
+  vacancyData: Omit<Vacancy, 'id' | 'createdAt'>,
+  autoSyncDjobba: boolean = true
+): Promise<Vacancy> {
+  const newId = `vac-${Date.now().toString(36)}`;
+  const now = new Date().toISOString();
+
+  let vacancy: Vacancy = {
+    ...vacancyData,
+    id: newId,
+    createdAt: now,
+    status: vacancyData.status || 'active',
+  };
+
+  // Direct syncen met Djobba indien gewenst
+  if (autoSyncDjobba) {
+    try {
+      const djobbaRes = await postVacancyToDjobba(vacancy);
+      vacancy.djobbaSync = {
+        synced: djobbaRes.success,
+        djobbaJobId: djobbaRes.jobId,
+        syncedAt: djobbaRes.timestamp,
+        status: djobbaRes.success ? 'synced' : 'failed',
+        syncResponse: djobbaRes.message,
+        targetUrl: djobbaRes.url,
+      };
+    } catch (err) {
+      console.warn('Djobba auto-sync tijdens creatie mislukt:', err);
+    }
+  }
+
+  // Bewaar lokaal
+  const current = loadStoredVacancies();
+  saveStoredVacancies([vacancy, ...current]);
+
+  if (isConfigured) {
+    try {
+      const fb = await getFirebaseBundle();
+      if (fb) {
+        const docRef = fb.firestore.doc(fb.db, 'vacancies', newId);
+        await fb.firestore.setDoc(docRef, vacancy);
+      }
+    } catch (err) {
+      console.warn('Fout bij opslaan van vacature in Firestore:', err);
+    }
+  }
+
+  return vacancy;
+}
+
+/**
+ * Synchroniseer een specifieke vacature vanuit Firestore direct naar Djobba.works
+ */
+export async function syncVacancyToDjobba(
+  vacancyId: string
+): Promise<{ success: boolean; message: string; vacancy?: Vacancy }> {
+  const currentVacancies = loadStoredVacancies();
+  const target = currentVacancies.find((v) => v.id === vacancyId);
+
+  if (!target) {
+    return { success: false, message: 'Vacature niet gevonden.' };
+  }
+
+  // Roep de Djobba API aan
+  const djobbaRes = await postVacancyToDjobba(target);
+
+  const updatedVacancy: Vacancy = {
+    ...target,
+    updatedAt: new Date().toISOString(),
+    djobbaSync: {
+      synced: djobbaRes.success,
+      djobbaJobId: djobbaRes.jobId || target.djobbaSync?.djobbaJobId,
+      syncedAt: djobbaRes.timestamp,
+      status: djobbaRes.success ? 'synced' : 'failed',
+      syncResponse: djobbaRes.message,
+      targetUrl: djobbaRes.url || target.djobbaSync?.targetUrl,
+    },
+  };
+
+  // Werk lokale cache bij
+  const updatedList = currentVacancies.map((v) => (v.id === vacancyId ? updatedVacancy : v));
+  saveStoredVacancies(updatedList);
+
+  // Werk Firestore bij
+  if (isConfigured) {
+    try {
+      const fb = await getFirebaseBundle();
+      if (fb) {
+        const docRef = fb.firestore.doc(fb.db, 'vacancies', vacancyId);
+        await fb.firestore.setDoc(docRef, updatedVacancy, { merge: true });
+      }
+    } catch (err) {
+      console.warn('Fout bij bijwerken van Djobba sync status in Firestore:', err);
+    }
+  }
+
+  return {
+    success: djobbaRes.success,
+    message: djobbaRes.message || 'Succesvol gesynchroniseerd met Djobba.works',
+    vacancy: updatedVacancy,
+  };
+}
+
+/**
+ * Verstuur een sollicitatie naar Firestore (`job_applications` collectie)
+ */
+export async function submitJobApplicationToFirestore(
+  data: Omit<JobApplication, 'id' | 'submittedAt' | 'status'>
+): Promise<JobApplication> {
+  const appId = `APP-${Date.now().toString(36).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`;
+  const now = new Date().toISOString();
+
+  const application: JobApplication = {
+    ...data,
+    id: appId,
+    submittedAt: now,
+    status: 'new',
+  };
+
+  // Bewaar in localStorage voor directe feedback
+  try {
+    const raw = localStorage.getItem('boostplug_my_applications');
+    const existing = raw ? JSON.parse(raw) : [];
+    localStorage.setItem('boostplug_my_applications', JSON.stringify([application, ...existing]));
+  } catch (err) {
+    console.warn('Kon sollicitatie niet lokaal cachen:', err);
+  }
+
+  if (isConfigured) {
+    try {
+      const fb = await getFirebaseBundle();
+      if (fb) {
+        const docRef = fb.firestore.doc(fb.db, 'job_applications', appId);
+        await fb.firestore.setDoc(docRef, application);
+      }
+    } catch (err) {
+      console.warn('Fout bij opslaan van sollicitatie in Firestore:', err);
+    }
+  }
+
+  return application;
+}
+

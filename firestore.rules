@@ -53,6 +53,46 @@ rules_version = '2';
 //   - updatedAt: string (optional)
 //   - syncedAt: string (optional)
 //
+// Collection: vacancies
+// Document ID: {vacancyId} (unique string identifier, e.g. vac-eng-01)
+// Fields:
+//   - id: string (optional, matching document ID, max 100 chars)
+//   - title: string (required, vacancy title, 3 to 150 chars)
+//   - department: string (required, department name, 2 to 50 chars)
+//   - employmentType: string (required, e.g. 'Full-time', 'Freelance / DBA', 2 to 50 chars)
+//   - description: string (required, vacancy description, 10 to 5000 chars)
+//   - status: string (required, enum: 'active', 'draft', 'closed')
+//   - location: string (optional, location up to 100 chars)
+//   - salaryRange: string (optional, salary range up to 100 chars)
+//   - responsibilities: list (optional, list of string responsibilities, max 30 items)
+//   - requirements: list (optional, list of string requirements, max 30 items)
+//   - benefits: list (optional, list of string benefits, max 30 items)
+//   - tags: list (optional, list of string tags, max 30 items)
+//   - niceToHave: list (optional, list of string items, max 30 items)
+//   - experienceLevel: string (optional, max 50 chars)
+//   - quantumSubholding: string (optional, max 100 chars)
+//   - dbaCompliant: bool (optional, whether compliant with DBA guidelines)
+//   - djobbaSync: map (optional, synchronization status and payload for Djobba.works)
+//   - createdAt: string or timestamp (optional, creation timestamp)
+//   - updatedAt: string or timestamp (optional, last update timestamp)
+//
+// Collection: job_applications
+// Document ID: {applicationId} (unique string identifier, e.g. APP-...)
+// Fields:
+//   - id: string (optional, matching document ID, max 100 chars)
+//   - fullName: string (required, applicant full name, 2 to 100 chars)
+//   - email: string (required, applicant email address, 5 to 254 chars)
+//   - vacancyId: string (required, vacancy ID reference, 3 to 50 chars)
+//   - vacancyTitle: string (optional, vacancy title reference, max 150 chars)
+//   - phone: string (optional, applicant phone number, max 30 chars)
+//   - linkedinUrl: string (optional, LinkedIn profile URL, max 300 chars)
+//   - portfolioUrl: string (optional, portfolio or website URL, max 300 chars)
+//   - motivation: string (optional, motivation text, max 3000 chars)
+//   - dbaStatus: string (optional, e.g. 'zzp', 'loondienst', 'payroll', max 50 chars)
+//   - status: string (optional, enum: 'new', 'reviewing', 'interview', 'accepted', 'rejected')
+//   - submittedAt: string or timestamp (optional, submission timestamp)
+//   - createdAt: string or timestamp (optional)
+//
 // Fallback:
 //   - All other paths restricted strictly to isAdmin()
 //
@@ -92,6 +132,16 @@ service cloud.firestore {
              (mapData[field] is string &&
               mapData[field].size() >= minLen &&
               mapData[field].size() <= maxLen);
+    }
+
+    function isValidOptionalList(mapData, field, maxSize) {
+      return !(field in mapData) ||
+             (mapData[field] is list &&
+              mapData[field].size() <= maxSize);
+    }
+
+    function isValidOptionalMap(mapData, field) {
+      return !(field in mapData) || mapData[field] is map;
     }
 
     // ===============================================================
@@ -155,6 +205,58 @@ service cloud.firestore {
              (!('estimatedMonthlyEarnings' in data) || (data.estimatedMonthlyEarnings is number && data.estimatedMonthlyEarnings >= 0));
     }
 
+    function isValidVacancy(data) {
+      return data.title is string &&
+             data.title.size() >= 3 &&
+             data.title.size() <= 150 &&
+             data.department is string &&
+             data.department.size() >= 2 &&
+             data.department.size() <= 50 &&
+             data.employmentType is string &&
+             data.employmentType.size() >= 2 &&
+             data.employmentType.size() <= 50 &&
+             data.description is string &&
+             data.description.size() >= 10 &&
+             data.description.size() <= 5000 &&
+             data.status is string &&
+             data.status in ['active', 'draft', 'closed'] &&
+             isValidOptionalString(data, 'location', 0, 100) &&
+             isValidOptionalString(data, 'salaryRange', 0, 100) &&
+             isValidOptionalList(data, 'responsibilities', 30) &&
+             isValidOptionalList(data, 'requirements', 30) &&
+             isValidOptionalList(data, 'benefits', 30) &&
+             isValidOptionalList(data, 'tags', 30) &&
+             isValidOptionalList(data, 'niceToHave', 30) &&
+             isValidOptionalMap(data, 'djobbaSync') &&
+             isValidOptionalString(data, 'id', 0, 100) &&
+             isValidOptionalString(data, 'experienceLevel', 0, 50) &&
+             isValidOptionalString(data, 'quantumSubholding', 0, 100) &&
+             isValidOptionalString(data, 'createdAt', 0, 100) &&
+             isValidOptionalString(data, 'updatedAt', 0, 100) &&
+             (!('dbaCompliant' in data) || data.dbaCompliant is bool);
+    }
+
+    function isValidJobApplication(data) {
+      return data.fullName is string &&
+             data.fullName.size() >= 2 &&
+             data.fullName.size() <= 100 &&
+             data.email is string &&
+             isValidEmail(data.email) &&
+             data.vacancyId is string &&
+             data.vacancyId.size() >= 3 &&
+             data.vacancyId.size() <= 50 &&
+             isValidOptionalString(data, 'vacancyTitle', 0, 150) &&
+             isValidOptionalString(data, 'phone', 0, 30) &&
+             isValidOptionalString(data, 'linkedinUrl', 0, 300) &&
+             isValidOptionalString(data, 'portfolioUrl', 0, 300) &&
+             isValidOptionalString(data, 'motivation', 0, 3000) &&
+             isValidOptionalString(data, 'id', 0, 100) &&
+             isValidOptionalString(data, 'submittedAt', 0, 100) &&
+             isValidOptionalString(data, 'createdAt', 0, 100) &&
+             isValidOptionalString(data, 'dbaStatus', 0, 50) &&
+             (!('status' in data) || (data.status is string && data.status in ['new', 'reviewing', 'interview', 'accepted', 'rejected']));
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -197,6 +299,29 @@ service cloud.firestore {
                        isValidMiningNode(request.resource.data) &&
                        (!('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId);
       allow delete: if isAdmin() || isOwner(userId);
+    }
+
+    // Vacatures: publiek leesbaar mits actief (of door beheerder); beheer strikt beheerder
+    match /vacancies/{vacancyId} {
+      allow read: if resource.data.status == 'active' || isAdmin();
+      allow create: if isAdmin() &&
+                       isValidVacancy(request.resource.data) &&
+                       (!('id' in request.resource.data) || request.resource.data.id == vacancyId);
+      allow update: if isAdmin() &&
+                       isValidVacancy(request.resource.data) &&
+                       (!('id' in resource.data) || !('id' in request.resource.data) || request.resource.data.id == resource.data.id);
+      allow delete: if isAdmin();
+    }
+
+    // Sollicitaties: publiek insturen toegestaan met strikte schema-validatie, uitsluitend beheerder leest/beheert
+    match /job_applications/{applicationId} {
+      allow create: if isValidJobApplication(request.resource.data) &&
+                       (!('id' in request.resource.data) || request.resource.data.id == applicationId);
+      allow read: if isAdmin();
+      allow update: if isAdmin() &&
+                       isValidJobApplication(request.resource.data) &&
+                       (!('id' in resource.data) || !('id' in request.resource.data) || request.resource.data.id == resource.data.id);
+      allow delete: if isAdmin();
     }
 
     // Fallback voor overige collecties: strikt admin (default deny voor alle anderen)

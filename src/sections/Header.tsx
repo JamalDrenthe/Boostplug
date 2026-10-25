@@ -20,6 +20,7 @@ import {
   Users,
   ChevronDown,
   Layers,
+  Briefcase,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -39,6 +40,7 @@ interface HeaderProps {
   onIntegrations?: () => void;
   onQuantumInitium?: () => void;
   onVVC?: () => void;
+  onVacancies?: () => void;
   onNavigateSection?: (sectionId: string) => void;
 }
 
@@ -52,6 +54,7 @@ export function Header({
   onIntegrations,
   onQuantumInitium,
   onVVC,
+  onVacancies,
   onNavigateSection,
 }: HeaderProps) {
   const handleGoIntegrations = onIntegrations || onQuantumInitium || onVVC;
@@ -260,6 +263,24 @@ export function Header({
                   <div>
                     <span className="font-semibold text-xs text-white">Over ons</span>
                     <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Missie, holding en kwaliteitsgarantie</p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (onVacancies) onVacancies();
+                    else window.location.hash = '#/vacatures';
+                  }}
+                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-[#E5C583]/10 cursor-pointer focus:bg-[#E5C583]/10"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[#E5C583]/20 text-[#E5C583] flex items-center justify-center shrink-0 mt-0.5">
+                    <Briefcase className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-xs text-white">Carrières & Vacatures</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#E5C583]/20 text-[#E5C583] font-mono">Djobba</span>
+                    </div>
+                    <p className="text-[11px] text-white/50 mt-0.5 leading-snug">Werken bij BoostPlug & Quantum Initium</p>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -628,6 +649,22 @@ export function Header({
                   >
                     <Sparkles className="w-4 h-4 text-purple-400" />
                     <span className="text-white text-sm">Over ons</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      if (onVacancies) onVacancies();
+                      else window.location.hash = '#/vacatures';
+                    }}
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-[#E5C583]/10 border border-[#E5C583]/20 hover:bg-[#E5C583]/20 transition-colors text-left cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="w-4 h-4 text-[#E5C583]" />
+                      <span className="text-white text-sm font-medium">Carrières & Vacatures</span>
+                    </div>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#E5C583]/20 text-[#E5C583] font-mono">
+                      Djobba
+                    </span>
                   </button>
                 </div>
               </div>

@@ -115,6 +115,12 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="#/vacatures" className="text-white/70 hover:text-[#E5C583] transition-colors flex items-center gap-1.5 font-medium">
+                  Vacatures & Djobba
+                  <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#E5C583]/20 text-[#E5C583] font-mono">Talent</span>
+                </a>
+              </li>
+              <li>
                 <a href="#/integraties" className="text-white/70 hover:text-[hsl(142,76%,45%)] transition-colors flex items-center gap-1.5 font-medium">
                   Integraties & Ecosysteem
                   <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[hsl(142,76%,45%)]/20 text-[hsl(142,76%,45%)] font-mono">10</span>

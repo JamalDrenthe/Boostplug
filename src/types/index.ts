@@ -187,3 +187,98 @@ export const CURRENCY_SYMBOLS: Record<Currency, string> = {
   EUR: '€',
   GBP: '£',
 };
+
+// ===============================================================
+// Vacancies & Djobba.works Integration Types
+// ===============================================================
+
+export type VacancyDepartment = 
+  | 'Engineering' 
+  | 'Operations' 
+  | 'Growth' 
+  | 'Security & Anti-Detection' 
+  | 'Product' 
+  | 'Community & Nodes';
+
+export type EmploymentType = 
+  | 'Full-time' 
+  | 'Part-time' 
+  | 'Freelance / DBA' 
+  | 'Contract';
+
+export interface DjobbaSyncInfo {
+  synced: boolean;
+  djobbaJobId?: string;
+  syncedAt?: string;
+  status: 'synced' | 'pending' | 'failed' | 'not_synced';
+  syncResponse?: string;
+  targetUrl?: string;
+  lastPayload?: Record<string, unknown>;
+}
+
+export interface Vacancy {
+  id: string;
+  title: string;
+  department: VacancyDepartment;
+  location: string;
+  employmentType: EmploymentType;
+  experienceLevel: 'Junior' | 'Medior' | 'Senior' | 'Lead' | 'Medior / Senior';
+  salaryRange?: string;
+  description: string;
+  responsibilities: string[];
+  requirements: string[];
+  niceToHave?: string[];
+  benefits: string[];
+  tags: string[];
+  dbaCompliant?: boolean;
+  quantumSubholding?: string;
+  status: 'active' | 'draft' | 'closed';
+  createdAt: string;
+  updatedAt?: string;
+  djobbaSync?: DjobbaSyncInfo;
+}
+
+export interface JobApplication {
+  id: string;
+  vacancyId: string;
+  vacancyTitle: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  linkedinUrl?: string;
+  portfolioUrl?: string;
+  motivation?: string;
+  dbaStatus?: 'zzp' | 'loondienst' | 'payroll';
+  submittedAt: string;
+  status: 'new' | 'reviewing' | 'interview' | 'accepted' | 'rejected';
+}
+
+export interface DjobbaJobPayload {
+  company: string;
+  holding: string;
+  subholding: string;
+  externalRefId: string;
+  title: string;
+  department: string;
+  contractType: string;
+  location: string;
+  salaryOrRate: string;
+  dbaCompliant: boolean;
+  description: string;
+  skills: string[];
+  requirements: string[];
+  benefits: string[];
+  applyUrl: string;
+  contactEmail: string;
+  publishedAt: string;
+}
+
+export interface DjobbaApiResponse {
+  success: boolean;
+  jobId?: string;
+  url?: string;
+  message?: string;
+  timestamp: string;
+  railsRef?: string;
+}
+
