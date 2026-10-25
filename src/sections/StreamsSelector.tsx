@@ -10,27 +10,13 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { TiltCard } from '@/components/ui/TiltCard';
+import { CompanyLogo } from '@/components/common/CompanyLogos';
 import { 
-  Music2, 
-  Cloud, 
-  Radio, 
-  Waves,
-  Youtube,
-  Apple,
-  Plus,
-  Sparkles,
-  ArrowLeft
+  Plus, 
+  Sparkles, 
+  ArrowLeft 
 } from 'lucide-react';
 import { toast } from 'sonner';
-
-const iconMap: Record<string, React.ElementType> = {
-  Music2,
-  Apple,
-  Youtube,
-  Cloud,
-  Radio,
-  Waves,
-};
 
 interface StreamsSelectorProps {
   onCheckout: () => void;
@@ -106,7 +92,6 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
         >
           {streamPlatforms.map((platform, idx) => {
-            const Icon = iconMap[platform.icon] || Music2;
             return (
               <motion.div
                 key={platform.id}
@@ -123,7 +108,7 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
                       className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg"
                       style={{ backgroundColor: `${platform.color}15`, border: `1px solid ${platform.color}30` }}
                     >
-                      <Icon className="w-7 h-7" style={{ color: platform.color }} />
+                      <CompanyLogo name={platform.id} size={28} colored={true} className="transition-transform duration-300 group-hover:scale-110" />
                     </div>
                     <p className="text-[#FAF8F5] font-medium text-sm tracking-wide group-hover:text-[#E5C583] transition-colors">
                       {platform.name}
@@ -169,13 +154,12 @@ export function StreamsSelector({ onCheckout }: StreamsSelectorProps) {
         </button>
         <div className="h-4 w-px bg-white/20" />
         <div 
-          className="w-10 h-10 rounded-xl flex items-center justify-center"
+          className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md"
           style={{ backgroundColor: `${platform?.color}20` }}
         >
-          {platform && (() => {
-            const Icon = iconMap[platform.icon] || Music2;
-            return <Icon className="w-5 h-5" style={{ color: platform.color }} />;
-          })()}
+          {platform && (
+            <CompanyLogo name={platform.id} size={22} colored={true} />
+          )}
         </div>
         <div>
           <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">

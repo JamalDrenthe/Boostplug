@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { TiltCard } from '@/components/ui/TiltCard';
+import { CompanyLogo } from '@/components/common/CompanyLogos';
 import { 
   MapPin, 
   Star, 
@@ -189,7 +190,6 @@ export function ReviewsSelector({ onCheckout }: ReviewsSelectorProps) {
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
         >
           {filteredPlatforms.map((platform, idx) => {
-            const Icon = iconMap[platform.icon] || Star;
             return (
               <motion.div
                 key={platform.id}
@@ -208,7 +208,7 @@ export function ReviewsSelector({ onCheckout }: ReviewsSelectorProps) {
                           className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-md"
                           style={{ backgroundColor: `${platform.color}15`, border: `1px solid ${platform.color}30` }}
                         >
-                          <Icon className="w-5 h-5" style={{ color: platform.color }} />
+                          <CompanyLogo name={platform.id} size={22} colored={true} />
                         </div>
                         {platform.riskLevel === 'high' && (
                           <AlertCircle className="w-4 h-4 text-amber-400" />
@@ -263,13 +263,12 @@ export function ReviewsSelector({ onCheckout }: ReviewsSelectorProps) {
         </button>
         <div className="h-4 w-px bg-white/20" />
         <div 
-          className="w-10 h-10 rounded-xl flex items-center justify-center"
+          className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md"
           style={{ backgroundColor: `${platform?.color}20` }}
         >
-          {platform && (() => {
-            const Icon = iconMap[platform.icon] || Star;
-            return <Icon className="w-5 h-5" style={{ color: platform.color }} />;
-          })()}
+          {platform && (
+            <CompanyLogo name={platform.id} size={22} colored={true} />
+          )}
         </div>
         <div>
           <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">

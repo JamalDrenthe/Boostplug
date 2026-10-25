@@ -2,6 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { StoreProvider, useStore } from '@/hooks/useStore';
 import { Header } from '@/sections/Header';
 import { Hero } from '@/sections/Hero';
+import { LandingLogosSection } from '@/sections/LandingLogosSection';
 import { ProductSelector } from '@/sections/ProductSelector';
 import { SubscriptionsSection } from '@/sections/SubscriptionsSection';
 import type { AccountType } from '@/types';
@@ -176,6 +177,7 @@ function AppContent() {
         {route.page === 'home' && (
           <>
             <Hero onMembers={() => navigate({ page: 'members' })} />
+            <LandingLogosSection />
             <ProductSelector onCheckout={() => setShowCheckout(true)} />
             <SubscriptionsSection
               onRequireLogin={() => navigate({ page: 'login' })}
