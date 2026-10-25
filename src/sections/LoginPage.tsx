@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  LogIn,
   Mail,
   Lock,
   ArrowLeft,
@@ -22,6 +21,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { DEMO_ACCOUNTS_LIST, type DemoAccountConfig } from '@/data/demoAccounts';
+import { BoostPlugLogo } from '@/components/common/BoostPlugLogo';
 
 interface LoginPageProps {
   onBack: () => void;
@@ -145,8 +145,8 @@ export function LoginPage({ onBack, onSuccess, onGoRegister }: LoginPageProps) {
         <Card className="p-6 sm:p-8 bg-white/5 border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl">
           {/* Header */}
           <div className="text-center mb-6">
-            <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-[hsl(142,76%,45%)]/20 flex items-center justify-center">
-              <LogIn className="w-7 h-7 text-[hsl(142,76%,45%)]" />
+            <div className="flex justify-center mb-5">
+              <BoostPlugLogo size="lg" subtitle="AUTHENTICATIE GATEWAY" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1.5">Inloggen</h1>
             <p className="text-white/60 text-xs sm:text-sm max-w-sm mx-auto">

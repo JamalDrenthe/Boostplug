@@ -8,6 +8,7 @@ import {
   Instagram,
   Linkedin
 } from 'lucide-react';
+import { BoostPlugLogo } from '@/components/common/BoostPlugLogo';
 
 export function Footer() {
   return (
@@ -16,17 +17,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="relative w-10 h-10 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(220,30%,15%)] to-[hsl(220,35%,8%)] border border-white/10" />
-                <div className="relative flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[hsl(142,76%,45%)]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[hsl(199,89%,48%)]" />
-                </div>
-              </div>
-              <span className="text-xl font-bold text-white">
-                BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
-              </span>
+            <div className="mb-6">
+              <BoostPlugLogo size="md" subtitle="QUANTUM INITIUM HOLDING" />
             </div>
             <p className="text-white/50 mb-6">
               Boost je online aanwezigheid met streams en reviews. 

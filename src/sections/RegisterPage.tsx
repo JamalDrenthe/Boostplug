@@ -5,9 +5,10 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { UserPlus, Mail, Lock, User, ArrowLeft, Loader2, ShoppingBag, Pickaxe } from 'lucide-react';
+import { Mail, Lock, User, ArrowLeft, Loader2, ShoppingBag, Pickaxe } from 'lucide-react';
 import { toast } from 'sonner';
 import type { AccountType } from '@/types';
+import { BoostPlugLogo } from '@/components/common/BoostPlugLogo';
 
 interface RegisterPageProps {
   defaultType?: AccountType;
@@ -101,8 +102,8 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
 
         <Card className="p-6 sm:p-8 bg-white/5 border-white/10">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[hsl(142,76%,45%)]/20 flex items-center justify-center">
-              <UserPlus className="w-7 h-7 text-[hsl(142,76%,45%)]" />
+            <div className="flex justify-center mb-5">
+              <BoostPlugLogo size="lg" subtitle="NIEUW ACCOUNT" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Account aanmaken</h1>
             <p className="text-white/50 text-sm">

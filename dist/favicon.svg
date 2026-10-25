@@ -1,78 +1,77 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
   <defs>
-    <!-- Background Gradient: matching Header.tsx [hsl(220,30%,15%)] to [hsl(220,35%,8%)] -->
+    <!-- Background Gradient: Deep Obsidian Noir with subtle warmth -->
     <linearGradient id="badgeBg" x1="15%" y1="15%" x2="85%" y2="85%">
-      <stop offset="0%" stop-color="#1e293b"/>
-      <stop offset="45%" stop-color="#0f172a"/>
-      <stop offset="100%" stop-color="#080d1a"/>
+      <stop offset="0%" stop-color="#1A1F2C"/>
+      <stop offset="50%" stop-color="#0E121B"/>
+      <stop offset="100%" stop-color="#07090E"/>
     </linearGradient>
 
-    <!-- Subtle Premium Border Gradient: Green hint to Cyan hint -->
-    <linearGradient id="badgeBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.5"/>
-      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.5"/>
+    <!-- Atelier Champagne Gold & Emerald Micro-Rim -->
+    <linearGradient id="badgeRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#FAF3E3" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#E5C583" stop-opacity="0.8"/>
     </linearGradient>
 
-    <!-- Neon Glow Filter for Green Node -->
-    <filter id="glowGreen" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="6" result="blur"/>
+    <!-- Emerald Glow Filter -->
+    <filter id="glowEmerald" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
 
-    <!-- Neon Glow Filter for Cyan Node -->
-    <filter id="glowCyan" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="6" result="blur"/>
+    <!-- Gold Glow Filter -->
+    <filter id="glowGold" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
-
-    <!-- Radial Green Ambient Aura -->
-    <radialGradient id="greenAura" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.45"/>
-      <stop offset="60%" stop-color="#22c55e" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- Radial Cyan Ambient Aura -->
-    <radialGradient id="cyanAura" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.45"/>
-      <stop offset="60%" stop-color="#0ea5e9" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/>
-    </radialGradient>
 
     <!-- Node 3D Gradients -->
-    <linearGradient id="greenNodeGrad" x1="20%" y1="20%" x2="80%" y2="80%">
-      <stop offset="0%" stop-color="#4ade80"/>
-      <stop offset="100%" stop-color="#16a34a"/>
+    <linearGradient id="emeraldGrad" x1="20%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
     </linearGradient>
 
-    <linearGradient id="cyanNodeGrad" x1="20%" y1="20%" x2="80%" y2="80%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="100%" stop-color="#0284c7"/>
+    <linearGradient id="goldGrad" x1="20%" y1="20%" x2="80%" y2="80%">
+      <stop offset="0%" stop-color="#F5E6CA"/>
+      <stop offset="45%" stop-color="#E5C583"/>
+      <stop offset="100%" stop-color="#C5A059"/>
     </linearGradient>
+
+    <!-- Ambient Radial Auras -->
+    <radialGradient id="emeraldAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="goldAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E5C583" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#E5C583" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
-  <!-- Circular Base Badge -->
+  <!-- Circular Atelier Base Badge -->
   <circle cx="64" cy="64" r="58" fill="url(#badgeBg)"/>
-  <circle cx="64" cy="64" r="57" fill="none" stroke="url(#badgeBorder)" stroke-width="2.2"/>
+  <circle cx="64" cy="64" r="57" fill="none" stroke="url(#badgeRim)" stroke-width="2"/>
 
-  <!-- Left Green Node Ambient Glow -->
-  <circle cx="45" cy="64" r="26" fill="url(#greenAura)"/>
+  <!-- Energy Bridge / Plug Connector -->
+  <path d="M45 64 Q64 56 83 64" fill="none" stroke="#E5C583" stroke-width="2.5" stroke-opacity="0.4" stroke-dasharray="3 3"/>
 
-  <!-- Right Cyan Node Ambient Glow -->
-  <circle cx="83" cy="64" r="26" fill="url(#cyanAura)"/>
+  <!-- Ambient Glows -->
+  <circle cx="45" cy="64" r="28" fill="url(#emeraldAura)"/>
+  <circle cx="83" cy="64" r="28" fill="url(#goldAura)"/>
 
-  <!-- Left Green Node (Hsl 142, 76%, 45% - BoostPlug Signature Green) -->
-  <circle cx="45" cy="64" r="14.5" fill="url(#greenNodeGrad)" filter="url(#glowGreen)"/>
-  <circle cx="41.5" cy="60.5" r="4.5" fill="#ffffff" opacity="0.6"/>
+  <!-- Left Node: Emerald Streaming/Node -->
+  <circle cx="45" cy="64" r="15" fill="url(#emeraldGrad)" filter="url(#glowEmerald)"/>
+  <circle cx="41.5" cy="60.5" r="4.5" fill="#ffffff" opacity="0.65"/>
 
-  <!-- Right Cyan Node (Hsl 199, 89%, 48% - BoostPlug Signature Cyan) -->
-  <circle cx="83" cy="64" r="14.5" fill="url(#cyanNodeGrad)" filter="url(#glowCyan)"/>
-  <circle cx="79.5" cy="60.5" r="4.5" fill="#ffffff" opacity="0.6"/>
+  <!-- Right Node: Champagne Gold Reviews/Quantum -->
+  <circle cx="83" cy="64" r="15" fill="url(#goldGrad)" filter="url(#glowGold)"/>
+  <circle cx="79.5" cy="60.5" r="4.5" fill="#ffffff" opacity="0.75"/>
 </svg>

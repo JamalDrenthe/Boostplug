@@ -276,8 +276,8 @@ export function AccountCenter({
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; margin: 40px; }
           .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 20px; }
-          .logo { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; }
-          .logo span { color: #16a34a; }
+          .logo { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; font-family: -apple-system, sans-serif; }
+          .logo span { font-family: Georgia, serif; font-style: italic; font-weight: 400; color: #b89130; margin-left: 2px; }
           .tag { font-size: 12px; color: #64748b; margin-top: 4px; }
           .meta { margin-top: 30px; display: flex; justify-content: space-between; }
           table { width: 100%; border-collapse: collapse; margin-top: 30px; }
@@ -291,7 +291,7 @@ export function AccountCenter({
       <body>
         <div class="header">
           <div>
-            <div class="logo">BOOST<span>PLUG</span></div>
+            <div class="logo">BOOST<span>Plug</span></div>
             <div class="tag">Streaming & Reviews Growth Platform</div>
             <div class="tag">Een onderneming van Quantum Initium</div>
           </div>

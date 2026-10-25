@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { isStripeConfigured, getStripeMode } from '@/lib/stripe';
+import { BoostPlugLogo } from '@/components/common/BoostPlugLogo';
 
 interface CheckoutModalProps {
   open: boolean;
@@ -120,11 +121,12 @@ export function CheckoutModal({ open, onClose }: CheckoutModalProps) {
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[hsl(220,30%,8%)] border-white/10 p-0">
         {!orderComplete ? (
           <>
-            <DialogHeader className="p-6 pb-0">
+            <DialogHeader className="p-6 pb-0 flex flex-row items-center justify-between">
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
-                <ShoppingBag className="w-6 h-6 text-[hsl(142,76%,45%)]" />
+                <ShoppingBag className="w-6 h-6 text-[#E5C583]" />
                 Afrekenen
               </DialogTitle>
+              <BoostPlugLogo size="xs" />
             </DialogHeader>
 
             <div className="p-6 space-y-6">

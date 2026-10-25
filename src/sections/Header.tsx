@@ -29,6 +29,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { BoostPlugLogo } from '@/components/common/BoostPlugLogo';
 
 interface HeaderProps {
   onCheckout: () => void;
@@ -119,22 +120,8 @@ export function Header({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <a href="#" onClick={(e) => { e.preventDefault(); onHome(); }} className="flex items-center gap-3 group">
-            <div className="relative w-10 h-10 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#1C2331] to-[#090B0F] border border-[#E5C583]/30 group-hover:border-[#E5C583]/80 group-hover:shadow-[0_0_15px_rgba(229,197,131,0.3)] transition-all duration-300" />
-              <div className="relative flex gap-1.5 items-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-[0_0_8px_#10B981] animate-pulse" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#E5C583] shadow-[0_0_8px_#E5C583] animate-pulse" style={{ animationDelay: '0.5s' }} />
-              </div>
-            </div>
-            <div className="flex items-baseline tracking-tight">
-              <span className="text-xl font-bold tracking-tight text-white font-sans">
-                BOOST
-              </span>
-              <span className="font-serif italic text-2xl text-[#E5C583] font-normal ml-0.5">
-                Plug
-              </span>
-            </div>
+          <a href="#" onClick={(e) => { e.preventDefault(); onHome(); }} className="flex items-center group">
+            <BoostPlugLogo size="md" />
           </a>
 
           {/* Desktop Navigation */}
@@ -523,18 +510,16 @@ export function Header({
         >
           <div>
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="relative w-9 h-9 flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(220,30%,15%)] to-[hsl(220,35%,8%)] border border-white/10" />
-                  <div className="relative flex gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-[hsl(142,76%,45%)]" />
-                    <div className="w-2 h-2 rounded-full bg-[hsl(199,89%,48%)]" />
-                  </div>
-                </div>
-                <span className="text-lg font-bold text-white">
-                  BOOST<span className="text-[hsl(142,76%,45%)]">PLUG</span>
-                </span>
-              </div>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  onHome();
+                }}
+              >
+                <BoostPlugLogo size="sm" />
+              </a>
               <Button
                 variant="ghost"
                 size="icon"
