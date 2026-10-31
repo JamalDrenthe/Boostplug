@@ -93,7 +93,7 @@ export async function testDjobbaHandshake(): Promise<{ ok: boolean; latencyMs: n
       return {
         ok: true,
         latencyMs,
-        message: `Djobba.works gateway online (${latencyMs}ms). SABI Rails factoring & DBA-engine geverifieerd.`,
+        message: `Djobba.works gateway online (${latencyMs}ms). Xabi World Rails factoring & DBA-engine geverifieerd.`,
       };
     }
 
@@ -102,7 +102,7 @@ export async function testDjobbaHandshake(): Promise<{ ok: boolean; latencyMs: n
     return {
       ok: true,
       latencyMs: 18,
-      message: 'Handshake geslaagd met Djobba.works (Subholding 03: Talent & Gateway). SABI Rails 72-uurs factoring & DBA model verbonden.',
+      message: 'Handshake geslaagd met Djobba.works (Subholding 03: Talent & Gateway). Xabi World Rails 72-uurs factoring & DBA model verbonden.',
     };
   } catch {
     return {
@@ -141,12 +141,12 @@ export async function postVacancyToDjobba(vacancy: Vacancy): Promise<DjobbaApiRe
         url: data.url || `https://djobba.works/jobs/${vacancy.id}`,
         message: 'Vacature succesvol live gezet op Djobba.works',
         timestamp: now,
-        railsRef: data.railsRef || `SABI-${Math.floor(100000 + Math.random() * 900000)}`,
+        railsRef: data.railsRef || `XABI-WORLD-${Math.floor(100000 + Math.random() * 900000)}`,
       };
     }
 
     // Betrouwbare Quantum Initium talent simulatie voor development / staging:
-    // Genereer een officieel Djobba ID en SABI Rails referentienummer
+    // Genereer een officieel Djobba ID en Xabi World Rails referentienummer
     await new Promise((r) => setTimeout(r, 700));
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const djobbaJobId = `DJB-${vacancy.department.slice(0, 3).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
@@ -157,7 +157,7 @@ export async function postVacancyToDjobba(vacancy: Vacancy): Promise<DjobbaApiRe
       url: `https://djobba.works/jobs/boostplug-${vacancy.id}`,
       message: `Vacature "${vacancy.title}" succesvol gesynchroniseerd met Djobba.works talentenpool.`,
       timestamp: now,
-      railsRef: `SABI-RAILS-${randomSuffix}`,
+      railsRef: `XABI-WORLD-RAILS-${randomSuffix}`,
     };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : 'Netwerkfout bij sync';

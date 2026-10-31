@@ -402,12 +402,12 @@ export const ECOSYSTEM_INTEGRATIONS: EcosystemIntegration[] = [
     tagColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
     icon: Briefcase,
     description:
-      'Verbind BoostPlug vacatures en hiring requests direct met DJOBBA.works. Biedt automatische Nederlandse Wet DBA-compliance verificatie en 72-uurs factoring via SABI Rails.',
+      'Verbind BoostPlug vacatures en hiring requests direct met DJOBBA.works. Biedt automatische Nederlandse Wet DBA-compliance verificatie en 72-uurs factoring via Xabi World Rails.',
     synergy:
       'De exclusieve talent- en freelance matching engine voor alle software engineers, DevOps en growth specialisten binnen het Quantum Initium holdingnetwerk.',
     defaultActive: true,
     externalUrl: 'https://djobba.works',
-    metrics: { label: 'Factoring Snelheid', value: '72 uur via SABI' },
+    metrics: { label: 'Factoring Snelheid', value: '72 uur via Xabi World' },
     instructions: [
       'Voer jouw Djobba API Key in om vacatures direct vanuit Firestore te publiceren.',
       'Activeer de automatische DBA-compliance check voor ZZP en freelance kandidaten.',

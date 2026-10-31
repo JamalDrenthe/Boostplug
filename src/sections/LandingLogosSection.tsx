@@ -263,7 +263,7 @@ const PARTNER_COMPANIES: PartnerCompany[] = [
     logo: DjobbaLogo,
     brandColor: '#38BDF8',
     role: 'Talent & Gateway API Factoring',
-    tag: 'SABI Rails 72h',
+    tag: 'Xabi World Rails 72h',
     status: 'Live API Sync',
     targetAction: 'vacancies',
   },

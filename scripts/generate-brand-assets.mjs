@@ -201,7 +201,7 @@ async function generateAssets() {
     <!-- Footer Trust Ribbon -->
     <g transform="translate(600, 520)">
       <text x="0" y="0" font-family="monospace, monospace" font-size="13" font-weight="500" fill="#999999" letter-spacing="2" text-anchor="middle">
-        99.4% RETENTIE • KPN/ZIGGO RESIDENTIËLE NODES • 72H SABI RAILS
+        99.4% RETENTIE • KPN/ZIGGO RESIDENTIËLE NODES • 72H XABI WORLD RAILS
       </text>
     </g>
   </svg>

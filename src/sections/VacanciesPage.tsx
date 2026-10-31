@@ -248,7 +248,7 @@ export function VacanciesPage({ onBack, onIntegrations }: VacanciesPageProps) {
           </h1>
           <p className="text-[#FAF8F5]/60 text-sm sm:text-lg max-w-3xl mx-auto leading-relaxed font-light">
             Bouw mee aan de gedecentraliseerde architectuur van BoostPlug en het bredere holdingnetwerk van Quantum Initium.
-            Alle vacatures zijn direct gekoppeld aan <strong>DJOBBA.works</strong> met gegarandeerde 72-uurs factoring via SABI Rails
+            Alle vacatures zijn direct gekoppeld aan <strong>DJOBBA.works</strong> met gegarandeerde 72-uurs factoring via Xabi World Rails
             en 100% Nederlandse Wet DBA-compliance.
           </p>
         </motion.div>
@@ -266,7 +266,7 @@ export function VacanciesPage({ onBack, onIntegrations }: VacanciesPageProps) {
                 <Badge className="bg-[#E5C583] text-[#090B0F] font-bold text-xs px-2.5 py-0.5">
                   DJOBBA INTEGRATED API
                 </Badge>
-                <span className="text-xs text-white/50 font-mono">SABI Rails v2.4</span>
+                <span className="text-xs text-white/50 font-mono">Xabi World Rails v2.4</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                 Directe koppeling met de DJOBBA.works Talent Engine
@@ -666,7 +666,7 @@ export function VacanciesPage({ onBack, onIntegrations }: VacanciesPageProps) {
                       Gegarandeerde DBA-conformiteit via Djobba
                     </p>
                     <p className="text-[11px] text-white/50 mt-0.5">
-                      Factoring via SABI Rails binnen 72 uur. Geen debiteurenrisico voor freelancers.
+                      Factoring via Xabi World Rails binnen 72 uur. Geen debiteurenrisico voor freelancers.
                     </p>
                   </div>
                   {isAdmin && (
@@ -766,7 +766,7 @@ export function VacanciesPage({ onBack, onIntegrations }: VacanciesPageProps) {
                     >
                       <option value="zzp">ZZP / Freelance (DBA-conform via Djobba)</option>
                       <option value="loondienst">Vast dienstverband</option>
-                      <option value="payroll">Payroll via SABI Rails</option>
+                      <option value="payroll">Payroll via Xabi World Rails</option>
                     </select>
                   </div>
                 </div>
