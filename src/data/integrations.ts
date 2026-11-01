@@ -10,6 +10,7 @@ import {
   Briefcase,
   CreditCard,
   BellRing,
+  Database,
 } from 'lucide-react';
 
 export type IntegrationCategory =
@@ -440,6 +441,66 @@ export const ECOSYSTEM_INTEGRATIONS: EcosystemIntegration[] = [
       },
     ],
   },
+  {
+    id: 'crmos',
+    name: 'CRMos (Universal CRM & Sales Pipeline)',
+    subtitle: 'Unified Sales Rails & Agent Sync (Subholding 05)',
+    category: 'developer',
+    categoryLabel: 'Talent & Developer',
+    tag: 'Bi-directionele REST',
+    tagColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    icon: Database,
+    description:
+      'Volledige bi-directionele REST API-koppeling met CRMos.one. Synchroniseert realtime orders, contacten, deals, activiteiten en sollicitaties tussen BoostPlug en de Quantum Initium sales engine.',
+    synergy:
+      'Zorgt voor realtime leadkwalificatie, automatische dealregistratie en No Cure No Pay kandidaatmatching over het gehele holdingnetwerk.',
+    defaultActive: true,
+    externalUrl: 'https://crmos.one',
+    metrics: { label: 'Sync Status', value: 'Live REST API' },
+    instructions: [
+      'Authenticatie verloopt via de master header: X-CRMOS-API-KEY.',
+      'Nieuwe bestellingen worden direct geregistreerd als deals in de sales pipeline.',
+      'Sollicitanten vanuit de vacaturepagina worden automatisch verrijkt als gekwalificeerde kandidaten.',
+    ],
+    fields: [
+      {
+        id: 'apiKey',
+        label: 'CRMos API Key',
+        placeholder: 'crm_live_master_jamaldrenthe_2026_all_ecosystem',
+        type: 'password',
+        required: true,
+        helperText: 'Standaard ingesteld op de Quantum Initium master key.',
+      },
+      {
+        id: 'apiUrl',
+        label: 'API Base URL',
+        placeholder: 'https://crmos.one/api/v1',
+        type: 'url',
+        required: true,
+        helperText: 'Lokaal/dev: http://localhost:5173/api/v1',
+      },
+      {
+        id: 'autoSyncOrders',
+        label: 'Automatisch orders registreren als deals',
+        placeholder: 'true',
+        type: 'select',
+        options: [
+          { label: 'Ja (Aanbevolen)', value: 'true' },
+          { label: 'Nee (Alleen handmatig)', value: 'false' },
+        ],
+      },
+      {
+        id: 'autoSyncCandidates',
+        label: 'Sollicitaties direct inschrijven als kandidaten',
+        placeholder: 'true',
+        type: 'select',
+        options: [
+          { label: 'Ja (No Cure No Pay Engine)', value: 'true' },
+          { label: 'Nee', value: 'false' },
+        ],
+      },
+    ],
+  },
 ];
 
 const INTEGRATIONS_STORAGE_KEY = 'boostplug_active_integrations';
@@ -475,6 +536,17 @@ export function loadUserIntegrations(): Record<string, UserIntegrationState> {
           configData: {
             apiKey: 'LR-LIVE-NL-8491',
             region: 'nl-residential',
+          },
+        },
+        crmos: {
+          integrationId: 'crmos',
+          isActive: true,
+          activatedAt: new Date().toISOString(),
+          configData: {
+            apiKey: 'crm_live_master_jamaldrenthe_2026_all_ecosystem',
+            apiUrl: 'https://crmos.one/api/v1',
+            autoSyncOrders: 'true',
+            autoSyncCandidates: 'true',
           },
         },
       };

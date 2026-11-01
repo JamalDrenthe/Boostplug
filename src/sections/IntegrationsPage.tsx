@@ -41,6 +41,7 @@ import {
   type UserIntegrationState,
   type IntegrationCategory,
 } from '@/data/integrations';
+import { testCrmosHandshake, saveCrmosConfig } from '@/lib/crmosApi';
 
 interface IntegrationsPageProps {
   onBack: () => void;
@@ -102,6 +103,20 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
   const handleTestHandshake = async () => {
     setIsTestingConnection(true);
     setTestResult(null);
+
+    if (activeModalIntegration?.id === 'crmos') {
+      const res = await testCrmosHandshake();
+      setIsTestingConnection(false);
+      if (res.ok) {
+        setTestResult(res.message);
+        toast.success('CRMos handshake geslaagd!');
+      } else {
+        setTestResult(`Handshake mislukt: ${res.message}`);
+        toast.error('CRMos handshake mislukt');
+      }
+      return;
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 1400));
     setIsTestingConnection(false);
     setTestResult('Handshake geslaagd! Verbinding met Quantum Initium gateway is stabiel en geverifieerd (14ms latency).');
@@ -119,6 +134,15 @@ export function IntegrationsPage({ onBack, onShop, onJoin }: IntegrationsPagePro
     if (missing.length > 0) {
       toast.error(`Vul a.u.b. alle verplichte velden in: ${missing.map((m) => m.label).join(', ')}`);
       return;
+    }
+
+    if (activeModalIntegration.id === 'crmos') {
+      saveCrmosConfig({
+        apiKey: modalFormData.apiKey,
+        baseUrl: modalFormData.apiUrl,
+        autoSyncOrders: modalFormData.autoSyncOrders === 'true',
+        autoSyncCandidates: modalFormData.autoSyncCandidates === 'true',
+      });
     }
 
     const updated = saveUserIntegration(activeModalIntegration.id, true, modalFormData);

@@ -39,6 +39,7 @@ import {
   syncVacancyToDjobba 
 } from '@/lib/firebase';
 import { testDjobbaHandshake } from '@/lib/djobbaApi';
+import { syncJobApplicationToCrmos } from '@/lib/crmosApi';
 
 interface VacanciesPageProps {
   onBack: () => void;
@@ -185,6 +186,10 @@ export function VacanciesPage({ onBack, onIntegrations }: VacanciesPageProps) {
       });
 
       setApplicationSuccess(app);
+      // Bi-directionele registratie van kandidaat & contact in CRMos
+      syncJobApplicationToCrmos(app, activeVacancy.title).catch((err) => {
+        console.warn('CRMos kandidaat auto-sync achtergrondtaak:', err);
+      });
       toast.success(`Sollicitatie voor "${activeVacancy.title}" succesvol ingediend!`);
     } catch {
       toast.error('Er ging iets mis bij het versturen van je sollicitatie.');

@@ -9,6 +9,7 @@ import { Mail, Lock, User, ArrowLeft, Loader2, ShoppingBag, Pickaxe } from 'luci
 import { toast } from 'sonner';
 import type { AccountType } from '@/types';
 import { BoostPlugLogo } from '@/components/common/BoostPlugLogo';
+import { syncUserRegistrationToCrmos } from '@/lib/crmosApi';
 
 interface RegisterPageProps {
   defaultType?: AccountType;
@@ -81,6 +82,13 @@ export function RegisterPage({ defaultType, onBack, onSuccess, onGoLogin }: Regi
         return;
       }
       toast.success('Account aangemaakt — welkom bij BoostPlug!');
+      syncUserRegistrationToCrmos({
+        id: `user-${Date.now()}`,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        accountType,
+        createdAt: new Date().toISOString(),
+      }).catch((err) => console.warn('CRMos registration sync:', err));
       onSuccess();
     } catch {
       toast.error('Er is een onverwachte fout opgetreden bij het registreren');

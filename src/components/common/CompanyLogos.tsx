@@ -434,6 +434,36 @@ export function DjobbaLogo({ size = 24, className = '', colored = false, ...prop
   );
 }
 
+// 21. CRMos (Unified CRM & Sales Rails)
+export function CrmosLogo({ size = 24, className = '', colored = false, ...props }: CompanyLogoProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="9.5" stroke={colored ? '#10B981' : 'currentColor'} strokeWidth="1.5" />
+      <path
+        d="M7 12a5 5 0 0 1 8.5-3.5L13.5 10"
+        stroke={colored ? '#E5C583' : 'currentColor'}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <circle cx="15.5" cy="14" r="2.5" fill={colored ? '#10B981' : 'currentColor'} />
+      <path
+        d="M7.5 15.5L13 14"
+        stroke={colored ? '#38BDF8' : 'currentColor'}
+        strokeWidth="1.25"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 // Unified Logo resolver by string id
 export function CompanyLogo({
   name,
@@ -494,6 +524,9 @@ export function CompanyLogo({
     case 'djobba':
     case 'djobbaworks':
       return <DjobbaLogo size={size} className={className} colored={colored} {...props} />;
+    case 'crmos':
+    case 'crmosone':
+      return <CrmosLogo size={size} className={className} colored={colored} {...props} />;
     default:
       return <SpotifyLogo size={size} className={className} colored={colored} {...props} />;
   }

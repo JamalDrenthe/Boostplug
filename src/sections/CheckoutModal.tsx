@@ -26,6 +26,7 @@ import {
 import { toast } from 'sonner';
 import { isStripeConfigured, getStripeMode } from '@/lib/stripe';
 import { BoostPlugLogo } from '@/components/common/BoostPlugLogo';
+import { syncOrderToCrmos } from '@/lib/crmosApi';
 
 interface CheckoutModalProps {
   open: boolean;
@@ -94,6 +95,10 @@ export function CheckoutModal({ open, onClose }: CheckoutModalProps) {
     };
 
     addOrder(newOrder);
+    // Realtime bi-directionele registratie in CRMos (Contact Upsert + Sales Deal)
+    syncOrderToCrmos(newOrder).catch((err) => {
+      console.warn('CRMos auto-sync achtergrondtaak:', err);
+    });
     setTrackingToken(token);
     setIsProcessing(false);
     setOrderComplete(true);

@@ -25,6 +25,7 @@ import {
   StripeLogo,
   QuantumInitiumLogo,
   DjobbaLogo,
+  CrmosLogo,
 } from '@/components/common/CompanyLogos';
 
 type CategoryFilter = 'all' | 'streaming' | 'reviews' | 'infrastructure';
@@ -267,6 +268,17 @@ const PARTNER_COMPANIES: PartnerCompany[] = [
     status: 'Live API Sync',
     targetAction: 'vacancies',
   },
+  {
+    id: 'crmos',
+    name: 'CRMos.one',
+    category: 'infrastructure',
+    logo: CrmosLogo,
+    brandColor: '#10B981',
+    role: 'Unified CRM & Sales Pipeline',
+    tag: 'Bi-directionele REST',
+    status: 'Live Handshake',
+    targetAction: 'integraties',
+  },
 ];
 
 export function LandingLogosSection() {
@@ -332,10 +344,10 @@ export function LandingLogosSection() {
         <div className="flex justify-center mb-10 overflow-x-auto pb-2 scrollbar-none">
           <div className="inline-flex items-center p-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl">
             {[
-              { id: 'all', label: 'Alle Partners & Platforms', count: '20' },
+              { id: 'all', label: 'Alle Partners & Platforms', count: '21' },
               { id: 'streaming', label: 'Streaming & Muziek', count: '7' },
               { id: 'reviews', label: 'Reviews & Social Proof', count: '7' },
-              { id: 'infrastructure', label: 'Telecom & Rails', count: '6' },
+              { id: 'infrastructure', label: 'Telecom & Rails', count: '7' },
             ].map((tab) => (
               <button
                 key={tab.id}
