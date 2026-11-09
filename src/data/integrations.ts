@@ -466,10 +466,10 @@ export const ECOSYSTEM_INTEGRATIONS: EcosystemIntegration[] = [
       {
         id: 'apiKey',
         label: 'CRMos API Key',
-        placeholder: 'crm_live_master_jamaldrenthe_2026_all_ecosystem',
+        placeholder: 'crm_live_boostplug_energy_iot_2026',
         type: 'password',
         required: true,
-        helperText: 'Standaard ingesteld op de Quantum Initium master key.',
+        helperText: 'Standaard ingesteld op BoostPlug sleutel (crm_live_boostplug_energy_iot_2026) of gebruik Master Key.',
       },
       {
         id: 'apiUrl',
@@ -543,7 +543,7 @@ export function loadUserIntegrations(): Record<string, UserIntegrationState> {
           isActive: true,
           activatedAt: new Date().toISOString(),
           configData: {
-            apiKey: 'crm_live_master_jamaldrenthe_2026_all_ecosystem',
+            apiKey: 'crm_live_boostplug_energy_iot_2026',
             apiUrl: 'https://crmos.one/api/v1',
             autoSyncOrders: 'true',
             autoSyncCandidates: 'true',

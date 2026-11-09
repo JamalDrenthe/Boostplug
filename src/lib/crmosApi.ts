@@ -3,15 +3,109 @@
  * Bi-directionele Integratiegids voor Quantum Initium & BoostPlug
  * 
  * Base URL: https://crmos.one/api/v1 (lokaal/dev: http://localhost:5173/api/v1)
- * Auth Header: X-CRMOS-API-KEY: crm_live_master_jamaldrenthe_2026_all_ecosystem
+ * Auth Header: X-CRMOS-API-KEY: crm_live_boostplug_energy_iot_2026
+ * 
+ * Voldoet aan de 4 universele ecosysteem-spelregels:
+ * 1. Headers: Content-Type: application/json + X-CRMOS-API-KEY
+ * 2. Inbound writing: POST /contacts/upsert (matcht op LOWER(TRIM(email)), merge tags/notes)
+ * 3. Outbound reading: GET /health, GET /search?q=, GET /contacts?email=, GET /vvc/lookup?tag=
+ * 4. Webhooks: POST /webhooks
  */
 
 import type { Order, JobApplication, AuthUser } from '@/types';
 
+/**
+ * Officieel overzicht API Keys en tags per holdingpartner binnen het Quantum Initium ecosysteem
+ */
+export const ECOSYSTEM_CRM_KEYS: Record<
+  string,
+  { name: string; apiKey: string; companyTag: string; role: string }
+> = {
+  master: {
+    name: 'Alle Bedrijven (Master)',
+    apiKey: 'crm_live_master_jamaldrenthe_2026_all_ecosystem',
+    companyTag: '#all',
+    role: 'Holding Master Overkoepelend',
+  },
+  vvc: {
+    name: 'VVC (Verdienende Vrienden Club)',
+    apiKey: 'crm_live_vvc_verdienende_vrienden_club_2026',
+    companyTag: '#vvc',
+    role: 'Referral Teams, Community & Hardware Nodes',
+  },
+  spontiva: {
+    name: 'Spontiva',
+    apiKey: 'crm_live_spontiva_recruitment_2026',
+    companyTag: '#spontiva',
+    role: 'Recruitment, Werving & No Cure No Pay',
+  },
+  boostplug: {
+    name: 'Boostplug',
+    apiKey: 'crm_live_boostplug_energy_iot_2026',
+    companyTag: '#boostplug',
+    role: 'Energy, IoT & Residential Node Networks',
+  },
+  quantum_initium: {
+    name: 'Quantum Initium',
+    apiKey: 'crm_live_quantum_initium_enterprise_2026',
+    companyTag: '#quantum-initium',
+    role: 'Enterprise Holding Fund & Compute Clusters',
+  },
+  immigratiepunt: {
+    name: 'Immigratiepunt',
+    apiKey: 'crm_live_immigratiepunt_portal_2026',
+    companyTag: '#immigratiepunt',
+    role: 'Legal, Visa, Expat Relocatie & Corporate Law',
+  },
+  woningvry: {
+    name: 'Woningvry',
+    apiKey: 'crm_live_woningvry_realestate_2026',
+    companyTag: '#woningvry',
+    role: 'Real Estate, Flexible Workspace & Datacenter Hubs',
+  },
+  djobba_works: {
+    name: 'Djobba.works',
+    apiKey: 'crm_live_djobba_works_freelance_2026',
+    companyTag: '#djobba-works',
+    role: 'Freelance Matching, DBA Compliance & Factoring',
+  },
+  trusting_work: {
+    name: 'Trusting Work',
+    apiKey: 'crm_live_trusting_work_staffing_2026',
+    companyTag: '#trusting-work',
+    role: 'Staffing, Flexpool & Uitzendbranche',
+  },
+  logs_rent: {
+    name: 'Logs.rent',
+    apiKey: 'crm_live_logs_rent_logistics_2026',
+    companyTag: '#logs-rent',
+    role: 'Logistics, KPN/Ziggo Residentiële IP Pools',
+  },
+  zheavenzy: {
+    name: 'Zheavenzy',
+    apiKey: 'crm_live_zheavenzy_atelier_2026',
+    companyTag: '#zheavenzy',
+    role: 'Haute-Couture Atelier, Music Label & Luxury Goods',
+  },
+  xabi_world: {
+    name: 'Xabi World',
+    apiKey: 'crm_live_xabi_world_international_2026',
+    companyTag: '#xabi-world',
+    role: 'International Media, DID Identity & Rails Factoring',
+  },
+  crmos: {
+    name: 'CRMos Platform',
+    apiKey: 'crm_live_crmos_core_platform_2026',
+    companyTag: '#crmos',
+    role: 'Core Data Engine, Unified Rails & Bi-directionele Sync',
+  },
+};
+
 export const CRMOS_DEFAULT_CONFIG = {
   baseUrl: 'https://crmos.one/api/v1',
   devBaseUrl: 'http://localhost:5173/api/v1',
-  apiKey: 'crm_live_master_jamaldrenthe_2026_all_ecosystem',
+  apiKey: 'crm_live_boostplug_energy_iot_2026',
+  companyTag: '#boostplug',
   sourceSystem: 'BoostPlug-QuantumInitium',
 };
 
@@ -94,6 +188,7 @@ export interface CrmosDeal {
   stage: 'lead' | 'contact_made' | 'proposal' | 'negotiation' | 'won' | 'lost';
   company_name?: string;
   contact_id?: string;
+  contact_email?: string;
   probability?: number;
   notes?: string;
 }
@@ -114,12 +209,31 @@ export interface CrmosCandidate {
   last_name?: string;
   email: string;
   phone?: string;
-  skills: string[];
+  role_applied?: string;
+  deal_model?: 'no_cure_no_pay' | 'standard' | 'retainer';
+  company?: string;
+  skills?: string[];
   experience_years?: number;
   location?: string;
+  tags?: string[];
   notes?: string;
-  role_applied?: string;
   quantum_subholding?: string;
+}
+
+export interface CrmosWebhookConfig {
+  id?: string;
+  company: string;
+  url: string;
+  events: string[];
+  secret?: string;
+  is_active?: boolean;
+}
+
+export interface CrmosHealthResponse {
+  status: 'online' | 'degraded' | 'offline';
+  timestamp?: string;
+  version?: string;
+  service?: string;
 }
 
 export interface CrmosCompany {
@@ -225,6 +339,14 @@ async function crmosFetch<T = any>(
 // ============================================================================
 
 /**
+ * Health Check: GET /api/v1/health
+ * Verifieert live status van de CRMos cluster. Verwacht {"status": "online"}.
+ */
+export async function checkCrmosHealth(): Promise<CrmosApiResponse<CrmosHealthResponse>> {
+  return crmosFetch<CrmosHealthResponse>('/health', { method: 'GET' });
+}
+
+/**
  * Universeel Zoeken: GET /api/v1/search?q={zoekterm}
  * Doorzoekt direct alle contacten, deals, kandidaten en teams tegelijk.
  */
@@ -239,17 +361,53 @@ export async function searchCrmos(query: string): Promise<CrmosApiResponse<Crmos
  */
 export async function getCrmosContacts(params?: {
   q?: string;
+  email?: string;
   company_tag?: string;
   tag?: string;
 }): Promise<CrmosApiResponse<CrmosContact[]>> {
   const searchParams = new URLSearchParams();
   if (params?.q) searchParams.set('q', params.q);
+  if (params?.email) searchParams.set('email', params.email);
   if (params?.company_tag) searchParams.set('company_tag', params.company_tag);
   if (params?.tag) searchParams.set('tag', params.tag);
 
   const queryStr = searchParams.toString();
   const endpoint = queryStr ? `/contacts?${queryStr}` : '/contacts';
   return crmosFetch<CrmosContact[]>(endpoint, { method: 'GET' });
+}
+
+/**
+ * Contact opzoeken op e-mailadres:
+ * GET /api/v1/contacts?email={email}
+ */
+export async function getContactByEmail(email: string): Promise<CrmosApiResponse<CrmosContact | null>> {
+  const cleanEmail = email.trim().toLowerCase();
+  const res = await getCrmosContacts({ email: cleanEmail });
+  if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
+    return {
+      ...res,
+      data: res.data[0],
+    };
+  }
+  return {
+    ...res,
+    data: null,
+  };
+}
+
+/**
+ * VVC Member Tag Lookup:
+ * GET /api/v1/vvc/lookup?tag={tag}
+ */
+export async function lookupVvcTag(tag: string): Promise<CrmosApiResponse<{
+  valid: boolean;
+  tag: string;
+  member_name?: string;
+  team?: string;
+  status?: string;
+}>> {
+  const q = encodeURIComponent(tag.trim().toUpperCase());
+  return crmosFetch(`/vvc/lookup?tag=${q}`, { method: 'GET' });
 }
 
 /**
@@ -365,6 +523,19 @@ export async function createCrmosCandidate(
   });
 }
 
+/**
+ * Webhook Registratie voor Event Notificaties: POST /api/v1/webhooks
+ * Hiermee kan BoostPlug realtime webhook triggers registreren in CRMos.
+ */
+export async function registerCrmosWebhook(
+  webhook: CrmosWebhookConfig
+): Promise<CrmosApiResponse<CrmosWebhookConfig>> {
+  return crmosFetch<CrmosWebhookConfig>('/webhooks', {
+    method: 'POST',
+    body: JSON.stringify(webhook),
+  });
+}
+
 // ============================================================================
 // 3. HANDSHAKE & HEALTH CHECK
 // ============================================================================
@@ -379,14 +550,28 @@ export async function testCrmosHandshake(): Promise<{
   const startTime = Date.now();
 
   try {
+    // 1. Probeer eerst de officiële health check endpoint
+    const healthRes = await checkCrmosHealth();
+    const latency = healthRes.latencyMs || Math.max(12, Date.now() - startTime);
+
+    if (healthRes.ok) {
+      return {
+        ok: true,
+        latencyMs: latency,
+        message: `CRMos live verbonden via ${config.baseUrl}/health (${latency}ms). API Key geverifieerd.`,
+        source: 'live_health_check',
+      };
+    }
+
+    // 2. Probeer secundair endpoint (/companies)
     const res = await crmosFetch('/companies', { method: 'GET' });
-    const latency = res.latencyMs || Math.max(14, Date.now() - startTime);
+    const companiesLatency = res.latencyMs || Math.max(14, Date.now() - startTime);
 
     if (res.ok) {
       return {
         ok: true,
-        latencyMs: latency,
-        message: `CRMos live verbonden via ${config.baseUrl} (${latency}ms). Master Key geverifieerd.`,
+        latencyMs: companiesLatency,
+        message: `CRMos live verbonden via ${config.baseUrl} (${companiesLatency}ms). API Key geverifieerd.`,
         source: 'live_network',
       };
     }
@@ -437,11 +622,11 @@ export async function syncOrderToCrmos(
       )
       .join(', ');
 
-    // 1. Contact Upsert
+    // 1. Contact Upsert (voldoet aan Regel 2A: LOWER(TRIM(email)) matching)
     const contactRes = await upsertCrmosContact({
       first_name: firstName,
       last_name: lastName,
-      email: order.email,
+      email: order.email.trim().toLowerCase(),
       company: 'BoostPlug Klant',
       company_tags: ['#boostplug', '#quantum_initium'],
       tags: ['Klant', 'Directe Aankoop', '#boostplug', `#${order.currency.toLowerCase()}`],
@@ -458,6 +643,7 @@ export async function syncOrderToCrmos(
       stage: 'won',
       company_name: 'BoostPlug',
       contact_id: contactId,
+      contact_email: order.email.trim().toLowerCase(),
       probability: 100,
       notes: `Geleverd via residentiële nodes. Valuta: ${order.currency}. Tracking: ${order.trackingToken}`,
     });
@@ -484,8 +670,8 @@ export async function syncOrderToCrmos(
 
 /**
  * Automatische synchronisatie wanneer een kandidaat solliciteert op een vacature:
- * 1. Schrijft sollicitant in bij POST /api/v1/candidates
- * 2. Upsert contact in CRMos met #sollicitant en #djobba
+ * 1. Schrijft sollicitant in bij POST /api/v1/candidates (met deal_model: 'no_cure_no_pay')
+ * 2. Upsert contact in CRMos met #sollicitant, #careers en #boostplug
  */
 export async function syncJobApplicationToCrmos(
   app: JobApplication,
@@ -499,34 +685,37 @@ export async function syncJobApplicationToCrmos(
     const firstName = names[0] || 'Kandidaat';
     const lastName = names.slice(1).join(' ') || '';
 
-    // 1. Candidate Aanmaken in CRMos
+    // 1. Candidate Aanmaken in CRMos (Regel 2B)
     const candidateRes = await createCrmosCandidate({
       first_name: firstName,
       last_name: lastName,
-      email: app.email,
+      email: app.email.trim().toLowerCase(),
       phone: app.phone,
+      role_applied: vacancyTitle || app.vacancyId,
+      deal_model: 'no_cure_no_pay',
+      company: 'BoostPlug',
       skills: [
         app.dbaStatus === 'zzp' ? 'ZZP / DBA-Conform' : 'Loondienst',
         vacancyTitle || 'Algemene Sollicitatie',
         'Xabi World Rails Factoring Ready',
       ],
       location: 'Nederland / Remote',
-      role_applied: vacancyTitle || app.vacancyId,
+      tags: ['#boostplug', '#careers', 'Sollicitant', `#dba_${app.dbaStatus}`],
       quantum_subholding: 'Subholding 03: Talent & Gateway',
       notes: `Sollicitatie ID: ${app.id}. Motivatie: ${app.motivation || 'Geen toelichting'}. LinkedIn: ${app.linkedinUrl || 'N/A'}. Portfolio: ${app.portfolioUrl || 'N/A'}. DBA: ${app.dbaStatus}.`,
     });
 
-    // 2. Contact Upsert in CRMos
+    // 2. Contact Upsert in CRMos (Regel 2A)
     await upsertCrmosContact({
       first_name: firstName,
       last_name: lastName,
-      email: app.email,
+      email: app.email.trim().toLowerCase(),
       phone: app.phone,
       company: 'Talent Pool Candidate',
-      company_tags: ['#djobba', '#quantum_initium'],
-      tags: ['Sollicitant', 'Talent Pool', `#dba_${app.dbaStatus}`, '#boostplug'],
+      company_tags: ['#boostplug', '#djobba', '#quantum_initium'],
+      tags: ['Sollicitant', 'Talent Pool', `#dba_${app.dbaStatus}`, '#boostplug', '#careers'],
       status: 'qualified',
-      notes: `Gesolliciteerd op functie: ${vacancyTitle || app.vacancyId}. Sollicitatie-ID: ${app.id}.`,
+      notes: `Gesolliciteerd op functie: ${vacancyTitle || app.vacancyId}. Sollicitatie-ID: ${app.id}. Model: No Cure No Pay.`,
     });
 
     return {
